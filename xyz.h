@@ -21,5 +21,6 @@ void xyz_end(void);
 
 xyz_image *xyz_load_image(const char *file);
 void xyz_draw_image(xyz_image *image, int x, int y);
+void xyz_free_image(xyz_image *image);
 
 #endif /* __XYZ_H__ */
