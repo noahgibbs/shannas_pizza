@@ -1,2 +1,2 @@
 #!/bin/bash
-gcc -o pizza pizza.c xyz.c -I.
+gcc -Wall -o pizza pizza.c xyz.c -I. `sdl-config --cflags --libs` -lSDL_image
