@@ -13,14 +13,26 @@ int xyz_mouse_is_button_down(int button) {
   return mouse_button[button];
 }
 
+static void (*xyz_key_handler)(const char *key_name, int down);
+
+void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down)) {
+  xyz_key_handler = key_handler;
+}
+
 static void xyz_process_event(SDL_Event *eventp) {
   switch(eventp->type) {
   case SDL_KEYDOWN: {
     const char *keyname = SDL_GetKeyName(eventp->key.keysym.sym);
-    if(!strcasecmp(keyname, "q")) {
-      exit(0);
+    if(xyz_key_handler) {
+      xyz_key_handler(keyname, 1);
     }
-    /* printf("The %s key was pressed!\n", keyname); */
+    break;
+  }
+  case SDL_KEYUP: {
+    const char *keyname = SDL_GetKeyName(eventp->key.keysym.sym);
+    if(xyz_key_handler) {
+      xyz_key_handler(keyname, 0);
+    }
     break;
   }
   case SDL_MOUSEBUTTONDOWN: {

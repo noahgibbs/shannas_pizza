@@ -12,6 +12,8 @@
 #define SYMBOLS_WIDTH  32
 #define SYMBOLS_HEIGHT 32
 
+void keyhandler(const char *keyname, int down);
+
 /* From toppings.c */
 void draw_toppings(void);
 void load_toppings(void);

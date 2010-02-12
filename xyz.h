@@ -25,6 +25,7 @@ void xyz_end(void);
 
 void xyz_mouse_position(int *x, int *y);
 int xyz_mouse_is_button_down(int button);
+void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down));
 void xyz_process_events(void);
 
 void xyz_color(int r, int g, int b);
