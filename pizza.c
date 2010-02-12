@@ -2,8 +2,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "SDL.h"
-
 #include "xyz.h"
 #include "pizza.h"
 
@@ -11,20 +9,19 @@ void init(void) {
   xyz_start();
   xyz_set_up_screen(TOTAL_HEIGHT, TOTAL_WIDTH);
 
-  SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
-
   load_toppings();
 }
 
 void draw(void) {
   xyz_color(0, 0, 0);
-  xyz_fill();
+  xyz_rectangle(0, 0, TOTAL_HEIGHT, TOTAL_WIDTH);
   draw_toppings();
   xyz_done_drawing();
 }
 
 void shutdown(void) {
   free_toppings();
+  xyz_end();
 }
 
 /************ Mouse processing **************/
@@ -45,10 +42,22 @@ void mouse_button_up(int button, int x, int y) {
   /* button 3 is right button */
 }
 
+static int old_button1 = 0;
+
 void process_mouse(void) {
   int x, y;
+  int button1;
 
-  SDL_GetMouseState(&x, &y);
+  xyz_mouse_position(&x, &y);
+  button1 = xyz_mouse_is_button_down(1);
+  if(button1 != old_button1) {
+    if(button1) {
+      mouse_button_down(1, x, y);
+    } else {
+      mouse_button_up(1, x, y);
+    }
+    old_button1 = button1;
+  }
 
   if(selected_sprite) {
     xyz_sprite_set_x(selected_sprite, x);
@@ -58,49 +67,13 @@ void process_mouse(void) {
 
 /**************** Main loop ****************/
 
-void process_event(SDL_Event *eventp) {
-  switch(eventp->type) {
-  case SDL_KEYDOWN: {
-    const char *keyname = SDL_GetKeyName(eventp->key.keysym.sym);
-    if(!strcasecmp(keyname, "q")) {
-      exit(0);
-    }
-    /* printf("The %s key was pressed!\n", keyname); */
-    break;
-  }
-  case SDL_MOUSEBUTTONDOWN:
-    mouse_button_down(eventp->button.button, eventp->button.x,
-		      eventp->button.y);
-    break;
-  case SDL_MOUSEBUTTONUP:
-    mouse_button_up(eventp->button.button, eventp->button.x,
-		    eventp->button.y);
-    break;
-  case SDL_QUIT:
-    exit(0);
-    break;
-  }
-}
-
 void main_loop(void) {
-  SDL_Event event;
-
   while(1) {
-    int pending;
-    do {
-      pending = SDL_PollEvent(&event);
-
-      if(pending) {
-	process_event(&event);
-      }
-    } while(pending);
-
+    xyz_process_events();
     process_mouse();
-
     draw();
     usleep(50);
   }
-
 }
 
 int main(int argc, char** argv) {
@@ -109,7 +82,6 @@ int main(int argc, char** argv) {
     main_loop();
 
     shutdown();
-    xyz_end();
 
     return 0;
 }

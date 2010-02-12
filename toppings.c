@@ -50,6 +50,8 @@ void free_toppings(void) {
   int idx = 0;
 
   while(toppings[idx].filename) {
+    xyz_free_sprite(toppings[idx].sprite);
+    toppings[idx].sprite = NULL;
     xyz_free_image(toppings[idx].image);
     toppings[idx].image = NULL;
     idx++;
