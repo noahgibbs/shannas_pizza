@@ -1,4 +1,6 @@
 #!/bin/bash
-SOURCE_FILES="pizza.c toppings.c xyz.c xyz_sprite.c xyz_events.c"
+SOURCE_FILES="pizza.c toppings.c buttons.c"
+XYZ_FILES="xyz.c xyz_sprite.c xyz_events.c"
+ALL_SOURCE="$SOURCE_FILES $XYZ_FILES"
 LIBS="-lSDL_image -lSDL_ttf"
-gcc -Wall -o pizza $SOURCE_FILES -I. `sdl-config --cflags --libs` $LIBS
+gcc -Wall -o pizza $ALL_SOURCE -I. `sdl-config --cflags --libs` $LIBS

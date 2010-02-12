@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 #include "xyz.h"
+#include "xyz_sprite.h"
 #include "pizza.h"
 
 void init(void) {
@@ -12,6 +13,7 @@ void init(void) {
   xyz_set_key_handler(keyhandler);
 
   load_toppings();
+  load_buttons();
 }
 
 static int show_mousebox = 0;
@@ -29,8 +31,10 @@ void draw(void) {
   xyz_rectangle(TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT,
 		TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
 		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
+
+  /* Conveyor box */
   xyz_color(255, 0, 0);
-  xyz_rectangle(0, 0, TOTAL_WIDTH, TOOLBOX_TOP_HEIGHT);
+  xyz_rectangle(0, 0, TOTAL_WIDTH, CONVEYOR_BOTTOM_HEIGHT);
 
   /* Mouse Coords */
   if(show_mousebox) {
@@ -42,14 +46,18 @@ void draw(void) {
     xyz_block_text(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, mousebox);
   }
 
+  draw_buttons();
   draw_toppings();
   xyz_done_drawing();
 }
 
 void shutdown(void) {
+  free_buttons();
   free_toppings();
   xyz_end();
 }
+
+/************ Event processing **************/
 
 void keyhandler(const char *keyname, int down) {
   if(!strcasecmp(keyname, "q"))
@@ -57,8 +65,6 @@ void keyhandler(const char *keyname, int down) {
   if(!strcasecmp(keyname, "m") && down == 1)
     show_mousebox = !show_mousebox;
 }
-
-/************ Mouse processing **************/
 
 static xyz_sprite* selected_sprite = NULL;
 

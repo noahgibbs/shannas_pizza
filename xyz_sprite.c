@@ -1,4 +1,5 @@
 #include "xyz.h"
+#include "xyz_sprite.h"
 
 /*********** xyz_sprite ****************/
 
@@ -9,6 +10,7 @@ struct _xyz_sprite_t {
   unsigned int height;
   xyz_image *image;
   int draggable;
+  int own_image;
   struct _xyz_sprite_t *next;
   struct _xyz_sprite_t *prev;
 };
@@ -34,6 +36,21 @@ xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
   sprite_head = tmp;
 
   return tmp;
+}
+
+xyz_sprite* sprite_from_spec(sprite_spec *spec) {
+  xyz_image *image;
+  xyz_sprite *sprite;
+  image = xyz_load_image(spec->filename);
+  if(!image)
+    xyz_fatal_error("Couldn't load image '%s'!", spec->filename);
+  sprite = xyz_new_sprite(spec->x, spec->y, spec->width, spec->height, image);
+  if(!sprite)
+    xyz_fatal_error("Couldn't create sprite for image '%s'!", spec->filename);
+  xyz_sprite_set_draggable(sprite, spec->draggable);
+  sprite->own_image = 1;
+
+  return sprite;
 }
 
 void xyz_free_sprite(xyz_sprite *sprite) {
