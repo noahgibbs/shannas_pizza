@@ -1,12 +1,15 @@
 #ifndef __PIZZA_H__
 #define __PIZZA_H__
 
-#define TOTAL_HEIGHT 500
-#define TOTAL_WIDTH 500
-#define SYMBOLS_TOP_HEIGHT  400
-#define TOOLBOX_LEFT_WIDTH  400
+/* Screen layout */
+#define TOTAL_HEIGHT           500
+#define TOTAL_WIDTH            500
+#define SYMBOLS_TOP_HEIGHT     400
+#define TOOLBOX_TOP_HEIGHT     100
+#define TOOLBOX_BOTTOM_HEIGHT  400
+#define TOOLBOX_LEFT_WIDTH     400
 
-#define SYMBOLS_WIDTH 32
+#define SYMBOLS_WIDTH  32
 #define SYMBOLS_HEIGHT 32
 
 /* From toppings.c */

@@ -3,8 +3,11 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 
 #include "xyz.h"
+
+static TTF_Font *sanskrit_font_20 = NULL;
 
 void xyz_start(void) {
   /* Initialize defaults, Video and Audio subsystems */
@@ -12,6 +15,14 @@ void xyz_start(void) {
     xyz_fatal_error("Could not initialize SDL: %s.\n", SDL_GetError());
   }
   SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+
+  if(TTF_Init() == -1)
+    xyz_fatal_error("Couldn't initialize SDL_ttf: %s.\n",
+		    TTF_GetError());
+  sanskrit_font_20 = TTF_OpenFont("sanskrit.ttf", 20);
+  if(!sanskrit_font_20)
+    xyz_fatal_error("Couldn't open font file: %s!\n",
+		    TTF_GetError());
 }
 
 static SDL_Surface *surface = NULL;
@@ -28,6 +39,11 @@ void xyz_set_up_screen(int width, int height) {
 }
 
 void xyz_end(void) {
+  TTF_CloseFont(sanskrit_font_20);
+  sanskrit_font_20 = NULL;
+  TTF_Quit();
+
+  surface = NULL;  /* Freed automatically */
   SDL_Quit();
 }
 
@@ -106,6 +122,30 @@ void xyz_rectangle(int x, int y, int width, int height) {
   rect.h = height;
 
   SDL_FillRect(surface, &rect, current_color);
+}
+
+void xyz_block_text(int x, int y, const char *text) {
+  SDL_Surface *rendered_text;
+  SDL_Rect dest;
+  SDL_Color color;
+  Uint8 r, g, b;
+
+  SDL_GetRGB(current_color, surface->format, &r, &g, &b);
+  color.r = r;
+  color.g = g;
+  color.b = b;
+
+  rendered_text = TTF_RenderText_Solid(sanskrit_font_20, text, color);
+  if(!rendered_text)
+    xyz_fatal_error("Couldn't render text: %s!", TTF_GetError());
+
+  dest.x = x;
+  dest.y = y;
+  dest.w = surface->w;
+  dest.h = surface->h;
+
+  SDL_BlitSurface(rendered_text, NULL, surface, &dest);
+  SDL_FreeSurface(rendered_text);
 }
 
 #if 0

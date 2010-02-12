@@ -13,9 +13,9 @@ typedef struct {
 } topping;
 
 static topping toppings[] = {
-  { "images/sausage_small_white.png", NULL, NULL, 0, SYMBOLS_TOP_HEIGHT },
-  { "images/pepper_small_white.png", NULL, NULL, 64, SYMBOLS_TOP_HEIGHT },
-  { "images/pineapple_small_white.png", NULL, NULL, 128, SYMBOLS_TOP_HEIGHT },
+  { "images/sausage_small_white.png", NULL, NULL, 50, 425 },
+  { "images/pepper_small_white.png", NULL, NULL, 130, 450 },
+  { "images/pineapple_small_white.png", NULL, NULL, 210, 425 },
   { NULL, NULL }
 };
 

@@ -31,6 +31,7 @@ void xyz_color(int r, int g, int b);
 void xyz_color_alpha(int r, int g, int b, int alpha);
 void xyz_rectangle(int x, int y, int width, int height);
 void xyz_fill();
+void xyz_block_text(int x, int y, const char *text);
 void xyz_done_drawing();
 
 xyz_image *xyz_load_image(const char *file);

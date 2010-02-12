@@ -13,8 +13,29 @@ void init(void) {
 }
 
 void draw(void) {
+  char mousebox[100];
+  int x, y;
+
   xyz_color(0, 0, 0);
-  xyz_rectangle(0, 0, TOTAL_HEIGHT, TOTAL_WIDTH);
+  xyz_fill();  /* TODO: Make this smaller later */
+
+  /* Draw board background */
+  /* Toolbox */
+  xyz_color(0, 0, 255);
+  xyz_rectangle(TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT,
+		TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
+		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
+  xyz_color(255, 0, 0);
+  xyz_rectangle(0, 0, TOTAL_WIDTH, TOOLBOX_TOP_HEIGHT);
+
+  /* Mouse Coords */
+  xyz_color(128, 128, 128);
+  xyz_rectangle(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, 100, 50);
+  xyz_color(0, 0, 255);
+  xyz_mouse_position(&x, &y);
+  snprintf(mousebox, 100, "%d, %d", x, y);
+  xyz_block_text(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, mousebox);
+
   draw_toppings();
   xyz_done_drawing();
 }
