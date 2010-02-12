@@ -70,6 +70,14 @@ void xyz_draw_sprite(xyz_sprite *sprite) {
   xyz_draw_image(sprite->image, sprite->x, sprite->y);
 }
 
+unsigned int xyz_sprite_get_x(xyz_sprite *sprite) {
+  return sprite->x;
+}
+
+unsigned int xyz_sprite_get_y(xyz_sprite *sprite) {
+  return sprite->y;
+}
+
 void xyz_sprite_set_x(xyz_sprite *sprite, unsigned int x) {
   sprite->x = x;
 }

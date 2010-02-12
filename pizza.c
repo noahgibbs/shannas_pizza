@@ -66,51 +66,11 @@ void keyhandler(const char *keyname, int down) {
     show_mousebox = !show_mousebox;
 }
 
-static xyz_sprite* selected_sprite = NULL;
-
-void mouse_button_down(int button, int x, int y) {
-  if(button == 1) {
-    selected_sprite = xyz_intersect_draggable_sprite(x, y);
-  }
-  /* button 3 is right button */
-}
-
-void mouse_button_up(int button, int x, int y) {
-  if(button == 1) {
-    selected_sprite = NULL;
-  }
-  /* button 3 is right button */
-}
-
-static int old_button1 = 0;
-
-void process_mouse(void) {
-  int x, y;
-  int button1;
-
-  xyz_mouse_position(&x, &y);
-  button1 = xyz_mouse_is_button_down(1);
-  if(button1 != old_button1) {
-    if(button1) {
-      mouse_button_down(1, x, y);
-    } else {
-      mouse_button_up(1, x, y);
-    }
-    old_button1 = button1;
-  }
-
-  if(selected_sprite) {
-    xyz_sprite_set_x(selected_sprite, x);
-    xyz_sprite_set_y(selected_sprite, y);
-  }
-}
-
 /**************** Main loop ****************/
 
 void main_loop(void) {
   while(1) {
     xyz_process_events();
-    process_mouse();
     draw();
     usleep(50);
   }

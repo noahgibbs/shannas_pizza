@@ -1,4 +1,5 @@
 #include "xyz.h"
+#include "xyz_sprite.h"
 #include "SDL.h"
 
 void xyz_mouse_position(int *x, int *y) {
@@ -19,6 +20,10 @@ void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down)) {
   xyz_key_handler = key_handler;
 }
 
+static xyz_sprite* selected_sprite = NULL;
+static int selected_x_offset;
+static int selected_y_offset;
+
 static void xyz_process_event(SDL_Event *eventp) {
   switch(eventp->type) {
   case SDL_KEYDOWN: {
@@ -37,8 +42,17 @@ static void xyz_process_event(SDL_Event *eventp) {
   }
   case SDL_MOUSEBUTTONDOWN: {
     int button = eventp->button.button;
+    int x = eventp->button.x;
+    int y = eventp->button.y;
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 1;
+    }
+    if(button == 1) {
+      selected_sprite = xyz_intersect_draggable_sprite(x, y);
+      if(selected_sprite) {
+	selected_x_offset = x - xyz_sprite_get_x(selected_sprite);
+	selected_y_offset = y - xyz_sprite_get_y(selected_sprite);
+      }
     }
     break;
   }
@@ -47,6 +61,7 @@ static void xyz_process_event(SDL_Event *eventp) {
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 0;
     }
+    if(button == 1) selected_sprite = NULL;
     break;
   }
   case SDL_QUIT:
@@ -57,6 +72,7 @@ static void xyz_process_event(SDL_Event *eventp) {
 
 void xyz_process_events(void) {
   SDL_Event event;
+  int x, y;
 
   int pending;
   do {
@@ -66,4 +82,10 @@ void xyz_process_events(void) {
       xyz_process_event(&event);
     }
   } while(pending);
+
+  xyz_mouse_position(&x, &y);
+  if(selected_sprite) {
+    xyz_sprite_set_x(selected_sprite, x - selected_x_offset);
+    xyz_sprite_set_y(selected_sprite, y - selected_y_offset);
+  }
 }

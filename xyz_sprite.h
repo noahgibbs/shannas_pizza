@@ -35,14 +35,19 @@ xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
 			   unsigned int width, unsigned int height,
 			   xyz_image *image);
 xyz_sprite* sprite_from_spec(sprite_spec *spec);
+
 void xyz_free_sprite(xyz_sprite *sprite);
 void xyz_draw_sprite(xyz_sprite *sprite);
+
 void xyz_sprite_set_x(xyz_sprite *sprite, unsigned int x);
 void xyz_sprite_set_y(xyz_sprite *sprite, unsigned int y);
 void xyz_sprite_set_width(xyz_sprite *sprite, unsigned int width);
 void xyz_sprite_set_height(xyz_sprite *sprite, unsigned int height);
 void xyz_sprite_set_image(xyz_sprite *sprite, xyz_image *image);
 void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable);
+unsigned int xyz_sprite_get_x(xyz_sprite *sprite);
+unsigned int xyz_sprite_get_y(xyz_sprite *sprite);
+
 int xyz_sprite_intersect_point(xyz_sprite *sprite, unsigned int x, unsigned int y);
 xyz_sprite *xyz_intersect_draggable_sprite(unsigned int x, unsigned int y);
 
