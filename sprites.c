@@ -53,5 +53,5 @@ void free_sprites(void) {
 }
 
 static void event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
-  printf("Sprite event handler, event %d\n", event->type);
+  /* printf("Sprite event handler, event %d\n", event->type); */
 }

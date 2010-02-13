@@ -7,10 +7,10 @@
 #define XYZ_SPRITE_BUTTONDOWN  1
 #define XYZ_SPRITE_BUTTONUP    2
 #define XYZ_SPRITE_MOVED       3
-#define XYZ_SPRITE_OUTOFBOUNDS 4
-#define XYZ_SPRITE_CLICKED     5
-#define XYZ_SPRITE_ENTER       6
-#define XYZ_SPRITE_EXIT        7
+#define XYZ_SPRITE_OUTOFBOUNDS 4  /* Use?  Not impl */
+#define XYZ_SPRITE_CLICKED     5  /* Not impl */
+#define XYZ_SPRITE_ENTER       6  /* Not impl */
+#define XYZ_SPRITE_EXIT        7  /* Not impl */
 #define XYZ_SPRITE_MAXEVENT    8
 
 typedef struct _xyz_sprite_t xyz_sprite;
