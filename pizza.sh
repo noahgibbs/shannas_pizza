@@ -1,5 +1,5 @@
 #!/bin/bash
-SOURCE_FILES="pizza.c toppings.c buttons.c"
+SOURCE_FILES="pizza.c sprites.c"
 XYZ_FILES="xyz.c xyz_sprite.c xyz_events.c"
 ALL_SOURCE="$SOURCE_FILES $XYZ_FILES"
 LIBS="-lSDL_image -lSDL_ttf"

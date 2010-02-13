@@ -15,14 +15,9 @@
 
 void keyhandler(const char *keyname, int down);
 
-/* From toppings.c */
-void draw_toppings(void);
-void load_toppings(void);
-void free_toppings(void);
-
-/* From buttons.c */
-void draw_buttons(void);
-void load_buttons(void);
-void free_buttons(void);
+/* From sprites.c */
+void draw_sprites(void);
+void load_sprites(void);
+void free_sprites(void);
 
 #endif /* __PIZZA_H__ */

@@ -12,8 +12,7 @@ void init(void) {
 
   xyz_set_key_handler(keyhandler);
 
-  load_toppings();
-  load_buttons();
+  load_sprites();
 }
 
 static int show_mousebox = 0;
@@ -46,14 +45,12 @@ void draw(void) {
     xyz_block_text(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, mousebox);
   }
 
-  draw_buttons();
-  draw_toppings();
+  draw_sprites();
   xyz_done_drawing();
 }
 
 void shutdown(void) {
-  free_buttons();
-  free_toppings();
+  free_sprites();
   xyz_end();
 }
 
