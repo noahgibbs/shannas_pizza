@@ -1,9 +1,11 @@
 #include "pizza.h"
 #include "xyz_sprite.h"
 
-static sprite_spec buttons[] = {
+static xyz_sprite_methods methods = { NULL };
+
+static xyz_sprite_spec buttons[] = {
   {"images/go_button.png", NULL, NULL,
-   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50, 0},
+   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50, 0, &methods},
   {NULL}
 };
 

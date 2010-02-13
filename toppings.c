@@ -3,10 +3,15 @@
 #include "xyz_sprite.h"
 #include "pizza.h"
 
-static sprite_spec toppings[] = {
-  { "images/sausage_small_white.png", NULL, NULL, 50, 425, 32, 32, 1 },
-  { "images/pepper_small_white.png", NULL, NULL, 130, 450, 32, 32, 1 },
-  { "images/pineapple_small_white.png", NULL, NULL, 210, 425, 32, 32, 1 },
+static xyz_sprite_methods methods = { NULL };
+
+static xyz_sprite_spec toppings[] = {
+  { "images/sausage_small_white.png", NULL, NULL, 50, 425, 32, 32, 1,
+    &methods },
+  { "images/pepper_small_white.png", NULL, NULL, 130, 450, 32, 32, 1,
+    &methods },
+  { "images/pineapple_small_white.png", NULL, NULL, 210, 425, 32, 32, 1,
+    &methods },
   { NULL }
 };
 

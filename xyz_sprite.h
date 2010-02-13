@@ -3,11 +3,15 @@
 #ifndef __XYZ_SPRITE_H__
 #define __XYZ_SPRITE_H__
 
+#define XYZ_SPRITE_NONE        0
 #define XYZ_SPRITE_BUTTONDOWN  1
 #define XYZ_SPRITE_BUTTONUP    2
 #define XYZ_SPRITE_MOVED       3
 #define XYZ_SPRITE_OUTOFBOUNDS 4
 #define XYZ_SPRITE_CLICKED     5
+#define XYZ_SPRITE_ENTER       6
+#define XYZ_SPRITE_EXIT        7
+#define XYZ_SPRITE_MAXEVENT    8
 
 typedef struct _sprite_event_t {
   int type;
@@ -21,6 +25,10 @@ typedef struct _sprite_event_t {
 typedef struct _xyz_sprite_t xyz_sprite;
 
 typedef struct {
+  int (*draw)(xyz_sprite *sprite);
+} xyz_sprite_methods;
+
+typedef struct {
   const char *filename;
   xyz_sprite *sprite;
   xyz_image *image;
@@ -29,12 +37,14 @@ typedef struct {
   int width;
   int height;
   int draggable;
-} sprite_spec;
+  xyz_sprite_methods *methods;
+  char events[XYZ_SPRITE_MAXEVENT];
+} xyz_sprite_spec;
 
 xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
 			   unsigned int width, unsigned int height,
 			   xyz_image *image);
-xyz_sprite* sprite_from_spec(sprite_spec *spec);
+xyz_sprite* sprite_from_spec(xyz_sprite_spec *spec);
 
 void xyz_free_sprite(xyz_sprite *sprite);
 void xyz_draw_sprite(xyz_sprite *sprite);
@@ -45,8 +55,14 @@ void xyz_sprite_set_width(xyz_sprite *sprite, unsigned int width);
 void xyz_sprite_set_height(xyz_sprite *sprite, unsigned int height);
 void xyz_sprite_set_image(xyz_sprite *sprite, xyz_image *image);
 void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable);
+void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods);
+
 unsigned int xyz_sprite_get_x(xyz_sprite *sprite);
 unsigned int xyz_sprite_get_y(xyz_sprite *sprite);
+unsigned int xyz_sprite_get_width(xyz_sprite *sprite);
+unsigned int xyz_sprite_get_height(xyz_sprite *sprite);
+xyz_image* xyz_sprite_get_image(xyz_sprite *sprite);
+int xyz_sprite_get_draggable(xyz_sprite *sprite);
 
 int xyz_sprite_intersect_point(xyz_sprite *sprite, unsigned int x, unsigned int y);
 xyz_sprite *xyz_intersect_draggable_sprite(unsigned int x, unsigned int y);

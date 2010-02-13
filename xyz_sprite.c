@@ -11,6 +11,9 @@ struct _xyz_sprite_t {
   xyz_image *image;
   int draggable;
   int own_image;
+
+  xyz_sprite_methods *methods;
+
   struct _xyz_sprite_t *next;
   struct _xyz_sprite_t *prev;
 };
@@ -38,7 +41,7 @@ xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
   return tmp;
 }
 
-xyz_sprite* sprite_from_spec(sprite_spec *spec) {
+xyz_sprite* sprite_from_spec(xyz_sprite_spec *spec) {
   xyz_image *image;
   xyz_sprite *sprite;
   image = xyz_load_image(spec->filename);
@@ -48,6 +51,7 @@ xyz_sprite* sprite_from_spec(sprite_spec *spec) {
   if(!sprite)
     xyz_fatal_error("Couldn't create sprite for image '%s'!", spec->filename);
   xyz_sprite_set_draggable(sprite, spec->draggable);
+  xyz_sprite_set_methods(sprite, spec->methods);
   sprite->own_image = 1;
 
   return sprite;
@@ -67,7 +71,11 @@ void xyz_free_sprite(xyz_sprite *sprite) {
 }
 
 void xyz_draw_sprite(xyz_sprite *sprite) {
-  xyz_draw_image(sprite->image, sprite->x, sprite->y);
+  if(sprite->methods && sprite->methods->draw) {
+    sprite->methods->draw(sprite);
+  } else {
+    xyz_draw_image(sprite->image, sprite->x, sprite->y);
+  }
 }
 
 unsigned int xyz_sprite_get_x(xyz_sprite *sprite) {
@@ -76,6 +84,26 @@ unsigned int xyz_sprite_get_x(xyz_sprite *sprite) {
 
 unsigned int xyz_sprite_get_y(xyz_sprite *sprite) {
   return sprite->y;
+}
+
+unsigned int xyz_sprite_get_width(xyz_sprite *sprite) {
+  return sprite->width;
+}
+
+unsigned int xyz_sprite_get_height(xyz_sprite *sprite) {
+  return sprite->height;
+}
+
+xyz_image* xyz_sprite_get_image(xyz_sprite *sprite) {
+  return sprite->image;
+}
+
+int xyz_sprite_get_draggable(xyz_sprite *sprite) {
+  return sprite->draggable;
+}
+
+void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
+  sprite->methods = methods;
 }
 
 void xyz_sprite_set_x(xyz_sprite *sprite, unsigned int x) {
