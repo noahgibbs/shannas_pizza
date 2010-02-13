@@ -116,6 +116,10 @@ int xyz_sprite_get_draggable(xyz_sprite *sprite) {
   return sprite->draggable;
 }
 
+int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event) {
+  return sprite->subscribed_events[event];
+}
+
 void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
   sprite->methods = methods;
 }
@@ -144,7 +148,17 @@ void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable) {
   sprite->draggable = draggable;
 }
 
+void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription) {
+  sprite->subscribed_events[event] = !!subscription;
+}
+
 /***************** Sprite Events ***************************/
+
+void xyz_sprite_handle_event(xyz_sprite* sprite, xyz_sprite_event* event) {
+  if(sprite->methods && sprite->methods->handle_event) {
+    sprite->methods->handle_event(sprite, event);
+  }
+}
 
 static xyz_sprite_event* sprite_event_head = NULL;
 static xyz_sprite_event* sprite_event_tail = NULL;
@@ -156,13 +170,15 @@ xyz_sprite_event *xyz_sprite_event_new(xyz_sprite *sprite) {
   event->sprite_x = sprite->x;
   event->sprite_y = sprite->y;
 
-  /* Insert into main list */
+  /* Insert into overall events list */
   event->next_event = sprite_event_head;
+  event->prev_event = NULL;
   sprite_event_head = event;
   if(!sprite_event_tail) sprite_event_tail = event;
 
   /* Insert into sprite list */
   event->next_sprite_event = sprite->events_head;
+  event->prev_sprite_event = NULL;
   sprite->events_head = event;
   if(!sprite->events_tail) sprite->events_tail = event;
 
@@ -170,7 +186,30 @@ xyz_sprite_event *xyz_sprite_event_new(xyz_sprite *sprite) {
 }
 
 void xyz_sprite_event_delete(xyz_sprite_event *event) {
-  
+  xyz_sprite *sprite = event->sprite;
+
+  /* Free from overall events list */
+  if(sprite_event_head == event) {
+    sprite_event_head = event->next_event;
+  }
+  if(sprite_event_tail == event) {
+    sprite_event_tail = event->prev_event;
+  }
+  if(event->prev_event) event->prev_event->next_event = event->next_event;
+  if(event->next_event) event->next_event->prev_event = event->prev_event;
+
+  /* Free from per-sprite events list */
+  if(sprite->events_head == event) {
+    sprite->events_head = sprite->events_head->next_sprite_event;
+  }
+  if(sprite->events_tail == event) {
+    sprite->events_tail = sprite->events_tail->prev_sprite_event;
+  }
+  if(event->prev_sprite_event)
+    event->prev_sprite_event->next_sprite_event = event->next_sprite_event;
+  if(event->next_sprite_event)
+    event->next_sprite_event->prev_sprite_event = event->prev_sprite_event;
+
   free(event);
 }
 
@@ -190,6 +229,21 @@ xyz_sprite *xyz_intersect_draggable_sprite(unsigned int x, unsigned y) {
     if(index->draggable) {
       if(xyz_sprite_intersect_point(index, x, y)) {
 	return index;
+      }
+    }
+    index = index->next;
+  }
+  return NULL;
+}
+
+xyz_sprite *xyz_intersect_event_sprite(unsigned int x, unsigned y,
+				       int event,
+				       void (*handler)(xyz_sprite *sprite)) {
+  xyz_sprite *index = sprite_head;
+  while(index) {
+    if(index->subscribed_events[event]) {
+      if(xyz_sprite_intersect_point(index, x, y)) {
+	handler(index);
       }
     }
     index = index->next;

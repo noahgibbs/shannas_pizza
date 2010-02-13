@@ -3,17 +3,21 @@
 #include "xyz_sprite.h"
 #include "pizza.h"
 
-static xyz_sprite_methods methods = { NULL };
+static void event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+
+static xyz_sprite_methods methods = { NULL, event_handler };
+
+#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1 }
 
 static xyz_sprite_spec pizzasprites[] = {
   { "images/sausage_small_white.png", NULL, NULL, 50, 425, 32, 32, 1,
-    &methods },
+    &methods, EVENTS },
   { "images/pepper_small_white.png", NULL, NULL, 130, 450, 32, 32, 1,
-    &methods },
+    &methods, EVENTS },
   { "images/pineapple_small_white.png", NULL, NULL, 210, 425, 32, 32, 1,
-    &methods },
+    &methods, EVENTS },
   {"images/go_button.png", NULL, NULL,
-   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50, 0, &methods},
+   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50, 0, &methods, EVENTS},
   { NULL }
 };
 
@@ -46,4 +50,8 @@ void free_sprites(void) {
     pizzasprites[idx].sprite = NULL;
     idx++;
   }
+}
+
+static void event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
+  printf("Sprite event handler, event %d\n", event->type);
 }
