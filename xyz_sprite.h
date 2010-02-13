@@ -30,7 +30,7 @@ typedef struct _xyz_sprite_event_t {
 } xyz_sprite_event;
 
 typedef struct {
-  int (*draw)(xyz_sprite *sprite);
+  void (*draw)(xyz_sprite *sprite);
   void (*handle_event)(xyz_sprite *sprite, xyz_sprite_event *event);
 } xyz_sprite_methods;
 
@@ -73,7 +73,9 @@ xyz_image* xyz_sprite_get_image(xyz_sprite *sprite);
 int xyz_sprite_get_draggable(xyz_sprite *sprite);
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event);
 
-int xyz_sprite_intersect_point(xyz_sprite *sprite, unsigned int x, unsigned int y);
+int xyz_sprite_intersect_point(xyz_sprite *sprite,
+			       unsigned int x, unsigned int y);
+int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2);
 
 xyz_sprite_event *xyz_sprite_event_new(xyz_sprite *sprite);
 void xyz_sprite_event_delete(xyz_sprite_event *event);

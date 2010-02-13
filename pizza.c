@@ -22,14 +22,7 @@ void draw(void) {
   int x, y;
 
   xyz_color(0, 0, 0);
-  xyz_fill();  /* TODO: Make this smaller later */
-
-  /* Draw board background */
-  /* Toolbox */
-  xyz_color(0, 0, 255);
-  xyz_rectangle(TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT,
-		TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
-		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
+  xyz_fill();
 
   /* Conveyor box */
   xyz_color(255, 0, 0);

@@ -51,9 +51,11 @@ xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
 xyz_sprite* sprite_from_spec(xyz_sprite_spec *spec) {
   xyz_image *image;
   xyz_sprite *sprite;
-  image = xyz_load_image(spec->filename);
-  if(!image)
-    xyz_fatal_error("Couldn't load image '%s'!", spec->filename);
+  if(spec->filename && spec->filename[0] != 0) {
+    image = xyz_load_image(spec->filename);
+    if(!image)
+      xyz_fatal_error("Couldn't load image '%s'!", spec->filename);
+  }
   sprite = xyz_new_sprite(spec->x, spec->y, spec->width, spec->height, image);
   if(!sprite)
     xyz_fatal_error("Couldn't create sprite for image '%s'!", spec->filename);
@@ -219,6 +221,23 @@ int xyz_sprite_intersect_point(xyz_sprite *sprite, unsigned int x, unsigned int 
   if(x < sprite->x || y < sprite->y) return 0;
   if(x > sprite->x + sprite->width || y > sprite->y + sprite->height)
     return 0;
+
+  return 1;
+}
+
+int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2) {
+  int s1x1, s1x2, s1y1, s1y2;
+  int s2x1, s2x2, s2y1, s2y2;
+
+  s1x1 = sprite1->x; s1y1 = sprite1->y;
+  s1x2 = s1x1 + sprite1->width; s1y2 = s1y1 + sprite1->height;
+  s2x1 = sprite2->x; s2y1 = sprite2->y;
+  s2x2 = s2x1 + sprite2->width; s2y2 = s2y1 + sprite2->height;
+
+  if(s2x1 < s1x2) return 0;
+  if(s1x2 < s2x1) return 0;
+  if(s2y1 < s1y2) return 0;
+  if(s1y2 < s2y1) return 0;
 
   return 1;
 }
