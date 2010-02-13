@@ -13,16 +13,21 @@
 #define XYZ_SPRITE_EXIT        7
 #define XYZ_SPRITE_MAXEVENT    8
 
-typedef struct _sprite_event_t {
+typedef struct _xyz_sprite_t xyz_sprite;
+
+typedef struct _xyz_sprite_event_t {
   int type;
   int mouse_x;
   int mouse_y;
   int button;
   int sprite_x;
   int sprite_y;
-} sprite_event;
-
-typedef struct _xyz_sprite_t xyz_sprite;
+  xyz_sprite *sprite;
+  struct _xyz_sprite_event_t *next_event;
+  struct _xyz_sprite_event_t *prev_event;
+  struct _xyz_sprite_event_t *next_sprite_event;
+  struct _xyz_sprite_event_t *prev_sprite_event;
+} xyz_sprite_event;
 
 typedef struct {
   int (*draw)(xyz_sprite *sprite);
@@ -47,6 +52,7 @@ xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
 xyz_sprite* sprite_from_spec(xyz_sprite_spec *spec);
 
 void xyz_free_sprite(xyz_sprite *sprite);
+void xyz_free_all_sprites(void);
 void xyz_draw_sprite(xyz_sprite *sprite);
 
 void xyz_sprite_set_x(xyz_sprite *sprite, unsigned int x);

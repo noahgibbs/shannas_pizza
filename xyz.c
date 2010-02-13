@@ -6,6 +6,7 @@
 #include "SDL_ttf.h"
 
 #include "xyz.h"
+#include "xyz_sprite.h"
 
 static TTF_Font *sanskrit_font_20 = NULL;
 
@@ -43,7 +44,8 @@ void xyz_end(void) {
   sanskrit_font_20 = NULL;
   TTF_Quit();
 
-  surface = NULL;  /* Freed automatically */
+  xyz_free_all_sprites();
+  surface = NULL;  /* Freed automatically on SDL_Quit() */
   SDL_Quit();
 }
 

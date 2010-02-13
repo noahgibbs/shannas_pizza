@@ -20,7 +20,7 @@ void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down)) {
   xyz_key_handler = key_handler;
 }
 
-static xyz_sprite* selected_sprite = NULL;
+static xyz_sprite* dragged_sprite = NULL;
 static int selected_x_offset;
 static int selected_y_offset;
 
@@ -48,10 +48,10 @@ static void xyz_process_event(SDL_Event *eventp) {
       mouse_button[button] = 1;
     }
     if(button == 1) {
-      selected_sprite = xyz_intersect_draggable_sprite(x, y);
-      if(selected_sprite) {
-	selected_x_offset = x - xyz_sprite_get_x(selected_sprite);
-	selected_y_offset = y - xyz_sprite_get_y(selected_sprite);
+      dragged_sprite = xyz_intersect_draggable_sprite(x, y);
+      if(dragged_sprite) {
+	selected_x_offset = x - xyz_sprite_get_x(dragged_sprite);
+	selected_y_offset = y - xyz_sprite_get_y(dragged_sprite);
       }
     }
     break;
@@ -61,7 +61,7 @@ static void xyz_process_event(SDL_Event *eventp) {
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 0;
     }
-    if(button == 1) selected_sprite = NULL;
+    if(button == 1) dragged_sprite = NULL;
     break;
   }
   case SDL_QUIT:
@@ -84,8 +84,8 @@ void xyz_process_events(void) {
   } while(pending);
 
   xyz_mouse_position(&x, &y);
-  if(selected_sprite) {
-    xyz_sprite_set_x(selected_sprite, x - selected_x_offset);
-    xyz_sprite_set_y(selected_sprite, y - selected_y_offset);
+  if(dragged_sprite) {
+    xyz_sprite_set_x(dragged_sprite, x - selected_x_offset);
+    xyz_sprite_set_y(dragged_sprite, y - selected_y_offset);
   }
 }
