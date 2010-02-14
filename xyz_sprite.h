@@ -50,7 +50,7 @@ typedef struct {
 xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
 			   unsigned int width, unsigned int height,
 			   xyz_image *image);
-xyz_sprite* sprite_from_spec(xyz_sprite_spec *spec);
+xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec);
 
 void xyz_free_sprite(xyz_sprite *sprite);
 void xyz_free_all_sprites(void);

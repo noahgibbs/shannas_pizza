@@ -13,6 +13,9 @@
 #define SYMBOLS_WIDTH  32
 #define SYMBOLS_HEIGHT 32
 
+#define GATE_WIDTH 32
+#define GATE_HEIGHT 64
+
 void keyhandler(const char *keyname, int down);
 
 /* From sprites.c */

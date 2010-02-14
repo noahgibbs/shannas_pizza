@@ -48,8 +48,8 @@ xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
   return tmp;
 }
 
-xyz_sprite* sprite_from_spec(xyz_sprite_spec *spec) {
-  xyz_image *image;
+xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec) {
+  xyz_image *image = NULL;
   xyz_sprite *sprite;
   if(spec->filename && spec->filename[0] != 0) {
     image = xyz_load_image(spec->filename);
