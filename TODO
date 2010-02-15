@@ -9,6 +9,8 @@ Make program full-screen, with coordinates recentered somehow
 
 ========= XYZ TODO:
 
+Fix problems with unsigned coords and going off left edge of screen
+
 Error handling APIs
 
 Autoupdater
