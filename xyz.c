@@ -85,12 +85,10 @@ void xyz_draw_image(xyz_image *image, int x, int y)
     dest.w = image->image->w;
     dest.h = image->image->h;
     SDL_BlitSurface(image->image, NULL, surface, &dest);
-
-    /* Update the changed portion of the screen */
-    SDL_UpdateRects(surface, 1, &dest);
 }
 
 void xyz_free_image(xyz_image *image) {
+  /* TODO: Maybe change to track screen parts? */
   SDL_FreeSurface(image->image);
   free(image);
 }
