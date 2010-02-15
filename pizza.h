@@ -16,6 +16,8 @@
 #define GATE_WIDTH 32
 #define GATE_HEIGHT 64
 
+#define MAX_NUM_GATES 100
+
 void keyhandler(const char *keyname, int down);
 
 /* From sprites.c */

@@ -234,10 +234,10 @@ int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2) {
   s2x1 = sprite2->x; s2y1 = sprite2->y;
   s2x2 = s2x1 + sprite2->width; s2y2 = s2y1 + sprite2->height;
 
-  if(s2x1 < s1x2) return 0;
-  if(s1x2 < s2x1) return 0;
-  if(s2y1 < s1y2) return 0;
-  if(s1y2 < s2y1) return 0;
+  if(s2x2 < s1x1) return 0;
+  if(s2x1 > s1x2) return 0;
+  if(s2y2 < s1y1) return 0;
+  if(s2y1 > s1y2) return 0;
 
   return 1;
 }

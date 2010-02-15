@@ -8,6 +8,7 @@ static void go_button_event_handler(xyz_sprite *sprite, xyz_sprite_event *event)
 static void toolbox_draw(xyz_sprite *sprite);
 static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_draw(xyz_sprite *sprite);
+static void draw_gates(void);
 static void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 
 static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
@@ -39,7 +40,8 @@ static xyz_sprite_spec gatesprites[] = {
     &gate_methods, EVENTS },
 };
 
-static xyz_image *base_gate_image;
+static xyz_image *base_gate_image = NULL;
+static xyz_sprite *toolbox_sprite = NULL;
 
 void load_sprites(void) {
   int idx = 0;
@@ -51,6 +53,11 @@ void load_sprites(void) {
     if(!pizzasprites[idx].sprite)
       xyz_fatal_error("Can't create sprite for '%s'!",
 		      pizzasprites[idx].filename);
+
+    if(pizzasprites[idx].methods == &toolbox_methods) {
+      toolbox_sprite = pizzasprites[idx].sprite;
+    }
+
     idx++;
   }
 }
@@ -63,7 +70,7 @@ void draw_sprites(void) {
     idx++;
   }
 
-  /* TODO: DRAW GATES! */
+  draw_gates();
 }
 
 void free_sprites(void) {
@@ -96,23 +103,82 @@ static void toolbox_draw(xyz_sprite *sprite) {
 		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
 }
 
+static int num_gates = 0;
+static xyz_sprite* gates[MAX_NUM_GATES];
+
+void draw_gates(void) {
+  int i = 0;
+
+  for(i = 0; i < num_gates; i++) {
+    xyz_draw_sprite(gates[i]);
+  }
+}
+
+static xyz_sprite* new_gate(unsigned int x, unsigned int y) {
+  int i;
+  xyz_sprite *gate = xyz_sprite_from_spec(&gatesprites[0]);
+  xyz_sprite_set_x(gate, x - GATE_WIDTH / 2);
+  xyz_sprite_set_y(gate, y - GATE_HEIGHT / 2);
+
+  gates[num_gates] = gate;
+  num_gates++;
+
+  printf("Creating sprite %p\n", gate);
+  printf("***Gate array:\n");
+  for(i = 0; i < num_gates; i++) {
+    printf("   %p\n", gates[i]);
+  }
+  printf("***End gate array\n");
+
+  return gate;
+}
+
+void delete_gate(xyz_sprite *sprite) {
+  int i = 0;
+
+  printf("Deleting sprite %p\n", sprite);
+
+  printf("***Gate array:\n");
+  for(i = 0; i < num_gates; i++) {
+    printf("   %p\n", gates[i]);
+  }
+  printf("***End gate array\n");
+
+  i = 0;
+  while(gates[i] != sprite && i < num_gates) i++;
+  if(i >= num_gates)
+    xyz_fatal_error("Deleting non-existent gate sprite %p!\n", sprite);
+
+  num_gates--;
+  while(i < num_gates) {
+    gates[i] = gates[i + 1];
+    i++;
+  }
+
+  printf("***Gate array:\n");
+  for(i = 0; i < num_gates; i++) {
+    printf("   %p\n", gates[i]);
+  }
+  printf("***End gate array\n");
+
+  xyz_free_sprite(sprite);
+}
+
 static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   switch(event->type) {
   case XYZ_SPRITE_BUTTONDOWN:
     if(event->button == 1) {
-      /* Create new gate object */
-      xyz_sprite *gate = xyz_sprite_from_spec(&gatesprites[0]);
-      xyz_sprite_set_x(gate, event->mouse_x);
-      xyz_sprite_set_y(gate, event->mouse_y);
-      printf("Created new gate sprite\n");
+      if(num_gates >= MAX_NUM_GATES) {
+	/* TODO: real response of some useful kind */
+      } else {
+	new_gate(event->mouse_x, event->mouse_y);
+      }
     }
     break;
   }
 }
 
-
 static void gate_draw(xyz_sprite *sprite) {
-  printf("Draw gate!\n");
   int x = xyz_sprite_get_x(sprite);
   int y = xyz_sprite_get_y(sprite);
   xyz_draw_image(base_gate_image, x, y);
@@ -122,10 +188,11 @@ static void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   /* Do we do anything special in this handler? */
   switch(event->type) {
   case XYZ_SPRITE_BUTTONDOWN:
-    printf("Clicked on gate!\n");
     break;
-  case XYZ_SPRITE_MOVED:
-    printf("Dragged gate!\n");
+  case XYZ_SPRITE_BUTTONUP:
+    if(xyz_sprite_overlap(sprite, toolbox_sprite)) {
+      delete_gate(sprite);
+    }
     break;
   }
 }

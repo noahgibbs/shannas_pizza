@@ -1,5 +1,10 @@
 Pizza TODO:
 
+When an invalid key or mouse button is hit, flash the screen or respond
+in some way.  Provide an option to turn this off, perhaps (or not).
+
 XYZ TODO:
 
 Error handling APIs
+
+Autoupdater
