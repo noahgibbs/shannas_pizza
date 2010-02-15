@@ -15,6 +15,7 @@ struct _xyz_sprite_t {
   unsigned char subscribed_events[XYZ_SPRITE_MAXEVENT];
 
   xyz_sprite_methods *methods;
+  void *user_info;
 
   struct _xyz_sprite_t *next;
   struct _xyz_sprite_t *prev;
@@ -63,6 +64,7 @@ xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec) {
   xyz_sprite_set_methods(sprite, spec->methods);
   memcpy(sprite->subscribed_events, spec->events, XYZ_SPRITE_MAXEVENT);
   sprite->own_image = 1;
+  sprite->user_info = spec->user_info;
 
   return sprite;
 }
@@ -89,8 +91,10 @@ void xyz_free_all_sprites(void) {
 void xyz_draw_sprite(xyz_sprite *sprite) {
   if(sprite->methods && sprite->methods->draw) {
     sprite->methods->draw(sprite);
-  } else {
+  } else if(sprite->image) {
     xyz_draw_image(sprite->image, sprite->x, sprite->y);
+  } else {
+    xyz_fatal_error("There's no way to draw sprite %p!\n", sprite);
   }
 }
 
@@ -120,6 +124,10 @@ int xyz_sprite_get_draggable(xyz_sprite *sprite) {
 
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event) {
   return sprite->subscribed_events[event];
+}
+
+void *xyz_sprite_get_user_info(xyz_sprite *sprite) {
+  return sprite->user_info;
 }
 
 void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
@@ -152,6 +160,10 @@ void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable) {
 
 void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription) {
   sprite->subscribed_events[event] = !!subscription;
+}
+
+void xyz_sprite_set_user_info(xyz_sprite *sprite, void *user_info) {
+  sprite->user_info = user_info;
 }
 
 /***************** Sprite Events ***************************/
