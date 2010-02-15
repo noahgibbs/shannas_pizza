@@ -3,8 +3,6 @@
 When an invalid key or mouse button is hit, flash the screen or respond
 in some way.  Provide an option to turn this off, perhaps (or not).
 
-Show pics of different gate types along toolbar
-
 Make program full-screen, with coordinates recentered somehow
 
 ========= XYZ TODO:
