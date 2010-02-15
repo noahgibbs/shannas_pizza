@@ -123,28 +123,12 @@ static xyz_sprite* new_gate(unsigned int x, unsigned int y) {
   gates[num_gates] = gate;
   num_gates++;
 
-  printf("Creating sprite %p\n", gate);
-  printf("***Gate array:\n");
-  for(i = 0; i < num_gates; i++) {
-    printf("   %p\n", gates[i]);
-  }
-  printf("***End gate array\n");
-
   return gate;
 }
 
 void delete_gate(xyz_sprite *sprite) {
   int i = 0;
 
-  printf("Deleting sprite %p\n", sprite);
-
-  printf("***Gate array:\n");
-  for(i = 0; i < num_gates; i++) {
-    printf("   %p\n", gates[i]);
-  }
-  printf("***End gate array\n");
-
-  i = 0;
   while(gates[i] != sprite && i < num_gates) i++;
   if(i >= num_gates)
     xyz_fatal_error("Deleting non-existent gate sprite %p!\n", sprite);
@@ -154,12 +138,6 @@ void delete_gate(xyz_sprite *sprite) {
     gates[i] = gates[i + 1];
     i++;
   }
-
-  printf("***Gate array:\n");
-  for(i = 0; i < num_gates; i++) {
-    printf("   %p\n", gates[i]);
-  }
-  printf("***End gate array\n");
 
   xyz_free_sprite(sprite);
 }
