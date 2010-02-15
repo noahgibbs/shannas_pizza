@@ -14,6 +14,7 @@ static void toolbox_draw(xyz_sprite *sprite);
 static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_draw(xyz_sprite *sprite);
 static void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+static void gate_target_draw(xyz_sprite *sprite);
 static void gate_target_event_handler(xyz_sprite *sprite,
 				      xyz_sprite_event *event);
 
@@ -22,7 +23,7 @@ static xyz_sprite_methods go_button_methods = { NULL, go_button_event_handler };
 static xyz_sprite_methods toolbox_methods = { toolbox_draw,
 					      toolbox_event_handler };
 static xyz_sprite_methods gate_methods = { gate_draw, gate_event_handler };
-static xyz_sprite_methods gate_target_methods = { NULL,
+static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 						  gate_target_event_handler };
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1 }
@@ -38,17 +39,13 @@ static xyz_sprite_spec pizzasprites[] = {
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
    TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT, 0,
    &toolbox_methods, EVENTS, NULL},
-  /*
   {"",
-   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
-   TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT, 0,
+   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, GATE_WIDTH, GATE_HEIGHT, 0,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_AND},
   {"",
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT + GATE_HEIGHT,
-   TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
-   TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT, 0,
+   GATE_WIDTH, GATE_HEIGHT, 0,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_OR},
-  */
   {"images/go_button.png",
    TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50, 0,
    &go_button_methods, EVENTS, NULL},
@@ -126,6 +123,7 @@ static xyz_sprite* new_gate(unsigned int x, unsigned int y, int type) {
 
   gates[num_gates] = gate;
   num_gates++;
+  printf("Created gate #%d\n", num_gates);
 
   return gate;
 }
@@ -175,7 +173,7 @@ static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
       if(num_gates >= MAX_NUM_GATES) {
 	/* TODO: real response of some useful kind */
       } else {
-	new_gate(event->mouse_x, event->mouse_y, GATE_TYPE_AND);
+	//new_gate(event->mouse_x, event->mouse_y, GATE_TYPE_AND);
       }
     }
     break;
@@ -196,10 +194,25 @@ static void gate_draw(xyz_sprite *sprite) {
 		  AND_CROSSBAR_WIDTH, AND_CROSSBAR_HEIGHT);
     break;
   case GATE_TYPE_OR:
+    xyz_color(128, 0, 180);
+    xyz_rectangle(x + OR_CROSSBAR_WIDTH_OFFSET, y + OR_CROSSBAR_OFF_HEIGHT,
+		  OR_CROSSBAR_WIDTH, OR_CROSSBAR_HEIGHT);
     break;
   default:
     xyz_fatal_error("Unknown gate type!");
   }
+}
+
+static void gate_target_draw(xyz_sprite *sprite) {
+  unsigned int x, y, width, height;
+
+  x = xyz_sprite_get_x(sprite);
+  y = xyz_sprite_get_y(sprite);
+  width = xyz_sprite_get_width(sprite);
+  height = xyz_sprite_get_height(sprite);
+  xyz_color(0, 30, 250);
+  xyz_rectangle(x, y, width, height);
+  gate_draw(sprite);
 }
 
 static void gate_target_event_handler(xyz_sprite *sprite,
@@ -210,7 +223,8 @@ static void gate_target_event_handler(xyz_sprite *sprite,
       if(num_gates >= MAX_NUM_GATES) {
 	/* TODO: real response of some useful kind */
       } else {
-	new_gate(event->mouse_x, event->mouse_y, GATE_TYPE_AND);
+	new_gate(event->mouse_x, event->mouse_y,
+		 (int)xyz_sprite_get_user_info(sprite));
       }
     }
     break;
