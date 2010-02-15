@@ -5,10 +5,10 @@
 /*********** xyz_sprite ****************/
 
 struct _xyz_sprite_t {
-  unsigned int x;
-  unsigned int y;
-  unsigned int width;
-  unsigned int height;
+  int x;
+  int y;
+  int width;
+  int height;
   xyz_image *image;
   int draggable;
   int own_image;
@@ -26,8 +26,7 @@ struct _xyz_sprite_t {
 
 static xyz_sprite *sprite_head = NULL;
 
-xyz_sprite *xyz_new_sprite(unsigned int x, unsigned int y,
-			   unsigned int width, unsigned int height,
+xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 			   xyz_image *image) {
   xyz_sprite *tmp = NULL;
 
@@ -98,19 +97,19 @@ void xyz_draw_sprite(xyz_sprite *sprite) {
   }
 }
 
-unsigned int xyz_sprite_get_x(xyz_sprite *sprite) {
+int xyz_sprite_get_x(xyz_sprite *sprite) {
   return sprite->x;
 }
 
-unsigned int xyz_sprite_get_y(xyz_sprite *sprite) {
+int xyz_sprite_get_y(xyz_sprite *sprite) {
   return sprite->y;
 }
 
-unsigned int xyz_sprite_get_width(xyz_sprite *sprite) {
+int xyz_sprite_get_width(xyz_sprite *sprite) {
   return sprite->width;
 }
 
-unsigned int xyz_sprite_get_height(xyz_sprite *sprite) {
+int xyz_sprite_get_height(xyz_sprite *sprite) {
   return sprite->height;
 }
 
@@ -134,19 +133,19 @@ void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
   sprite->methods = methods;
 }
 
-void xyz_sprite_set_x(xyz_sprite *sprite, unsigned int x) {
+void xyz_sprite_set_x(xyz_sprite *sprite, int x) {
   sprite->x = x;
 }
 
-void xyz_sprite_set_y(xyz_sprite *sprite, unsigned int y) {
+void xyz_sprite_set_y(xyz_sprite *sprite, int y) {
   sprite->y = y;
 }
 
-void xyz_sprite_set_width(xyz_sprite *sprite, unsigned int width) {
+void xyz_sprite_set_width(xyz_sprite *sprite, int width) {
   sprite->width = width;
 }
 
-void xyz_sprite_set_height(xyz_sprite *sprite, unsigned int height) {
+void xyz_sprite_set_height(xyz_sprite *sprite, int height) {
   sprite->height = height;
 }
 
@@ -229,7 +228,7 @@ void xyz_sprite_event_delete(xyz_sprite_event *event) {
 
 /***************** Sprite Intersection ********************/
 
-int xyz_sprite_intersect_point(xyz_sprite *sprite, unsigned int x, unsigned int y) {
+int xyz_sprite_intersect_point(xyz_sprite *sprite, int x, int y) {
   if(x < sprite->x || y < sprite->y) return 0;
   if(x > sprite->x + sprite->width || y > sprite->y + sprite->height)
     return 0;
@@ -254,7 +253,7 @@ int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2) {
   return 1;
 }
 
-xyz_sprite *xyz_intersect_draggable_sprite(unsigned int x, unsigned y) {
+xyz_sprite *xyz_intersect_draggable_sprite(int x, int y) {
   xyz_sprite *index = sprite_head;
   while(index) {
     if(index->draggable) {
@@ -267,8 +266,7 @@ xyz_sprite *xyz_intersect_draggable_sprite(unsigned int x, unsigned y) {
   return NULL;
 }
 
-xyz_sprite *xyz_intersect_event_sprite(unsigned int x, unsigned y,
-				       int event,
+xyz_sprite *xyz_intersect_event_sprite(int x, int y, int event,
 				       void (*handler)(xyz_sprite *sprite)) {
   xyz_sprite *index = sprite_head;
   while(index) {

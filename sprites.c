@@ -115,7 +115,7 @@ void draw_gates(void) {
   }
 }
 
-static xyz_sprite* new_gate(unsigned int x, unsigned int y, int type) {
+static xyz_sprite* new_gate(int x, int y, int type) {
   xyz_sprite *gate = xyz_sprite_from_spec(&gatesprites[0]);
   xyz_sprite_set_x(gate, x - GATE_WIDTH / 2);
   xyz_sprite_set_y(gate, y - GATE_HEIGHT / 2);
@@ -123,7 +123,6 @@ static xyz_sprite* new_gate(unsigned int x, unsigned int y, int type) {
 
   gates[num_gates] = gate;
   num_gates++;
-  printf("Created gate #%d\n", num_gates);
 
   return gate;
 }
@@ -204,7 +203,7 @@ static void gate_draw(xyz_sprite *sprite) {
 }
 
 static void gate_target_draw(xyz_sprite *sprite) {
-  unsigned int x, y, width, height;
+  int x, y, width, height;
 
   x = xyz_sprite_get_x(sprite);
   y = xyz_sprite_get_y(sprite);

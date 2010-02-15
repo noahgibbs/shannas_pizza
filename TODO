@@ -9,11 +9,13 @@ Make program full-screen, with coordinates recentered somehow
 
 ========= XYZ TODO:
 
-Fix problems with unsigned coords and going off left edge of screen
+Fix flickering
 
 Error handling APIs
 
 Autoupdater
   * Make sure only to update if no error
   * Save previous copy as backup?
-  * Send version # to web service and/or check known URL
+  * Send version # to web service and/or check known URL to find download
+  * Unpack before deleting files, and keep certain known filenames
+    (license files, maybe libraries, unchanged files?)
