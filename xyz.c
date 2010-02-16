@@ -40,6 +40,9 @@ void xyz_set_up_screen(int width, int height) {
 }
 
 void xyz_end(void) {
+  /* Free custom cursor, if any */
+  xyz_custom_cursor_from_file(NULL, 0, 0);
+
   TTF_CloseFont(sanskrit_font_20);
   sanskrit_font_20 = NULL;
   TTF_Quit();
@@ -47,6 +50,42 @@ void xyz_end(void) {
   xyz_free_all_sprites();
   surface = NULL;  /* Freed automatically on SDL_Quit() */
   SDL_Quit();
+}
+
+const char *xyz_last_error(void) {
+  return SDL_GetError();
+}
+
+static xyz_image *custom_cursor = NULL;
+static int cursor_x_offset = 0;
+static int cursor_y_offset = 0;
+
+void xyz_custom_cursor_from_file(const char *filename, int x_off, int y_off) {
+  if(filename && !filename[0]) filename = NULL;
+
+  if(!filename && !custom_cursor) return;
+
+  if(!filename) {
+    xyz_free_image(custom_cursor);
+    custom_cursor = NULL;
+    SDL_ShowCursor(1);
+    return;
+  }
+
+  custom_cursor = xyz_load_image(filename);
+  cursor_x_offset = x_off;
+  cursor_y_offset = y_off;
+  if(!custom_cursor) xyz_fatal_error("Couldn't load cursor '%s': %s",
+				     filename, SDL_GetError());
+  SDL_ShowCursor(0);
+}
+
+void xyz_draw_cursor() {
+  if(custom_cursor) {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    xyz_draw_image(custom_cursor, x - cursor_x_offset, y - cursor_y_offset);
+  }
 }
 
 /*********** xyz_image ****************/

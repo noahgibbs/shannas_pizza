@@ -6,6 +6,11 @@
 #include "xyz_sprite.h"
 #include "pizza.h"
 
+#define CURSOR_FILE            "images/cursor_small.png"
+#define CURSOR_X_OFFSET        6
+#define CURSOR_Y_OFFSET        4
+/* #define DRAGGING_CURSOR_FILE   "images/dragging_cursor.png" */
+
 void init(void) {
   xyz_start();
   xyz_set_up_screen(TOTAL_HEIGHT, TOTAL_WIDTH);
@@ -13,6 +18,8 @@ void init(void) {
   xyz_set_key_handler(keyhandler);
 
   load_sprites();
+
+  xyz_custom_cursor_from_file(CURSOR_FILE, CURSOR_X_OFFSET, CURSOR_Y_OFFSET);
 }
 
 static int show_mousebox = 0;
@@ -39,10 +46,12 @@ void draw(void) {
   }
 
   draw_sprites();
+  xyz_draw_cursor();
   xyz_done_drawing();
 }
 
 void shutdown(void) {
+  xyz_custom_cursor_from_file(NULL, 0, 0);
   free_sprites();
   xyz_end();
 }

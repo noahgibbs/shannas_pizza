@@ -22,6 +22,11 @@ void xyz_start(void);
 void xyz_set_up_screen(int width, int height);
 void xyz_end(void);
 
+void xyz_custom_cursor_from_file(const char *filename, int x_off, int y_off);
+void xyz_draw_cursor(void);
+
+const char *xyz_last_error(void);
+
 void xyz_mouse_position(int *x, int *y);
 int xyz_mouse_is_button_down(int button);
 void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down));
