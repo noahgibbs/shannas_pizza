@@ -209,7 +209,7 @@ static void gate_target_draw(xyz_sprite *sprite) {
   y = xyz_sprite_get_y(sprite);
   width = xyz_sprite_get_width(sprite);
   height = xyz_sprite_get_height(sprite);
-  xyz_color(0, 30, 250);
+  xyz_color(0, 80, 250);
   xyz_rectangle(x, y, width, height);
   gate_draw(sprite);
 }

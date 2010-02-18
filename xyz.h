@@ -19,7 +19,8 @@
 typedef struct _xyz_image_t xyz_image;
 
 void xyz_start(void);
-void xyz_set_up_screen(int width, int height);
+void xyz_set_up_screen_fullscreen();
+void xyz_set_up_screen_window(int width, int height);
 void xyz_end(void);
 
 void xyz_custom_cursor_from_file(const char *filename, int x_off, int y_off);

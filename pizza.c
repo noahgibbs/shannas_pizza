@@ -13,7 +13,7 @@
 
 void init(void) {
   xyz_start();
-  xyz_set_up_screen(TOTAL_HEIGHT, TOTAL_WIDTH);
+  xyz_set_up_screen_fullscreen(); /* (TOTAL_HEIGHT, TOTAL_WIDTH);*/
 
   xyz_set_key_handler(keyhandler);
 
