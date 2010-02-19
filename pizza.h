@@ -46,4 +46,7 @@ void draw_sprites(void);
 void load_sprites(void);
 void free_sprites(void);
 
+/* From toppings.c */
+void init_toppings(void);
+
 #endif /* __PIZZA_H__ */

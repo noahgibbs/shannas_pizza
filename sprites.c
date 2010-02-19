@@ -5,7 +5,6 @@
 
 /****** Sprite definitions ************/
 
-static void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void go_button_event_handler(xyz_sprite *sprite,
 				    xyz_sprite_event *event);
 static void toolbox_draw(xyz_sprite *sprite);
@@ -16,7 +15,6 @@ static void gate_target_draw(xyz_sprite *sprite);
 static void gate_target_event_handler(xyz_sprite *sprite,
 				      xyz_sprite_event *event);
 
-static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
 static xyz_sprite_methods go_button_methods = { NULL, go_button_event_handler };
 static xyz_sprite_methods toolbox_methods = { toolbox_draw,
 					      toolbox_event_handler };
@@ -29,12 +27,6 @@ static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 static int toolbox_sprite_user_info = 0;
 
 static xyz_sprite_spec pizzasprites[] = {
-  { "images/sausage_small_white.png", 50, 425, 32, 32, 1,
-    &topping_methods, EVENTS, NULL },
-  { "images/pepper_small_white.png", 130, 450, 32, 32, 1,
-    &topping_methods, EVENTS, NULL },
-  { "images/pineapple_small_white.png", 210, 425, 32, 32, 1,
-    &topping_methods, EVENTS, NULL },
   {"",
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
    TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT, 0,
@@ -68,6 +60,8 @@ void load_sprites(void) {
   xyz_sprites_from_specs(-1, pizzasprites);
 
   toolbox_sprite = xyz_get_sprite_by_user_info(&toolbox_sprite_user_info);
+
+  init_toppings();
 }
 
 void draw_sprites(void) {
@@ -118,10 +112,6 @@ void delete_gate(xyz_sprite *sprite) {
 }
 
 /*********** Sprite event handlers ******************/
-
-static void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
-  /* printf("Sprite event handler, event %d\n", event->type); */
-}
 
 static void go_button_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   switch(event->type) {
