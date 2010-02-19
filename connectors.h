@@ -25,9 +25,9 @@ typedef struct _connector_type_t {
 
 struct _connector_t {
   connector_type *type;
-  conn_input *inputs;
+  conn_input **inputs;
   int num_inputs;
-  conn_output *outputs;
+  conn_output **outputs;
   int num_outputs;
   void *user_info;
 };
@@ -37,5 +37,9 @@ void shutdown_connectors(void);
 
 void *get_signal_one(void);
 void *get_signal_zero(void);
+
+connector *new_connector(connector_type *type, void *user_info);
+void connect_input(connector *conn, conn_input *input);
+void connect_output(connector *conn, conn_output *output);
 
 #endif /* __CONNECTORS_H__ */

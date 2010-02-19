@@ -31,6 +31,9 @@ const char *xyz_last_error(void);
 void xyz_mouse_position(int *x, int *y);
 int xyz_mouse_is_button_down(int button);
 void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down));
+void xyz_set_mouse_handlers(int (*mouse_move_handler)(int x, int y),
+			    int (*mouse_button_handler)(int button,
+							int is_up));
 void xyz_process_events(void);
 
 void xyz_color(int r, int g, int b);

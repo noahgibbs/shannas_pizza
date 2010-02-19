@@ -40,6 +40,16 @@ void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down)) {
   xyz_key_handler = key_handler;
 }
 
+static int (*xyz_mouse_move_handler)(int x, int y);
+static int (*xyz_mouse_button_handler)(int button, int is_up);
+
+void xyz_set_mouse_handlers(int (*mouse_move_handler)(int x, int y),
+			    int (*mouse_button_handler)(int button,
+							int is_up)) {
+  xyz_mouse_move_handler = mouse_move_handler;
+  xyz_mouse_button_handler = mouse_button_handler;
+}
+
 static xyz_sprite* dragged_sprite = NULL;
 static int selected_x_offset;
 static int selected_y_offset;

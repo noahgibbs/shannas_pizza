@@ -5,7 +5,11 @@ in some way.  Provide an option to turn this off, perhaps (or not).
 
 Make program full-screen, with coordinates recentered somehow
 
+Handle draggable with higher-level xyz event code (done in app).
+
 ========= XYZ TODO:
+
+Sprite INIT callback
 
 Allow hidden sprites
 
@@ -13,7 +17,7 @@ Allow Z-reordering of sprites
 
 Return value from event handlers, for things like cancelling events?
 
-Figure out how to handle dragging either entirely in or out of xyz
+Remove dragging from xyz, and draggable flag from sprites
 
 Error handling APIs
 
