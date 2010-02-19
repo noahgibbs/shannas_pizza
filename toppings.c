@@ -1,5 +1,6 @@
 #include "connectors.h"
 #include "xyz_sprite.h"
+#include "pizza.h"
 
 static void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void topping_connector_process(connector *conn);
@@ -39,5 +40,21 @@ static void topping_connector_process(connector *conn) {
 }
 
 static void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
+  int x, y;
+
   /* printf("Sprite event handler, event %d\n", event->type); */
+  switch(event->type) {
+  case XYZ_SPRITE_BUTTONDOWN:
+    if(event->button == 1) {
+      /* Get in-sprite x and y offset */
+      x = event->mouse_x - xyz_sprite_get_x(sprite);
+      y = event->mouse_y - xyz_sprite_get_y(sprite);
+      printf("Clicked on topping item [%d, %d]!\n", x, y);
+
+      if(xyz_point_distance(SYMBOLS_WIDTH / 2, 0, x, y) < CONNECT_RADIUS) {
+	printf("Clicked and connected!\n");
+      }
+    }
+    break;
+  }
 }

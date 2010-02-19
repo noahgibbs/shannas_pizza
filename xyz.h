@@ -44,4 +44,8 @@ xyz_image *xyz_load_image(const char *file);
 void xyz_draw_image(xyz_image *image, int x, int y);
 void xyz_free_image(xyz_image *image);
 
+/* Utils */
+
+int xyz_point_distance(int x1, int y1, int x2, int y2);
+
 #endif /* __XYZ_H__ */

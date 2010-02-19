@@ -8,8 +8,6 @@
 #include "connectors.h"
 
 #define CURSOR_FILE            "images/cursor_small.png"
-#define CURSOR_X_OFFSET        6
-#define CURSOR_Y_OFFSET        4
 /* #define DRAGGING_CURSOR_FILE   "images/dragging_cursor.png" */
 
 void init(void) {

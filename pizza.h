@@ -1,6 +1,10 @@
 #ifndef __PIZZA_H__
 #define __PIZZA_H__
 
+/* Cursor "hot spot" */
+#define CURSOR_X_OFFSET        6
+#define CURSOR_Y_OFFSET        4
+
 /* Screen layout */
 #define TOTAL_HEIGHT           500
 #define TOTAL_WIDTH            500
@@ -28,6 +32,9 @@
 #define OR_CROSSBAR_ON_HEIGHT      16
 #define OR_CROSSBAR_HEIGHT         7
 #define OR_CROSSBAR_WIDTH_OFFSET   ((GATE_WIDTH - OR_CROSSBAR_WIDTH) / 2)
+
+/* Radius in pixels to click on an input or output */
+#define CONNECT_RADIUS 15
 
 /* Gate constants */
 #define MAX_NUM_GATES 100
