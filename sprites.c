@@ -82,6 +82,7 @@ void load_sprites(void) {
 }
 
 void draw_sprites(void) {
+#if 0
   int idx = 0;
 
   while(pizzasprites[idx].filename) {
@@ -90,6 +91,9 @@ void draw_sprites(void) {
   }
 
   draw_gates();
+#else
+  xyz_draw_sprites();
+#endif
 }
 
 void free_sprites(void) {

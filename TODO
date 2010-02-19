@@ -7,6 +7,14 @@ Make program full-screen, with coordinates recentered somehow
 
 ========= XYZ TODO:
 
+Allow hidden sprites
+
+Allow Z-reordering of sprites
+
+Return value from event handlers, for things like cancelling events?
+
+Figure out how to handle dragging either entirely in or out of xyz
+
 Error handling APIs
 
 Autoupdater

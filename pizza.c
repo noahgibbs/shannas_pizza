@@ -5,6 +5,7 @@
 #include "xyz.h"
 #include "xyz_sprite.h"
 #include "pizza.h"
+#include "connectors.h"
 
 #define CURSOR_FILE            "images/cursor_small.png"
 #define CURSOR_X_OFFSET        6
@@ -13,11 +14,13 @@
 
 void init(void) {
   xyz_start();
-  xyz_set_up_screen_fullscreen(); /* (TOTAL_HEIGHT, TOTAL_WIDTH);*/
+  /* xyz_set_up_screen_fullscreen(); */
+  xyz_set_up_screen_window(TOTAL_HEIGHT, TOTAL_WIDTH);
 
   xyz_set_key_handler(keyhandler);
 
   load_sprites();
+  init_connectors();
 
   xyz_custom_cursor_from_file(CURSOR_FILE, CURSOR_X_OFFSET, CURSOR_Y_OFFSET);
 }
@@ -52,6 +55,7 @@ void draw(void) {
 
 void shutdown(void) {
   xyz_custom_cursor_from_file(NULL, 0, 0);
+  shutdown_connectors();
   free_sprites();
   xyz_end();
 }

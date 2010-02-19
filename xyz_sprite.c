@@ -25,6 +25,7 @@ struct _xyz_sprite_t {
 };
 
 static xyz_sprite *sprite_head = NULL;
+static xyz_sprite *sprite_tail = NULL;
 
 xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 			   xyz_image *image) {
@@ -39,11 +40,12 @@ xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 
   memset(tmp->subscribed_events, 0, XYZ_SPRITE_MAXEVENT);
 
-  /* Put tmp at head of doubly-linked list */
-  tmp->next = sprite_head;
-  tmp->prev = NULL;
-  if(sprite_head) sprite_head->prev = tmp;
-  sprite_head = tmp;
+  /* Put tmp at tail of doubly-linked list */
+  tmp->prev = sprite_tail;
+  tmp->next = NULL;
+  if(sprite_tail) sprite_tail->next = tmp;
+  sprite_tail = tmp;
+  if(!sprite_head) sprite_head = tmp;
 
   return tmp;
 }
@@ -74,9 +76,10 @@ void xyz_free_sprite(xyz_sprite *sprite) {
   if(sprite->next)
     sprite->next->prev = sprite->prev;
 
-  if(sprite_head == sprite) {
+  if(sprite_head == sprite)
     sprite_head = sprite->next;
-  }
+  if(sprite_tail == sprite)
+    sprite_tail = sprite->prev;
 
   free(sprite);
 }
@@ -264,6 +267,15 @@ xyz_sprite *xyz_intersect_draggable_sprite(int x, int y) {
     index = index->next;
   }
   return NULL;
+}
+
+void xyz_draw_sprites(void) {
+  xyz_sprite *index = sprite_head;
+  while(index) {
+    xyz_draw_sprite(index);
+    index = index->next;
+  }
+  index = index->next;
 }
 
 xyz_sprite *xyz_intersect_event_sprite(int x, int y, int event,
