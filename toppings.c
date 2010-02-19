@@ -12,9 +12,12 @@ void init_toppings(void) {
   /* Initialize connectors */
 }
 
+static int hack = 0;
+
 void topping_connector_process(connector *conn) {
   if(conn->num_outputs < 1) return;
 
-  /* Turn output on */
-  conn->outputs[0].signal = get_signal_one();
+  /* Turn output on or off */
+  hack++;
+  conn->outputs[0].signal = hack ? get_signal_one() : get_signal_zero();
 }

@@ -53,6 +53,9 @@ xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 			   xyz_image *image);
 xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec);
 
+/* If num is -1, scan until hitting a NULL filename */
+void xyz_sprites_from_specs(int num, xyz_sprite_spec *specs);
+
 void xyz_free_sprite(xyz_sprite *sprite);
 void xyz_free_all_sprites(void);
 void xyz_draw_sprite(xyz_sprite *sprite);
@@ -76,6 +79,8 @@ xyz_image* xyz_sprite_get_image(xyz_sprite *sprite);
 int xyz_sprite_get_draggable(xyz_sprite *sprite);
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event);
 void *xyz_sprite_get_user_info(xyz_sprite *sprite);
+
+xyz_sprite* xyz_get_sprite_by_user_info(void *user_info);
 
 int xyz_sprite_intersect_point(xyz_sprite *sprite, int x, int y);
 int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2);

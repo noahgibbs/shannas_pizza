@@ -70,6 +70,28 @@ xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec) {
   return sprite;
 }
 
+/* If num is -1, scan until hitting a NULL filename */
+void xyz_sprites_from_specs(int num, xyz_sprite_spec *specs) {
+  if(num >= 0) {
+    int idx;
+
+    for(idx = 0; idx < num; idx++) {
+      if(!xyz_sprite_from_spec(specs + idx))
+	xyz_fatal_error("Can't create sprite for '%s'!",
+			(specs + idx)->filename);
+    }
+  } else {
+    xyz_sprite_spec *index = specs;
+
+    while(index->filename) {
+      if(!xyz_sprite_from_spec(index))
+	xyz_fatal_error("Can't create sprite for '%s'!", index->filename);
+
+      index++;
+    }
+  }
+}
+
 void xyz_free_sprite(xyz_sprite *sprite) {
   if(sprite->prev)
     sprite->prev->next = sprite->next;
@@ -167,6 +189,20 @@ void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription) {
 void xyz_sprite_set_user_info(xyz_sprite *sprite, void *user_info) {
   sprite->user_info = user_info;
 }
+
+/***************** Find Sprites &***************************/
+
+xyz_sprite* xyz_get_sprite_by_user_info(void *user_info) {
+  xyz_sprite* index = sprite_head;
+
+  while(index) {
+    if(index->user_info == user_info)
+      return index;
+    index = index->next;
+  }
+  return NULL;
+}
+
 
 /***************** Sprite Events ***************************/
 

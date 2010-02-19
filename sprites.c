@@ -3,8 +3,6 @@
 #include "xyz_sprite.h"
 #include "pizza.h"
 
-static void draw_gates(void);
-
 /****** Sprite definitions ************/
 
 static void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
@@ -28,6 +26,8 @@ static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1 }
 
+static int toolbox_sprite_user_info = 0;
+
 static xyz_sprite_spec pizzasprites[] = {
   { "images/sausage_small_white.png", 50, 425, 32, 32, 1,
     &topping_methods, EVENTS, NULL },
@@ -38,7 +38,7 @@ static xyz_sprite_spec pizzasprites[] = {
   {"",
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
    TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT, 0,
-   &toolbox_methods, EVENTS, NULL},
+   &toolbox_methods, EVENTS, &toolbox_sprite_user_info},
   {"",
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, GATE_WIDTH, GATE_HEIGHT, 0,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_AND},
@@ -63,37 +63,15 @@ static xyz_image *base_gate_image = NULL;
 /******* Sprite functions *************/
 
 void load_sprites(void) {
-  int idx = 0;
-
   base_gate_image = xyz_load_image("images/base_gate_small.png");
 
-  while(pizzasprites[idx].filename) {
-    pizzasprites[idx].sprite = xyz_sprite_from_spec(&pizzasprites[idx]);
-    if(!pizzasprites[idx].sprite)
-      xyz_fatal_error("Can't create sprite for '%s'!",
-		      pizzasprites[idx].filename);
+  xyz_sprites_from_specs(-1, pizzasprites);
 
-    if(pizzasprites[idx].methods == &toolbox_methods) {
-      toolbox_sprite = pizzasprites[idx].sprite;
-    }
-
-    idx++;
-  }
+  toolbox_sprite = xyz_get_sprite_by_user_info(&toolbox_sprite_user_info);
 }
 
 void draw_sprites(void) {
-#if 0
-  int idx = 0;
-
-  while(pizzasprites[idx].filename) {
-    xyz_draw_sprite(pizzasprites[idx].sprite);
-    idx++;
-  }
-
-  draw_gates();
-#else
   xyz_draw_sprites();
-#endif
 }
 
 void free_sprites(void) {
@@ -110,14 +88,6 @@ void free_sprites(void) {
 
 static int num_gates = 0;
 static xyz_sprite* gates[MAX_NUM_GATES];
-
-void draw_gates(void) {
-  int i = 0;
-
-  for(i = 0; i < num_gates; i++) {
-    xyz_draw_sprite(gates[i]);
-  }
-}
 
 static xyz_sprite* new_gate(int x, int y, int type) {
   xyz_sprite *gate = xyz_sprite_from_spec(&gatesprites[0]);
