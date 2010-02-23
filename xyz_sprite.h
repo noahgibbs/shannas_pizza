@@ -71,6 +71,7 @@ void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable);
 void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods);
 void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription);
 void xyz_sprite_set_user_info(xyz_sprite *sprite, void *user_info);
+void xyz_sprite_set_hidden(xyz_sprite *sprite, int hidden);
 
 int xyz_sprite_get_x(xyz_sprite *sprite);
 int xyz_sprite_get_y(xyz_sprite *sprite);
@@ -81,6 +82,7 @@ int xyz_sprite_get_draggable(xyz_sprite *sprite);
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event);
 void *xyz_sprite_get_user_info(xyz_sprite *sprite);
 void *xyz_sprite_get_private_data(xyz_sprite *sprite);
+int xyz_sprite_get_hidden(xyz_sprite *sprite);
 
 xyz_sprite* xyz_get_sprite_by_user_info(void *user_info);
 

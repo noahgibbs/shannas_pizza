@@ -18,6 +18,8 @@ struct _xyz_sprite_t {
   void *user_info;
   void *private_data;
 
+  int hidden;
+
   struct _xyz_sprite_t *next;
   struct _xyz_sprite_t *prev;
 
@@ -177,6 +179,10 @@ void *xyz_sprite_get_private_data(xyz_sprite *sprite) {
   return sprite->private_data;
 }
 
+int xyz_sprite_get_hidden(xyz_sprite *sprite) {
+  return sprite->hidden;
+}
+
 void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
   sprite->methods = methods;
 }
@@ -211,6 +217,10 @@ void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription) {
 
 void xyz_sprite_set_user_info(xyz_sprite *sprite, void *user_info) {
   sprite->user_info = user_info;
+}
+
+void xyz_sprite_set_hidden(xyz_sprite *sprite, int hidden) {
+  sprite->hidden = hidden;
 }
 
 /***************** Find Sprites &***************************/
@@ -291,6 +301,7 @@ void xyz_sprite_event_delete(xyz_sprite_event *event) {
 /***************** Sprite Intersection ********************/
 
 int xyz_sprite_intersect_point(xyz_sprite *sprite, int x, int y) {
+  if(sprite->hidden) return 0;
   if(x < sprite->x || y < sprite->y) return 0;
   if(x > sprite->x + sprite->width || y > sprite->y + sprite->height)
     return 0;
@@ -301,6 +312,8 @@ int xyz_sprite_intersect_point(xyz_sprite *sprite, int x, int y) {
 int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2) {
   int s1x1, s1x2, s1y1, s1y2;
   int s2x1, s2x2, s2y1, s2y2;
+
+  if(sprite1->hidden || sprite2->hidden) return 0;
 
   s1x1 = sprite1->x; s1y1 = sprite1->y;
   s1x2 = s1x1 + sprite1->width; s1y2 = s1y1 + sprite1->height;
@@ -319,7 +332,7 @@ xyz_sprite *xyz_intersect_draggable_sprite(int x, int y) {
   xyz_sprite *index = sprite_head;
   while(index) {
     if(index->draggable) {
-      if(xyz_sprite_intersect_point(index, x, y)) {
+      if(!index->hidden && xyz_sprite_intersect_point(index, x, y)) {
 	return index;
       }
     }
@@ -331,7 +344,7 @@ xyz_sprite *xyz_intersect_draggable_sprite(int x, int y) {
 void xyz_draw_sprites(void) {
   xyz_sprite *index = sprite_head;
   while(index) {
-    xyz_draw_sprite(index);
+    if(!index->hidden) xyz_draw_sprite(index);
     index = index->next;
   }
   index = index->next;
@@ -341,7 +354,7 @@ xyz_sprite *xyz_intersect_event_sprite(int x, int y, int event,
 				       void (*handler)(xyz_sprite *sprite)) {
   xyz_sprite *index = sprite_head;
   while(index) {
-    if(index->subscribed_events[event]) {
+    if(index->subscribed_events[event] && !index->hidden) {
       if(xyz_sprite_intersect_point(index, x, y)) {
 	handler(index);
       }

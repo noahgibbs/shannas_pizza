@@ -9,10 +9,6 @@ Handle draggable with higher-level xyz event code (done in app).
 
 ========= XYZ TODO:
 
-Sprite INIT callback
-
-Allow hidden sprites
-
 Allow Z-reordering of sprites
 
 Return value from event handlers, for things like cancelling events?
