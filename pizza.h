@@ -47,6 +47,8 @@
 
 /* From pizza.c */
 void keyhandler(const char *keyname, int down);
+int mouse_move_handler(int x, int y);
+int mouse_button_handler(int button, int is_down);
 
 /* From sprites.c */
 void draw_sprites(void);
@@ -55,5 +57,7 @@ void free_sprites(void);
 
 /* From toppings.c */
 void init_toppings(void);
+void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 
 #endif /* __PIZZA_H__ */

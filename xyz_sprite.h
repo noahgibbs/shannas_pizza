@@ -42,7 +42,6 @@ typedef struct {
   int y;
   int width;
   int height;
-  int draggable;
   xyz_sprite_methods *methods;
   unsigned char events[XYZ_SPRITE_MAXEVENT];
   void *user_info;
@@ -67,7 +66,6 @@ void xyz_sprite_set_y(xyz_sprite *sprite, int y);
 void xyz_sprite_set_width(xyz_sprite *sprite, int width);
 void xyz_sprite_set_height(xyz_sprite *sprite, int height);
 void xyz_sprite_set_image(xyz_sprite *sprite, xyz_image *image);
-void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable);
 void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods);
 void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription);
 void xyz_sprite_set_user_info(xyz_sprite *sprite, void *user_info);
@@ -78,10 +76,10 @@ int xyz_sprite_get_y(xyz_sprite *sprite);
 int xyz_sprite_get_width(xyz_sprite *sprite);
 int xyz_sprite_get_height(xyz_sprite *sprite);
 xyz_image* xyz_sprite_get_image(xyz_sprite *sprite);
-int xyz_sprite_get_draggable(xyz_sprite *sprite);
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event);
 void *xyz_sprite_get_user_info(xyz_sprite *sprite);
 void *xyz_sprite_get_private_data(xyz_sprite *sprite);
+xyz_sprite_methods *xyz_sprite_get_methods(xyz_sprite *sprite);
 int xyz_sprite_get_hidden(xyz_sprite *sprite);
 
 xyz_sprite* xyz_get_sprite_by_user_info(void *user_info);
@@ -94,8 +92,9 @@ void xyz_sprite_event_delete(xyz_sprite_event *event);
 
 /* Used internally by sprite library */
 void xyz_sprite_handle_event(xyz_sprite* sprite, xyz_sprite_event* event);
-xyz_sprite *xyz_intersect_draggable_sprite(int x, int y);
 xyz_sprite *xyz_intersect_event_sprite(int x, int y, int event,
 				       void (*handler)(xyz_sprite *sprite));
+xyz_sprite *xyz_intersect_filtered_sprite(int x, int y,
+					  int (*filter)(xyz_sprite *sprite));
 
 #endif /* __XYZ_SPRITE_H__ */

@@ -10,7 +10,6 @@ struct _xyz_sprite_t {
   int width;
   int height;
   xyz_image *image;
-  int draggable;
   int own_image;
   unsigned char subscribed_events[XYZ_SPRITE_MAXEVENT];
 
@@ -64,7 +63,6 @@ xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec) {
   sprite = xyz_new_sprite(spec->x, spec->y, spec->width, spec->height, image);
   if(!sprite)
     xyz_fatal_error("Couldn't create sprite for image '%s'!", spec->filename);
-  xyz_sprite_set_draggable(sprite, spec->draggable);
   xyz_sprite_set_methods(sprite, spec->methods);
   memcpy(sprite->subscribed_events, spec->events, XYZ_SPRITE_MAXEVENT);
   sprite->own_image = 1;
@@ -163,10 +161,6 @@ xyz_image* xyz_sprite_get_image(xyz_sprite *sprite) {
   return sprite->image;
 }
 
-int xyz_sprite_get_draggable(xyz_sprite *sprite) {
-  return sprite->draggable;
-}
-
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event) {
   return sprite->subscribed_events[event];
 }
@@ -179,12 +173,12 @@ void *xyz_sprite_get_private_data(xyz_sprite *sprite) {
   return sprite->private_data;
 }
 
-int xyz_sprite_get_hidden(xyz_sprite *sprite) {
-  return sprite->hidden;
+xyz_sprite_methods *xyz_sprite_get_methods(xyz_sprite *sprite) {
+  return sprite->methods;
 }
 
-void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
-  sprite->methods = methods;
+int xyz_sprite_get_hidden(xyz_sprite *sprite) {
+  return sprite->hidden;
 }
 
 void xyz_sprite_set_x(xyz_sprite *sprite, int x) {
@@ -207,12 +201,12 @@ void xyz_sprite_set_image(xyz_sprite *sprite, xyz_image *image) {
   sprite->image = image;
 }
 
-void xyz_sprite_set_draggable(xyz_sprite *sprite, int draggable) {
-  sprite->draggable = draggable;
-}
-
 void xyz_sprite_subscribe(xyz_sprite *sprite, int event, int subscription) {
   sprite->subscribed_events[event] = !!subscription;
+}
+
+void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {
+  sprite->methods = methods;
 }
 
 void xyz_sprite_set_user_info(xyz_sprite *sprite, void *user_info) {
@@ -328,11 +322,13 @@ int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2) {
   return 1;
 }
 
-xyz_sprite *xyz_intersect_draggable_sprite(int x, int y) {
+xyz_sprite *xyz_intersect_filtered_sprite(int x, int y,
+					  int (*filter)(xyz_sprite *sprite))
+{
   xyz_sprite *index = sprite_head;
   while(index) {
-    if(index->draggable) {
-      if(!index->hidden && xyz_sprite_intersect_point(index, x, y)) {
+    if(filter(index)) {
+      if(xyz_sprite_intersect_point(index, x, y)) {
 	return index;
       }
     }

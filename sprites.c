@@ -10,7 +10,7 @@ static void go_button_event_handler(xyz_sprite *sprite,
 static void toolbox_draw(xyz_sprite *sprite);
 static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_draw(xyz_sprite *sprite);
-static void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_target_draw(xyz_sprite *sprite);
 static void gate_target_event_handler(xyz_sprite *sprite,
 				      xyz_sprite_event *event);
@@ -29,23 +29,23 @@ static int toolbox_sprite_user_info = 0;
 static xyz_sprite_spec pizzasprites[] = {
   {"",
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
-   TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT, 0,
+   TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT,
    &toolbox_methods, EVENTS, &toolbox_sprite_user_info},
   {"",
-   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, GATE_WIDTH, GATE_HEIGHT, 0,
+   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, GATE_WIDTH, GATE_HEIGHT,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_AND},
   {"",
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT + GATE_HEIGHT,
-   GATE_WIDTH, GATE_HEIGHT, 0,
+   GATE_WIDTH, GATE_HEIGHT,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_OR},
   {"images/go_button.png",
-   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50, 0,
+   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50,
    &go_button_methods, EVENTS, NULL},
   { NULL }
 };
 
 static xyz_sprite_spec gatesprites[] = {
-  { "", 0, 0, GATE_WIDTH, GATE_HEIGHT, 1,
+  { "", 0, 0, GATE_WIDTH, GATE_HEIGHT,
     &gate_methods, EVENTS, NULL },
 };
 
@@ -194,7 +194,7 @@ static void gate_target_event_handler(xyz_sprite *sprite,
   }
 }
 
-static void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
+void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   /* Do we do anything special in this handler? */
   switch(event->type) {
   case XYZ_SPRITE_BUTTONDOWN:

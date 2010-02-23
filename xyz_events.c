@@ -41,18 +41,14 @@ void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down)) {
 }
 
 static int (*xyz_mouse_move_handler)(int x, int y);
-static int (*xyz_mouse_button_handler)(int button, int is_up);
+static int (*xyz_mouse_button_handler)(int button, int is_down);
 
 void xyz_set_mouse_handlers(int (*mouse_move_handler)(int x, int y),
 			    int (*mouse_button_handler)(int button,
-							int is_up)) {
+							int is_down)) {
   xyz_mouse_move_handler = mouse_move_handler;
   xyz_mouse_button_handler = mouse_button_handler;
 }
-
-static xyz_sprite* dragged_sprite = NULL;
-static int selected_x_offset;
-static int selected_y_offset;
 
 static void xyz_process_event(SDL_Event *eventp) {
   switch(eventp->type) {
@@ -74,32 +70,36 @@ static void xyz_process_event(SDL_Event *eventp) {
     int button = eventp->button.button;
     int x = eventp->button.x;
     int y = eventp->button.y;
+
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 1;
       handler_event = eventp;
       xyz_intersect_event_sprite(x, y, XYZ_SPRITE_BUTTONDOWN,
 				 &buttondown_handler);
     }
-    if(button == 1) {
-      dragged_sprite = xyz_intersect_draggable_sprite(x, y);
-      if(dragged_sprite) {
-	selected_x_offset = x - xyz_sprite_get_x(dragged_sprite);
-	selected_y_offset = y - xyz_sprite_get_y(dragged_sprite);
-      }
+
+    if(xyz_mouse_button_handler) {
+      xyz_mouse_button_handler(eventp->button.button, 1);
     }
+
     break;
   }
   case SDL_MOUSEBUTTONUP: {
     int button = eventp->button.button;
     int x = eventp->button.x;
     int y = eventp->button.y;
+
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 0;
       handler_event = eventp;
       xyz_intersect_event_sprite(x, y, XYZ_SPRITE_BUTTONUP,
 				 &buttonup_handler);
     }
-    if(button == 1) dragged_sprite = NULL;
+
+    if(xyz_mouse_button_handler) {
+      xyz_mouse_button_handler(eventp->button.button, 0);
+    }
+
     break;
   }
   case SDL_QUIT:
@@ -110,7 +110,6 @@ static void xyz_process_event(SDL_Event *eventp) {
 
 void xyz_process_events(void) {
   SDL_Event event;
-  int x, y;
 
   int pending;
   do {
@@ -120,26 +119,4 @@ void xyz_process_events(void) {
       xyz_process_event(&event);
     }
   } while(pending);
-
-  xyz_mouse_position(&x, &y);
-  if(dragged_sprite) {
-    int old_x, old_y, new_x, new_y;
-    old_x = xyz_sprite_get_x(dragged_sprite);
-    old_y = xyz_sprite_get_y(dragged_sprite);
-    new_x = x - selected_x_offset;
-    new_y = y - selected_y_offset;
-
-    if(old_x == new_x && old_y == new_y) return;
-
-    xyz_sprite_set_x(dragged_sprite, new_x);
-    xyz_sprite_set_y(dragged_sprite, new_y);
-    if(xyz_sprite_subscribes_to(dragged_sprite, XYZ_SPRITE_MOVED)) {
-      xyz_sprite_event *event = xyz_sprite_event_new(dragged_sprite);
-      event->type = XYZ_SPRITE_MOVED;
-      event->button = 1;
-      event->mouse_x = x;
-      event->mouse_y = y;
-      xyz_sprite_handle_event(dragged_sprite, event);
-    }
-  }
 }

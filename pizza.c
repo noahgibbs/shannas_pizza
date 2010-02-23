@@ -16,6 +16,7 @@ void init(void) {
   xyz_set_up_screen_window(TOTAL_HEIGHT, TOTAL_WIDTH);
 
   xyz_set_key_handler(keyhandler);
+  xyz_set_mouse_handlers(mouse_move_handler, mouse_button_handler);
 
   load_sprites();
   init_connectors();
@@ -67,11 +68,74 @@ void keyhandler(const char *keyname, int down) {
     show_mousebox = !show_mousebox;
 }
 
+static xyz_sprite* dragged_sprite = NULL;
+static int selected_x_offset;
+static int selected_y_offset;
+
+int mouse_move_handler(int x, int y) {
+  return 0;
+}
+
+static int is_draggable(xyz_sprite *sprite) {
+  xyz_sprite_methods *methods = xyz_sprite_get_methods(sprite);
+
+  if(methods->handle_event == topping_event_handler)
+    return 1;
+  if(methods->handle_event == gate_event_handler)
+    return 1;
+
+  return 0;
+}
+
+int mouse_button_handler(int button, int is_down) {
+  if(button == 1) {
+    int x, y;
+
+    if(!is_down) { dragged_sprite = NULL; return 0; }
+
+    xyz_mouse_position(&x, &y);
+    dragged_sprite = xyz_intersect_filtered_sprite(x, y, &is_draggable);
+    if(dragged_sprite) {
+      selected_x_offset = x - xyz_sprite_get_x(dragged_sprite);
+      selected_y_offset = y - xyz_sprite_get_y(dragged_sprite);
+    }
+  }
+  return 0;
+}
+
+void process_events(void) {
+  int x, y;
+
+  xyz_mouse_position(&x, &y);
+  if(dragged_sprite) {
+    int old_x, old_y, new_x, new_y;
+
+    old_x = xyz_sprite_get_x(dragged_sprite);
+    old_y = xyz_sprite_get_y(dragged_sprite);
+    new_x = x - selected_x_offset;
+    new_y = y - selected_y_offset;
+
+    if(old_x == new_x && old_y == new_y) return;
+
+    xyz_sprite_set_x(dragged_sprite, new_x);
+    xyz_sprite_set_y(dragged_sprite, new_y);
+    if(xyz_sprite_subscribes_to(dragged_sprite, XYZ_SPRITE_MOVED)) {
+      xyz_sprite_event *event = xyz_sprite_event_new(dragged_sprite);
+      event->type = XYZ_SPRITE_MOVED;
+      event->button = 1;
+      event->mouse_x = x;
+      event->mouse_y = y;
+      xyz_sprite_handle_event(dragged_sprite, event);
+    }
+  }
+}
+
 /**************** Main loop ****************/
 
 void main_loop(void) {
   while(1) {
     xyz_process_events();
+    process_events();
     draw();
     usleep(50);
   }
