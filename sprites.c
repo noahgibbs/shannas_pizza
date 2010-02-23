@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "xyz.h"
 #include "xyz_sprite.h"
+#include "connectors.h"
 #include "pizza.h"
 
 /****** Sprite definitions ************/
@@ -21,6 +22,10 @@ static xyz_sprite_methods toolbox_methods = { toolbox_draw,
 static xyz_sprite_methods gate_methods = { gate_draw, gate_event_handler };
 static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 						  gate_target_event_handler };
+
+typedef struct {
+  connector *conn;
+} GatePrivate;
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 
@@ -46,7 +51,7 @@ static xyz_sprite_spec pizzasprites[] = {
 
 static xyz_sprite_spec gatesprites[] = {
   { "", 0, 0, GATE_WIDTH, GATE_HEIGHT,
-    &gate_methods, EVENTS, NULL },
+    &gate_methods, EVENTS, NULL, sizeof(GatePrivate) },
 };
 
 static xyz_sprite *toolbox_sprite = NULL;

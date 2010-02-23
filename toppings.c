@@ -6,15 +6,19 @@ static void topping_connector_process(connector *conn);
 
 static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
 
+typedef struct {
+  connector *conn;
+} ToppingPrivate;
+
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 
 static xyz_sprite_spec toppingsprites[] = {
   { "images/sausage_small_white.png", 50, 425, 32, 32,
-    &topping_methods, EVENTS, NULL },
+    &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
   { "images/pepper_small_white.png", 130, 450, 32, 32,
-    &topping_methods, EVENTS, NULL },
+    &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
   { "images/pineapple_small_white.png", 210, 425, 32, 32,
-    &topping_methods, EVENTS, NULL },
+    &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
   { NULL }
 };
 
@@ -40,9 +44,15 @@ static void topping_connector_process(connector *conn) {
 
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   int x, y;
+  ToppingPrivate *tp = (ToppingPrivate*)xyz_sprite_get_private_data(sprite);
 
-  /* printf("Sprite event handler, event %d\n", event->type); */
   switch(event->type) {
+  case XYZ_SPRITE_CREATED:
+    tp->conn = new_connector(&topping_type, (void*)sprite);
+    break;
+  case XYZ_SPRITE_DESTROYED:
+    destroy_connector(tp->conn);
+    break;
   case XYZ_SPRITE_BUTTONDOWN:
     if(event->button == 1) {
       /* Get in-sprite x and y offset */
