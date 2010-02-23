@@ -39,6 +39,7 @@ void *get_signal_one(void);
 void *get_signal_zero(void);
 
 connector *new_connector(connector_type *type, void *user_info);
+void destroy_connector(connector *conn);
 void connect_input(connector *conn, conn_input *input);
 void connect_output(connector *conn, conn_output *output);
 

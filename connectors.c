@@ -32,6 +32,10 @@ connector *new_connector(connector_type *type, void *user_info) {
   return tmp;
 }
 
+void destroy_connector(connector *conn) {
+  free(conn);
+}
+
 void connect_input(connector *conn, conn_input *input) {
   if(conn->num_inputs >= conn->type->max_inputs)
     xyz_fatal_error("Trying to connect too many inputs!");
