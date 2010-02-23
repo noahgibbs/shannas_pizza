@@ -7,7 +7,7 @@ static void topping_connector_process(connector *conn);
 
 static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
 
-#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1 }
+#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 
 static xyz_sprite_spec toppingsprites[] = {
   { "images/sausage_small_white.png", 50, 425, 32, 32, 1,

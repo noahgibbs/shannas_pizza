@@ -3,15 +3,17 @@
 #ifndef __XYZ_SPRITE_H__
 #define __XYZ_SPRITE_H__
 
-#define XYZ_SPRITE_NONE        0
-#define XYZ_SPRITE_BUTTONDOWN  1
-#define XYZ_SPRITE_BUTTONUP    2
-#define XYZ_SPRITE_MOVED       3
-#define XYZ_SPRITE_OUTOFBOUNDS 4  /* Use?  Not impl */
-#define XYZ_SPRITE_CLICKED     5  /* Not impl */
-#define XYZ_SPRITE_ENTER       6  /* Not impl */
-#define XYZ_SPRITE_EXIT        7  /* Not impl */
-#define XYZ_SPRITE_MAXEVENT    8
+#define XYZ_SPRITE_NONE         0
+#define XYZ_SPRITE_CREATED      1
+#define XYZ_SPRITE_DESTROYED    2
+#define XYZ_SPRITE_BUTTONDOWN   3
+#define XYZ_SPRITE_BUTTONUP     4
+#define XYZ_SPRITE_MOVED        5
+#define XYZ_SPRITE_OUTOFBOUNDS  6  /* Use?  Not impl */
+#define XYZ_SPRITE_CLICKED      7  /* Not impl */
+#define XYZ_SPRITE_ENTER        8  /* Not impl */
+#define XYZ_SPRITE_EXIT         9  /* Not impl */
+#define XYZ_SPRITE_MAXEVENT    10
 
 typedef struct _xyz_sprite_t xyz_sprite;
 
@@ -45,12 +47,11 @@ typedef struct {
   unsigned char events[XYZ_SPRITE_MAXEVENT];
   void *user_info;
 
+  int private_data_size;  /* Size of private data struct */
   xyz_sprite *sprite;
   xyz_image *image;
 } xyz_sprite_spec;
 
-xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
-			   xyz_image *image);
 xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec);
 
 /* If num is -1, scan until hitting a NULL filename */
@@ -79,6 +80,7 @@ xyz_image* xyz_sprite_get_image(xyz_sprite *sprite);
 int xyz_sprite_get_draggable(xyz_sprite *sprite);
 int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event);
 void *xyz_sprite_get_user_info(xyz_sprite *sprite);
+void *xyz_sprite_get_private_data(xyz_sprite *sprite);
 
 xyz_sprite* xyz_get_sprite_by_user_info(void *user_info);
 

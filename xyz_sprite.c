@@ -16,6 +16,7 @@ struct _xyz_sprite_t {
 
   xyz_sprite_methods *methods;
   void *user_info;
+  void *private_data;
 
   struct _xyz_sprite_t *next;
   struct _xyz_sprite_t *prev;
@@ -27,7 +28,7 @@ struct _xyz_sprite_t {
 static xyz_sprite *sprite_head = NULL;
 static xyz_sprite *sprite_tail = NULL;
 
-xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
+static xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 			   xyz_image *image) {
   xyz_sprite *tmp = NULL;
 
@@ -66,6 +67,15 @@ xyz_sprite* xyz_sprite_from_spec(xyz_sprite_spec *spec) {
   memcpy(sprite->subscribed_events, spec->events, XYZ_SPRITE_MAXEVENT);
   sprite->own_image = 1;
   sprite->user_info = spec->user_info;
+  if(spec->private_data_size > 0) {
+    sprite->private_data = calloc(spec->private_data_size, 1);
+  }
+
+  if(sprite->subscribed_events[XYZ_SPRITE_CREATED]) {
+    xyz_sprite_event *event = xyz_sprite_event_new(sprite);
+    event->type = XYZ_SPRITE_CREATED;
+    xyz_sprite_handle_event(sprite, event);
+  }
 
   return sprite;
 }
@@ -93,6 +103,15 @@ void xyz_sprites_from_specs(int num, xyz_sprite_spec *specs) {
 }
 
 void xyz_free_sprite(xyz_sprite *sprite) {
+  if(sprite->subscribed_events[XYZ_SPRITE_DESTROYED]) {
+    xyz_sprite_event *event = xyz_sprite_event_new(sprite);
+    event->type = XYZ_SPRITE_DESTROYED;
+    xyz_sprite_handle_event(sprite, event);
+  }
+
+  if(sprite->private_data)
+    free(sprite->private_data);
+
   if(sprite->prev)
     sprite->prev->next = sprite->next;
   if(sprite->next)
@@ -152,6 +171,10 @@ int xyz_sprite_subscribes_to(xyz_sprite *sprite, int event) {
 
 void *xyz_sprite_get_user_info(xyz_sprite *sprite) {
   return sprite->user_info;
+}
+
+void *xyz_sprite_get_private_data(xyz_sprite *sprite) {
+  return sprite->private_data;
 }
 
 void xyz_sprite_set_methods(xyz_sprite *sprite, xyz_sprite_methods *methods) {

@@ -22,7 +22,7 @@ static xyz_sprite_methods gate_methods = { gate_draw, gate_event_handler };
 static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 						  gate_target_event_handler };
 
-#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1 }
+#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 
 static int toolbox_sprite_user_info = 0;
 
