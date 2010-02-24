@@ -8,12 +8,18 @@
 #define XYZ_SPRITE_DESTROYED    2
 #define XYZ_SPRITE_BUTTONDOWN   3
 #define XYZ_SPRITE_BUTTONUP     4
-#define XYZ_SPRITE_MOVED        5
-#define XYZ_SPRITE_OUTOFBOUNDS  6  /* Use?  Not impl */
-#define XYZ_SPRITE_CLICKED      7  /* Not impl */
-#define XYZ_SPRITE_ENTER        8  /* Not impl */
-#define XYZ_SPRITE_EXIT         9  /* Not impl */
-#define XYZ_SPRITE_MAXEVENT    10
+#define XYZ_SPRITE_CLICKED      5  /* Not impl */
+#define XYZ_SPRITE_ENTER        6  /* Not impl */
+#define XYZ_SPRITE_EXIT         7  /* Not impl */
+#define XYZ_SPRITE_RESERVED1    8
+#define XYZ_SPRITE_RESERVED2    9
+#define XYZ_SPRITE_RESERVED3   10
+#define XYZ_SPRITE_RESERVED4   11
+#define XYZ_SPRITE_RESERVED5   12
+#define XYZ_SPRITE_RESERVED6   13
+#define XYZ_SPRITE_RESERVED7   14
+#define XYZ_SPRITE_RESERVED8   15
+#define XYZ_SPRITE_MAXEVENT    16
 
 typedef struct _xyz_sprite_t xyz_sprite;
 

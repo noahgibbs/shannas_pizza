@@ -49,6 +49,8 @@
 void keyhandler(const char *keyname, int down);
 int mouse_move_handler(int x, int y);
 int mouse_button_handler(int button, int is_down);
+void drag_sprite(xyz_sprite *sprite);
+void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off);
 
 /* From sprites.c */
 void draw_sprites(void);

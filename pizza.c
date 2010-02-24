@@ -68,6 +68,7 @@ void keyhandler(const char *keyname, int down) {
     show_mousebox = !show_mousebox;
 }
 
+static int no_drag = 0;
 static xyz_sprite* dragged_sprite = NULL;
 static int selected_x_offset;
 static int selected_y_offset;
@@ -85,6 +86,22 @@ static int is_draggable(xyz_sprite *sprite) {
     return 1;
 
   return 0;
+}
+
+void drag_sprite(xyz_sprite *sprite) {
+  drag_sprite_with_offset(sprite, 0, 0);
+}
+
+void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off) {
+  if(sprite == NULL) {
+    no_drag = 1;
+    dragged_sprite = NULL;
+    return;
+  }
+
+  dragged_sprite = sprite;
+  selected_x_offset = x_off;
+  selected_y_offset = y_off;
 }
 
 int mouse_button_handler(int button, int is_down) {
@@ -106,6 +123,11 @@ int mouse_button_handler(int button, int is_down) {
 void process_events(void) {
   int x, y;
 
+  if(no_drag) {
+    no_drag = 0;
+    dragged_sprite = NULL;
+  }
+
   xyz_mouse_position(&x, &y);
   if(dragged_sprite) {
     int old_x, old_y, new_x, new_y;
@@ -119,14 +141,6 @@ void process_events(void) {
 
     xyz_sprite_set_x(dragged_sprite, new_x);
     xyz_sprite_set_y(dragged_sprite, new_y);
-    if(xyz_sprite_subscribes_to(dragged_sprite, XYZ_SPRITE_MOVED)) {
-      xyz_sprite_event *event = xyz_sprite_event_new(dragged_sprite);
-      event->type = XYZ_SPRITE_MOVED;
-      event->button = 1;
-      event->mouse_x = x;
-      event->mouse_y = y;
-      xyz_sprite_handle_event(dragged_sprite, event);
-    }
   }
 }
 
@@ -134,6 +148,7 @@ void process_events(void) {
 
 void main_loop(void) {
   while(1) {
+    no_drag = 0;
     xyz_process_events();
     process_events();
     draw();

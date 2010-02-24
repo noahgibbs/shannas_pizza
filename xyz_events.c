@@ -71,15 +71,16 @@ static void xyz_process_event(SDL_Event *eventp) {
     int x = eventp->button.x;
     int y = eventp->button.y;
 
+    if(xyz_mouse_button_handler) {
+      if(xyz_mouse_button_handler(eventp->button.button, 1))
+	break;
+    }
+
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 1;
       handler_event = eventp;
       xyz_intersect_event_sprite(x, y, XYZ_SPRITE_BUTTONDOWN,
 				 &buttondown_handler);
-    }
-
-    if(xyz_mouse_button_handler) {
-      xyz_mouse_button_handler(eventp->button.button, 1);
     }
 
     break;
@@ -89,15 +90,16 @@ static void xyz_process_event(SDL_Event *eventp) {
     int x = eventp->button.x;
     int y = eventp->button.y;
 
+    if(xyz_mouse_button_handler) {
+      if(xyz_mouse_button_handler(eventp->button.button, 0))
+	break;
+    }
+
     if(button >= 1 && button <= 3) {
       mouse_button[button] = 0;
       handler_event = eventp;
       xyz_intersect_event_sprite(x, y, XYZ_SPRITE_BUTTONUP,
 				 &buttonup_handler);
-    }
-
-    if(xyz_mouse_button_handler) {
-      xyz_mouse_button_handler(eventp->button.button, 0);
     }
 
     break;

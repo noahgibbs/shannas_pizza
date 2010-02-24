@@ -10,7 +10,8 @@ typedef struct {
   connector *conn;
 } ToppingPrivate;
 
-#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
+                 1, 1, 1, 1, 1, 1, 1, 1 }
 
 static xyz_sprite_spec toppingsprites[] = {
   { "images/sausage_small_white.png", 50, 425, 32, 32,

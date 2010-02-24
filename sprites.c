@@ -9,7 +9,6 @@
 static void go_button_event_handler(xyz_sprite *sprite,
 				    xyz_sprite_event *event);
 static void toolbox_draw(xyz_sprite *sprite);
-static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_draw(xyz_sprite *sprite);
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_target_draw(xyz_sprite *sprite);
@@ -18,7 +17,7 @@ static void gate_target_event_handler(xyz_sprite *sprite,
 
 static xyz_sprite_methods go_button_methods = { NULL, go_button_event_handler };
 static xyz_sprite_methods toolbox_methods = { toolbox_draw,
-					      toolbox_event_handler };
+					      NULL };
 static xyz_sprite_methods gate_methods = { gate_draw, gate_event_handler };
 static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 						  gate_target_event_handler };
@@ -27,7 +26,8 @@ typedef struct {
   connector *conn;
 } GatePrivate;
 
-#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+#define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
+                 1, 1, 1, 1, 1, 1, 1, 1 }
 
 static int toolbox_sprite_user_info = 0;
 
@@ -134,20 +134,6 @@ static void toolbox_draw(xyz_sprite *sprite) {
 		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
 }
 
-static void toolbox_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
-  switch(event->type) {
-  case XYZ_SPRITE_BUTTONDOWN:
-    if(event->button == 1) {
-      if(num_gates >= MAX_NUM_GATES) {
-	/* TODO: real response of some useful kind */
-      } else {
-	//new_gate(event->mouse_x, event->mouse_y, GATE_TYPE_AND);
-      }
-    }
-    break;
-  }
-}
-
 static void gate_draw(xyz_sprite *sprite) {
   int x = xyz_sprite_get_x(sprite);
   int y = xyz_sprite_get_y(sprite);
@@ -190,9 +176,11 @@ static void gate_target_event_handler(xyz_sprite *sprite,
     if(event->button == 1) {
       if(num_gates >= MAX_NUM_GATES) {
 	/* TODO: real response of some useful kind */
+	xyz_fatal_error("ERROR!  NOT ENOUGH GATES!");
       } else {
-	new_gate(event->mouse_x, event->mouse_y,
-		 (int)xyz_sprite_get_user_info(sprite));
+	xyz_sprite *gate = new_gate(event->mouse_x, event->mouse_y,
+				    (int)xyz_sprite_get_user_info(sprite));
+	drag_sprite_with_offset(gate, GATE_WIDTH / 2, GATE_HEIGHT / 2);
       }
     }
     break;
