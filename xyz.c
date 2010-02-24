@@ -248,6 +248,24 @@ void xyz_rectangle(int x, int y, int width, int height) {
   SDL_FillRect(surface, &rect, current_color);
 }
 
+void xyz_rectangle_coords(int x1, int y1, int x2, int y2) {
+  int tmp;
+
+  if(x2 < x1) {
+    tmp = x1;
+    x1 = x2;
+    x2 = tmp;
+  }
+
+  if(y2 < y1) {
+    tmp = y1;
+    y1 = y2;
+    y2 = tmp;
+  }
+
+  xyz_rectangle(x1, y1, x2 - x1, y2 - y1);
+}
+
 void xyz_block_text(int x, int y, const char *text) {
   SDL_Surface *rendered_text;
   SDL_Rect dest;

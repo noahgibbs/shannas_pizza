@@ -39,6 +39,7 @@ void xyz_process_events(void);
 void xyz_color(int r, int g, int b);
 void xyz_color_alpha(int r, int g, int b, int alpha);
 void xyz_rectangle(int x, int y, int width, int height);
+void xyz_rectangle_coords(int x1, int y1, int x2, int y2);
 void xyz_fill();
 void xyz_block_text(int x, int y, const char *text);
 void xyz_done_drawing();
