@@ -45,6 +45,27 @@
 #define GATE_TYPE_OR     1
 #define GATE_TYPE_MAX    1 /* Duplicate */
 
+
+/* Structures */
+
+typedef struct {
+  /* Offset within sprite */
+  int x;
+  int y;
+
+  /* Connection color */
+  int r;
+  int g;
+  int b;
+} conn_input_private;
+
+typedef struct {
+  /* Offset within sprite */
+  int x;
+  int y;
+} conn_output_private;
+
+
 /* Prototypes */
 
 /* From pizza.c */
@@ -56,14 +77,21 @@ void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off);
 void drag_to_connect(xyz_sprite *from_sprite,
 		     connector *from_connector,
 		     int from_x, int from_y);
+void wire_from_to(int from_x, int from_y, int to_x, int to_y);
 
 /* From sprites.c */
 void draw_sprites(void);
 void load_sprites(void);
 void free_sprites(void);
+void draw_connector(connector *conn);
+
+/* From gates.c */
+void init_gate_sprites(void);
+void delete_gate_sprites(void);
 
 /* From toppings.c */
 void init_toppings(void);
+void delete_toppings(void);
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 

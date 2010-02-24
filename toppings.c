@@ -33,6 +33,10 @@ void init_toppings(void) {
   xyz_sprites_from_specs(-1, toppingsprites);
 }
 
+void delete_toppings(void) {
+
+}
+
 static int hack = 0;
 
 static void topping_connector_process(connector *conn) {
@@ -57,12 +61,13 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   case XYZ_SPRITE_BUTTONDOWN:
     if(event->button == 1) {
       /* Get in-sprite x and y offset */
-      x = event->mouse_x - xyz_sprite_get_x(sprite);
-      y = event->mouse_y - xyz_sprite_get_y(sprite);
-      printf("Clicked on topping item [%d, %d]!\n", x, y);
+      int sx = xyz_sprite_get_x(sprite);
+      int sy = xyz_sprite_get_y(sprite);
+      x = event->mouse_x - sx;
+      y = event->mouse_y - sy;
 
       if(xyz_point_distance(SYMBOLS_WIDTH / 2, 0, x, y) < CONNECT_RADIUS) {
-	printf("Clicked and connected!\n");
+	drag_to_connect(sprite, tp->conn, SYMBOLS_WIDTH / 2 + sx, sy);
       }
     }
     break;

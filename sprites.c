@@ -4,68 +4,70 @@
 #include "connectors.h"
 #include "pizza.h"
 
+void draw_connector(connector *conn);
+
 /****** Sprite definitions ************/
 
 static void go_button_event_handler(xyz_sprite *sprite,
 				    xyz_sprite_event *event);
-static void toolbox_draw(xyz_sprite *sprite);
-static void gate_draw(xyz_sprite *sprite);
-void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
-static void gate_target_draw(xyz_sprite *sprite);
-static void gate_target_event_handler(xyz_sprite *sprite,
-				      xyz_sprite_event *event);
 
 static xyz_sprite_methods go_button_methods = { NULL, go_button_event_handler };
-static xyz_sprite_methods toolbox_methods = { toolbox_draw,
-					      NULL };
-static xyz_sprite_methods gate_methods = { gate_draw, gate_event_handler };
-static xyz_sprite_methods gate_target_methods = { gate_target_draw,
-						  gate_target_event_handler };
-
-typedef struct {
-  connector *conn;
-} GatePrivate;
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
                  1, 1, 1, 1, 1, 1, 1, 1 }
 
-static int toolbox_sprite_user_info = 0;
-
 static xyz_sprite_spec pizzasprites[] = {
-  {"",
-   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
-   TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT,
-   &toolbox_methods, EVENTS, &toolbox_sprite_user_info},
-  {"",
-   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT, GATE_WIDTH, GATE_HEIGHT,
-   &gate_target_methods, EVENTS, (void*)GATE_TYPE_AND},
-  {"",
-   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT + GATE_HEIGHT,
-   GATE_WIDTH, GATE_HEIGHT,
-   &gate_target_methods, EVENTS, (void*)GATE_TYPE_OR},
   {"images/go_button.png",
    TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50,
    &go_button_methods, EVENTS, NULL},
   { NULL }
 };
 
-static xyz_sprite_spec gatesprites[] = {
-  { "", 0, 0, GATE_WIDTH, GATE_HEIGHT,
-    &gate_methods, EVENTS, NULL, sizeof(GatePrivate) },
-};
+/******* Connector functions **********/
 
-static xyz_sprite *toolbox_sprite = NULL;
-static xyz_image *base_gate_image = NULL;
+void draw_connector(connector *conn) {
+  int i;
+  xyz_sprite *sprite1, *sprite2;
+  connector *output_conn;
+  conn_input *input;
+  conn_output *output;
+  conn_input_private *input_private;
+  conn_output_private *output_private;
+
+  for(i = 0; i < conn->num_inputs; i++) {
+    input = conn->inputs[i];
+
+    if(input) {
+      output = input->attached;
+      sprite1 = (xyz_sprite*)conn->user_info;
+
+      if(output) {
+	int ix, iy;
+	int ox, oy;
+
+	input_private = (conn_input_private*)input->user_info;
+	output_private = (conn_output_private*)output->user_info;
+	output_conn = output->host;
+	sprite2 = (xyz_sprite*)output_conn->user_info;
+
+	ix = xyz_sprite_get_x(sprite1) + input_private->x;
+	iy = xyz_sprite_get_y(sprite1) + input_private->y;
+	ox = xyz_sprite_get_x(sprite2) + output_private->x;
+	oy = xyz_sprite_get_y(sprite2) + output_private->y;
+
+	xyz_color(input_private->r, input_private->g, input_private->b);
+	wire_from_to(ix, iy, ox, oy);
+      }
+    }
+  }
+}
 
 /******* Sprite functions *************/
 
 void load_sprites(void) {
-  base_gate_image = xyz_load_image("images/base_gate_small.png");
-
   xyz_sprites_from_specs(-1, pizzasprites);
 
-  toolbox_sprite = xyz_get_sprite_by_user_info(&toolbox_sprite_user_info);
-
+  init_gate_sprites();
   init_toppings();
 }
 
@@ -74,46 +76,10 @@ void draw_sprites(void) {
 }
 
 void free_sprites(void) {
-  int idx = 0;
+  delete_gate_sprites();
+  delete_toppings();
 
-  while(pizzasprites[idx].filename) {
-    xyz_free_sprite(pizzasprites[idx].sprite);
-    pizzasprites[idx].sprite = NULL;
-    idx++;
-  }
-}
-
-/************** Gate functions ********************/
-
-static int num_gates = 0;
-static xyz_sprite* gates[MAX_NUM_GATES];
-
-static xyz_sprite* new_gate(int x, int y, int type) {
-  xyz_sprite *gate = xyz_sprite_from_spec(&gatesprites[0]);
-  xyz_sprite_set_x(gate, x - GATE_WIDTH / 2);
-  xyz_sprite_set_y(gate, y - GATE_HEIGHT / 2);
-  xyz_sprite_set_user_info(gate, (void*)type);
-
-  gates[num_gates] = gate;
-  num_gates++;
-
-  return gate;
-}
-
-void delete_gate(xyz_sprite *sprite) {
-  int i = 0;
-
-  while(gates[i] != sprite && i < num_gates) i++;
-  if(i >= num_gates)
-    xyz_fatal_error("Deleting non-existent gate sprite %p!\n", sprite);
-
-  num_gates--;
-  while(i < num_gates) {
-    gates[i] = gates[i + 1];
-    i++;
-  }
-
-  xyz_free_sprite(sprite);
+  /* XYZ will free sprites on exit */
 }
 
 /*********** Sprite event handlers ******************/
@@ -123,79 +89,6 @@ static void go_button_event_handler(xyz_sprite *sprite, xyz_sprite_event *event)
   case XYZ_SPRITE_BUTTONDOWN:
     printf("Clicked on 'GO' button, mouse button %d!\n",
 	   event->button);
-    break;
-  }
-}
-
-static void toolbox_draw(xyz_sprite *sprite) {
-  xyz_color(0, 0, 255);
-  xyz_rectangle(TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT,
-		TOTAL_WIDTH - TOOLBOX_LEFT_WIDTH,
-		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
-}
-
-static void gate_draw(xyz_sprite *sprite) {
-  int x = xyz_sprite_get_x(sprite);
-  int y = xyz_sprite_get_y(sprite);
-  int type = (int)xyz_sprite_get_user_info(sprite);
-
-  xyz_draw_image(base_gate_image, x, y);
-
-  switch(type) {
-  case GATE_TYPE_AND:
-    xyz_color(128, 128, 128);
-    xyz_rectangle(x + AND_CROSSBAR_WIDTH_OFFSET, y + AND_CROSSBAR_OFF_HEIGHT,
-		  AND_CROSSBAR_WIDTH, AND_CROSSBAR_HEIGHT);
-    break;
-  case GATE_TYPE_OR:
-    xyz_color(128, 0, 180);
-    xyz_rectangle(x + OR_CROSSBAR_WIDTH_OFFSET, y + OR_CROSSBAR_OFF_HEIGHT,
-		  OR_CROSSBAR_WIDTH, OR_CROSSBAR_HEIGHT);
-    break;
-  default:
-    xyz_fatal_error("Unknown gate type!");
-  }
-}
-
-static void gate_target_draw(xyz_sprite *sprite) {
-  int x, y, width, height;
-
-  x = xyz_sprite_get_x(sprite);
-  y = xyz_sprite_get_y(sprite);
-  width = xyz_sprite_get_width(sprite);
-  height = xyz_sprite_get_height(sprite);
-  xyz_color(0, 80, 250);
-  xyz_rectangle(x, y, width, height);
-  gate_draw(sprite);
-}
-
-static void gate_target_event_handler(xyz_sprite *sprite,
-				      xyz_sprite_event *event) {
-  switch(event->type) {
-  case XYZ_SPRITE_BUTTONDOWN:
-    if(event->button == 1) {
-      if(num_gates >= MAX_NUM_GATES) {
-	/* TODO: real response of some useful kind */
-	xyz_fatal_error("ERROR!  NOT ENOUGH GATES!");
-      } else {
-	xyz_sprite *gate = new_gate(event->mouse_x, event->mouse_y,
-				    (int)xyz_sprite_get_user_info(sprite));
-	drag_sprite_with_offset(gate, GATE_WIDTH / 2, GATE_HEIGHT / 2);
-      }
-    }
-    break;
-  }
-}
-
-void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
-  /* Do we do anything special in this handler? */
-  switch(event->type) {
-  case XYZ_SPRITE_BUTTONDOWN:
-    break;
-  case XYZ_SPRITE_BUTTONUP:
-    if(xyz_sprite_overlap(sprite, toolbox_sprite)) {
-      delete_gate(sprite);
-    }
     break;
   }
 }
