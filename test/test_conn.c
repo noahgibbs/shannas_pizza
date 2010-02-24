@@ -28,6 +28,12 @@ void connection1_test(void) {
   assert(!!connector_new_input(conn), "Couldn't allocate input!");
   assert(!!connector_new_output(conn), "Couldn't allocate output!");
 
+  connector_connect(conn->inputs[0], conn->outputs[0]);
+  assert(conn->inputs[0]->attached == conn->outputs[0],
+	 "Couldn't connect input to output!");
+  assert(conn->outputs[0]->attached == conn->inputs[0],
+	 "Couldn't connect input to output!");
+
   destroy_connector(conn);
 }
 
