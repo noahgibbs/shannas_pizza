@@ -55,11 +55,83 @@ void draw_connector(connector *conn) {
 	ox = xyz_sprite_get_x(sprite2) + output_private->x;
 	oy = xyz_sprite_get_y(sprite2) + output_private->y;
 
-	xyz_color(input_private->r, input_private->g, input_private->b);
+	xyz_color(255, 0, 0);
 	wire_from_to(ix, iy, ox, oy);
       }
     }
   }
+}
+
+static int filt_x, filt_y;
+static conn_input *filt_input = NULL;
+static conn_output *filt_output = NULL;
+
+int conn_sprite_filter(xyz_sprite *sprite) {
+  connector *conn;
+  int i, sx, sy;
+  xyz_sprite_methods *methods;
+
+  /* Check sprite info to make sure it's a connectable type */
+  methods = xyz_sprite_get_methods(sprite);
+  if(methods->handle_event == topping_event_handler) {
+    ToppingPrivate *tp = (ToppingPrivate*)xyz_sprite_get_private_data(sprite);
+    conn = tp->conn;
+  } else if (methods->handle_event == gate_event_handler) {
+    return 0;  /* For now */
+  } else {
+    return 0;
+  }
+
+  filt_input = NULL;
+  filt_output = NULL;
+
+  sx = xyz_sprite_get_x(sprite);
+  sy = xyz_sprite_get_y(sprite);
+
+  for(i = 0; i < conn->num_inputs; i++) {
+    conn_input *input = conn->inputs[i];
+    conn_input_private *priv = (conn_input_private*)input->user_info;
+
+    if(xyz_point_distance(sx + priv->x, sy + priv->y, filt_x, filt_y) <
+       CONNECT_RADIUS) {
+      //drag_to_connect(sprite, conn, sx + priv->x, sy + priv->y);
+      filt_input = input;
+      return 1;
+    }
+  }
+  for(i = 0; i < conn->num_outputs; i++) {
+    conn_output *output = conn->outputs[i];
+    conn_output_private *priv = (conn_output_private*)output->user_info;
+
+    if(xyz_point_distance(sx + priv->x, sy + priv->y, filt_x, filt_y) <
+       CONNECT_RADIUS) {
+      filt_output = output;
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+/* See if we intersect any inputs or outputs of any particular connectors */
+int intersect_connector_objects(int x, int y,
+				conn_input **inputOutP,
+				conn_output **outputOutP) {
+  xyz_sprite *sprite;
+  filt_x = x; filt_y = y;
+  sprite = xyz_intersect_filtered_sprite(x, y, &conn_sprite_filter);
+
+  if(filt_input) {
+    *inputOutP = filt_input;
+    return 1;
+  }
+
+  if(filt_output) {
+    *outputOutP = filt_output;
+    return 1;
+  }
+
+  return 0;
 }
 
 /******* Sprite functions *************/

@@ -343,7 +343,6 @@ void xyz_draw_sprites(void) {
     if(!index->hidden) xyz_draw_sprite(index);
     index = index->next;
   }
-  index = index->next;
 }
 
 xyz_sprite *xyz_intersect_event_sprite(int x, int y, int event,

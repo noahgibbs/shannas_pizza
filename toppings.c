@@ -6,10 +6,6 @@ static void topping_connector_process(connector *conn);
 
 static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
 
-typedef struct {
-  connector *conn;
-} ToppingPrivate;
-
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
                  1, 1, 1, 1, 1, 1, 1, 1 }
 
@@ -52,9 +48,17 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   ToppingPrivate *tp = (ToppingPrivate*)xyz_sprite_get_private_data(sprite);
 
   switch(event->type) {
-  case XYZ_SPRITE_CREATED:
+  case XYZ_SPRITE_CREATED: {
+    conn_output *output;
+    conn_output_private *priv = calloc(sizeof(conn_output_private), 1);
+
     tp->conn = new_connector(&topping_type, (void*)sprite);
+    output = connector_new_output(tp->conn);
+    priv->x = SYMBOLS_WIDTH / 2;
+    priv->y = 0;
+    output->user_info = (void*)priv;
     break;
+  }
   case XYZ_SPRITE_DESTROYED:
     destroy_connector(tp->conn);
     break;
@@ -65,10 +69,6 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
       int sy = xyz_sprite_get_y(sprite);
       x = event->mouse_x - sx;
       y = event->mouse_y - sy;
-
-      if(xyz_point_distance(SYMBOLS_WIDTH / 2, 0, x, y) < CONNECT_RADIUS) {
-	drag_to_connect(sprite, tp->conn, SYMBOLS_WIDTH / 2 + sx, sy);
-      }
     }
     break;
   }

@@ -43,7 +43,15 @@ void *get_signal_zero(void);
 
 connector *new_connector(connector_type *type, void *user_info);
 void destroy_connector(connector *conn);
-void connect_input(connector *conn, conn_input *input);
-void connect_output(connector *conn, conn_output *output);
+void connector_add_input(connector *conn, conn_input *input);
+void connector_add_output(connector *conn, conn_output *output);
+conn_input* connector_new_input(connector *conn);
+conn_output* connector_new_output(connector *conn);
+void connector_disconnect_input(conn_input *input);
+void connector_disconnect_output(conn_output *output);
+void connector_delete_input(conn_input *input);
+void connector_delete_output(conn_output *output);
+
+void connector_connect(conn_input *input, conn_output *output);
 
 #endif /* __CONNECTORS_H__ */

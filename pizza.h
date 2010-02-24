@@ -52,11 +52,6 @@ typedef struct {
   /* Offset within sprite */
   int x;
   int y;
-
-  /* Connection color */
-  int r;
-  int g;
-  int b;
 } conn_input_private;
 
 typedef struct {
@@ -64,6 +59,10 @@ typedef struct {
   int x;
   int y;
 } conn_output_private;
+
+typedef struct {
+  connector *conn;
+} ToppingPrivate;
 
 
 /* Prototypes */
@@ -84,6 +83,9 @@ void draw_sprites(void);
 void load_sprites(void);
 void free_sprites(void);
 void draw_connector(connector *conn);
+int intersect_connector_objects(int x, int y,
+				conn_input **inputOutP,
+				conn_output **outputOutP);
 
 /* From gates.c */
 void init_gate_sprites(void);

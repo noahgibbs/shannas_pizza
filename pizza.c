@@ -141,6 +141,8 @@ void drag_to_connect(xyz_sprite *from_sprite,
 int mouse_button_handler(int button, int is_down) {
   if(button == 1) {
     int x, y;
+    conn_input *input;
+    conn_output *output;
 
     if(!is_down) {
       dragged_sprite = NULL;
@@ -149,6 +151,33 @@ int mouse_button_handler(int button, int is_down) {
     }
 
     xyz_mouse_position(&x, &y);
+
+    if(intersect_connector_objects(x, y, &input, &output)) {
+      xyz_sprite *sprite;
+      connector *conn;
+      conn_input_private *ipriv;
+      conn_output_private *opriv;
+      int sx, sy, px, py;
+
+      if(input) conn = input->host;
+      else conn = output->host;
+
+      sprite = (xyz_sprite*)conn->user_info;
+      sx = xyz_sprite_get_x(sprite);
+      sy = xyz_sprite_get_y(sprite);
+
+      if(input) {
+	ipriv = (conn_input_private*)input->user_info;
+	px = ipriv->x; py = ipriv->y;
+      } else {
+	opriv = (conn_output_private*)output->user_info;
+	px = opriv->x; py = opriv->y;
+      }
+
+      drag_to_connect(sprite, conn, sx + px, sy + py);
+      return 0;
+    }
+
     dragged_sprite = xyz_intersect_filtered_sprite(x, y, &is_draggable);
     if(dragged_sprite) {
       selected_x_offset = x - xyz_sprite_get_x(dragged_sprite);
