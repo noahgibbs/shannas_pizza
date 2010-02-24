@@ -3,19 +3,22 @@
 
 typedef struct _connector_t connector;
 
-typedef struct _input_t {
-  void *signal;
-  connector *host;
-  connector *attached;
-  void *user_info;
-} conn_input;
+typedef struct _input_t conn_input;
+typedef struct _output_t conn_output;
 
-typedef struct _output_t {
+struct _input_t {
   void *signal;
   connector *host;
-  connector *attached;
+  conn_output *attached;
   void *user_info;
-} conn_output;
+};
+
+struct _output_t {
+  void *signal;
+  connector *host;
+  conn_input *attached;
+  void *user_info;
+};
 
 typedef struct _connector_type_t {
   int max_inputs;
