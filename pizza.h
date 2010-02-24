@@ -1,6 +1,8 @@
 #ifndef __PIZZA_H__
 #define __PIZZA_H__
 
+#include "connectors.h"
+
 /* Cursor "hot spot" */
 #define CURSOR_X_OFFSET        6
 #define CURSOR_Y_OFFSET        4
@@ -51,6 +53,9 @@ int mouse_move_handler(int x, int y);
 int mouse_button_handler(int button, int is_down);
 void drag_sprite(xyz_sprite *sprite);
 void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off);
+void drag_to_connect(xyz_sprite *from_sprite,
+		     connector *from_connector,
+		     int from_x, int from_y);
 
 /* From sprites.c */
 void draw_sprites(void);

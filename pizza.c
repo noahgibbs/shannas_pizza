@@ -26,9 +26,29 @@ void init(void) {
 
 static int show_mousebox = 0;
 
+/* For dragging whole sprites */
+static int no_drag = 0;
+static xyz_sprite* dragged_sprite = NULL;
+static int selected_x_offset;
+static int selected_y_offset;
+
+/* For creating new connections */
+static int drag_begin_x;
+static int drag_begin_y;
+static connector *drag_connector = NULL;
+
+
+void wire_from_to(int from_x, int from_y, int to_x, int to_y) {
+    xyz_color(255, 0, 0);
+    xyz_rectangle_coords(from_x, from_y, from_x + 1, to_y);
+    xyz_rectangle_coords(from_x, to_y, to_x, to_y + 1);
+}
+
 void draw(void) {
   char mousebox[100];
   int x, y;
+
+  xyz_mouse_position(&x, &y);
 
   xyz_color(0, 0, 0);
   xyz_fill();
@@ -42,9 +62,13 @@ void draw(void) {
     xyz_color(128, 128, 128);
     xyz_rectangle(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, 100, 50);
     xyz_color(0, 0, 255);
-    xyz_mouse_position(&x, &y);
     snprintf(mousebox, 100, "%d, %d", x, y);
     xyz_block_text(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, mousebox);
+  }
+
+  /* Connection-in-progress */
+  if(drag_connector) {
+    wire_from_to(drag_begin_x, drag_begin_y, x, y);
   }
 
   draw_sprites();
@@ -67,11 +91,6 @@ void keyhandler(const char *keyname, int down) {
   if(!strcasecmp(keyname, "m") && down == 1)
     show_mousebox = !show_mousebox;
 }
-
-static int no_drag = 0;
-static xyz_sprite* dragged_sprite = NULL;
-static int selected_x_offset;
-static int selected_y_offset;
 
 int mouse_move_handler(int x, int y) {
   return 0;
@@ -104,11 +123,30 @@ void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off) {
   selected_y_offset = y_off;
 }
 
+void drag_to_connect(xyz_sprite *from_sprite,
+		     connector *from_connector,
+		     int from_x, int from_y)
+{
+  /* Don't drag a sprite */
+  dragged_sprite = NULL;
+  selected_x_offset = 0;
+  selected_y_offset = 0;
+
+  /* Start creating a connection by dragging */
+  drag_begin_x = from_x;
+  drag_begin_y = from_y;
+  drag_connector = from_connector;
+}
+
 int mouse_button_handler(int button, int is_down) {
   if(button == 1) {
     int x, y;
 
-    if(!is_down) { dragged_sprite = NULL; return 0; }
+    if(!is_down) {
+      dragged_sprite = NULL;
+      drag_connector = NULL;
+      return 0;
+    }
 
     xyz_mouse_position(&x, &y);
     dragged_sprite = xyz_intersect_filtered_sprite(x, y, &is_draggable);
