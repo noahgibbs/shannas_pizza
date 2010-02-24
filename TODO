@@ -9,7 +9,7 @@ Make program full-screen, with coordinates recentered somehow
 
 Allow Z-reordering of sprites
 
-Return value from event handlers, for things like cancelling events?
+Return value for more event handlers, for cancelling events
 
 Error handling APIs
 
