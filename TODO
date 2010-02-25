@@ -5,6 +5,8 @@ in some way.  Provide an option to turn this off, perhaps (or not).
 
 Make program full-screen, with coordinates recentered somehow
 
+Break connections properly when reconnecting an already-used input or output
+
 ========= XYZ TODO:
 
 Allow Z-reordering of sprites

@@ -67,6 +67,7 @@ static conn_input *filt_input = NULL;
 static conn_output *filt_output = NULL;
 static xyz_sprite *filt_sprite = NULL;
 
+/* Sprite filter to check if a coordinate hits any inputs or outputs */
 int conn_sprite_filter(xyz_sprite *sprite) {
   connector *conn;
   int i, sx, sy;

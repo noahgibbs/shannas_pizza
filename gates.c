@@ -106,7 +106,7 @@ static void toolbox_draw(xyz_sprite *sprite) {
 		TOOLBOX_BOTTOM_HEIGHT - TOOLBOX_TOP_HEIGHT);
 }
 
-static void gate_draw(xyz_sprite *sprite) {
+static void basic_gate_draw(xyz_sprite *sprite) {
   int x = xyz_sprite_get_x(sprite);
   int y = xyz_sprite_get_y(sprite);
   int type = (int)xyz_sprite_get_user_info(sprite);
@@ -129,6 +129,14 @@ static void gate_draw(xyz_sprite *sprite) {
   }
 }
 
+static void gate_draw(xyz_sprite *sprite) {
+  GatePrivate *priv = (GatePrivate*)xyz_sprite_get_private_data(sprite);
+
+  draw_connector(priv->conn);
+
+  basic_gate_draw(sprite);
+}
+
 static void gate_target_draw(xyz_sprite *sprite) {
   int x, y, width, height;
 
@@ -138,7 +146,7 @@ static void gate_target_draw(xyz_sprite *sprite) {
   height = xyz_sprite_get_height(sprite);
   xyz_color(0, 80, 250);
   xyz_rectangle(x, y, width, height);
-  gate_draw(sprite);
+  basic_gate_draw(sprite);
 }
 
 static void gate_target_event_handler(xyz_sprite *sprite,
