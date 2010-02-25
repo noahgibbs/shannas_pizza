@@ -36,6 +36,8 @@ static int selected_y_offset;
 static int drag_begin_x;
 static int drag_begin_y;
 static connector *drag_connector = NULL;
+static conn_input *drag_input = NULL;
+static conn_output *drag_output = NULL;
 
 
 void wire_from_to(int from_x, int from_y, int to_x, int to_y) {
@@ -115,6 +117,7 @@ void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off) {
   if(sprite == NULL) {
     no_drag = 1;
     dragged_sprite = NULL;
+    drag_connector = NULL;
     return;
   }
 
@@ -125,6 +128,8 @@ void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off) {
 
 void drag_to_connect(xyz_sprite *from_sprite,
 		     connector *from_connector,
+		     conn_input *from_input,
+		     conn_output *from_output,
 		     int from_x, int from_y)
 {
   /* Don't drag a sprite */
@@ -136,6 +141,8 @@ void drag_to_connect(xyz_sprite *from_sprite,
   drag_begin_x = from_x;
   drag_begin_y = from_y;
   drag_connector = from_connector;
+  drag_input = from_input;
+  drag_output = from_output;
 }
 
 int mouse_button_handler(int button, int is_down) {
@@ -144,13 +151,31 @@ int mouse_button_handler(int button, int is_down) {
     conn_input *input;
     conn_output *output;
 
+    xyz_mouse_position(&x, &y);
+
     if(!is_down) {
+      if(drag_connector) {
+	/* See if we intersect a different input or output, and if we
+	   can connect a new wire */
+	if(intersect_connector_objects(x, y, &input, &output)) {
+	  if((input && drag_input) || (output && drag_output)) {
+	    /* Went from input to input or output to output -- break wire */
+	    /* TODO:  Add sound effect and visual feedback */
+	    printf("Same-to-same connection.  Break wire!\n");
+	  } else {
+	    printf("Same-to-different connection.  Connect!\n");
+	    if(input) {
+	      connector_connect(input, drag_output);
+	    } else {
+	      connector_connect(drag_input, output);
+	    }
+	  }
+	}
+      }
       dragged_sprite = NULL;
       drag_connector = NULL;
       return 0;
     }
-
-    xyz_mouse_position(&x, &y);
 
     if(intersect_connector_objects(x, y, &input, &output)) {
       xyz_sprite *sprite;
@@ -159,8 +184,7 @@ int mouse_button_handler(int button, int is_down) {
       conn_output_private *opriv;
       int sx, sy, px, py;
 
-      if(input) conn = input->host;
-      else conn = output->host;
+      conn = ioro_connector(input, output);
 
       sprite = (xyz_sprite*)conn->user_info;
       sx = xyz_sprite_get_x(sprite);
@@ -174,7 +198,7 @@ int mouse_button_handler(int button, int is_down) {
 	px = opriv->x; py = opriv->y;
       }
 
-      drag_to_connect(sprite, conn, sx + px, sy + py);
+      drag_to_connect(sprite, conn, input, output, sx + px, sy + py);
       return 0;
     }
 

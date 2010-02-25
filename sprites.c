@@ -121,6 +121,10 @@ int intersect_connector_objects(int x, int y,
 				conn_input **inputOutP,
 				conn_output **outputOutP) {
   xyz_sprite *sprite;
+
+  *inputOutP = NULL;
+  *outputOutP = NULL;
+
   filt_x = x; filt_y = y;
   xyz_sprite_each(&conn_sprite_filter);
   sprite = filt_sprite;

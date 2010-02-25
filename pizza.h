@@ -79,6 +79,8 @@ void drag_sprite(xyz_sprite *sprite);
 void drag_sprite_with_offset(xyz_sprite *sprite, int x_off, int y_off);
 void drag_to_connect(xyz_sprite *from_sprite,
 		     connector *from_connector,
+		     conn_input *from_input,
+		     conn_output *from_output,
 		     int from_x, int from_y);
 void wire_from_to(int from_x, int from_y, int to_x, int to_y);
 

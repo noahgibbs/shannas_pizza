@@ -112,3 +112,9 @@ void connector_connect(conn_input *input, conn_output *output) {
   input->attached = output;
   output->attached = input;
 }
+
+connector* ioro_connector(conn_input *input, conn_output *output) {
+  if(input) return input->host;
+  if(output) return output->host;
+  return NULL;
+}
