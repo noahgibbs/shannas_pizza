@@ -65,11 +65,14 @@ void draw_connector(connector *conn) {
 static int filt_x, filt_y;
 static conn_input *filt_input = NULL;
 static conn_output *filt_output = NULL;
+static xyz_sprite *filt_sprite = NULL;
 
 int conn_sprite_filter(xyz_sprite *sprite) {
   connector *conn;
   int i, sx, sy;
   xyz_sprite_methods *methods;
+
+  filt_sprite = sprite;
 
   /* Check sprite info to make sure it's a connectable type */
   methods = xyz_sprite_get_methods(sprite);
@@ -119,7 +122,8 @@ int intersect_connector_objects(int x, int y,
 				conn_output **outputOutP) {
   xyz_sprite *sprite;
   filt_x = x; filt_y = y;
-  sprite = xyz_intersect_filtered_sprite(x, y, &conn_sprite_filter);
+  xyz_sprite_each(&conn_sprite_filter);
+  sprite = filt_sprite;
 
   if(filt_input) {
     *inputOutP = filt_input;

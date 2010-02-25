@@ -322,13 +322,22 @@ int xyz_sprite_overlap(xyz_sprite *sprite1, xyz_sprite *sprite2) {
   return 1;
 }
 
+void xyz_sprite_each(int (*each_fn)(xyz_sprite *sprite)) {
+  xyz_sprite *index = sprite_head;
+
+  while(index) {
+    if(each_fn(index)) break;
+    index = index->next;
+  }
+}
+
 xyz_sprite *xyz_intersect_filtered_sprite(int x, int y,
 					  int (*filter)(xyz_sprite *sprite))
 {
   xyz_sprite *index = sprite_head;
   while(index) {
-    if(filter(index)) {
-      if(xyz_sprite_intersect_point(index, x, y)) {
+    if(xyz_sprite_intersect_point(index, x, y)) {
+      if(filter(index)) {
 	return index;
       }
     }
