@@ -44,13 +44,12 @@ static void topping_connector_process(connector *conn) {
 }
 
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
-  int x, y;
   ToppingPrivate *tp = (ToppingPrivate*)xyz_sprite_get_private_data(sprite);
 
   switch(event->type) {
   case XYZ_SPRITE_CREATED: {
     conn_output *output;
-    conn_output_private *priv = calloc(sizeof(conn_output_private), 1);
+    conn_output_private *priv = xyz_new(conn_output_private);
 
     tp->conn = new_connector(&topping_type, (void*)sprite);
     output = connector_new_output(tp->conn);
@@ -61,15 +60,6 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   }
   case XYZ_SPRITE_DESTROYED:
     destroy_connector(tp->conn);
-    break;
-  case XYZ_SPRITE_BUTTONDOWN:
-    if(event->button == 1) {
-      /* Get in-sprite x and y offset */
-      int sx = xyz_sprite_get_x(sprite);
-      int sy = xyz_sprite_get_y(sprite);
-      x = event->mouse_x - sx;
-      y = event->mouse_y - sy;
-    }
     break;
   }
 }

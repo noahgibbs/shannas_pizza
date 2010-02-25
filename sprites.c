@@ -77,7 +77,8 @@ int conn_sprite_filter(xyz_sprite *sprite) {
     ToppingPrivate *tp = (ToppingPrivate*)xyz_sprite_get_private_data(sprite);
     conn = tp->conn;
   } else if (methods->handle_event == gate_event_handler) {
-    return 0;  /* For now */
+    GatePrivate *gp = (GatePrivate*)xyz_sprite_get_private_data(sprite);
+    conn = gp->conn;
   } else {
     return 0;
   }
@@ -94,7 +95,6 @@ int conn_sprite_filter(xyz_sprite *sprite) {
 
     if(xyz_point_distance(sx + priv->x, sy + priv->y, filt_x, filt_y) <
        CONNECT_RADIUS) {
-      //drag_to_connect(sprite, conn, sx + priv->x, sy + priv->y);
       filt_input = input;
       return 1;
     }

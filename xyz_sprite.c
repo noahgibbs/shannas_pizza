@@ -33,7 +33,7 @@ static xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 			   xyz_image *image) {
   xyz_sprite *tmp = NULL;
 
-  tmp = calloc(sizeof(xyz_sprite), 1);
+  tmp = xyz_new(xyz_sprite);
   if(!tmp) xyz_fatal_error("Could not allocate structure for sprite!");
 
   tmp->x = x; tmp->y = y;
@@ -243,7 +243,7 @@ static xyz_sprite_event* sprite_event_head = NULL;
 static xyz_sprite_event* sprite_event_tail = NULL;
 
 xyz_sprite_event *xyz_sprite_event_new(xyz_sprite *sprite) {
-  xyz_sprite_event *event = calloc(sizeof(xyz_sprite), 1);
+  xyz_sprite_event *event = xyz_new(xyz_sprite_event);
 
   event->sprite = sprite;
   event->sprite_x = sprite->x;

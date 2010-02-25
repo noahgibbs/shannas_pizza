@@ -16,6 +16,8 @@
     exit(-1); \
   }
 
+#define xyz_new(structure) ((structure*)(calloc(sizeof(structure), 1)))
+
 typedef struct _xyz_image_t xyz_image;
 
 void xyz_start(void);

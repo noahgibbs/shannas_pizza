@@ -24,7 +24,7 @@ void shutdown_connectors(void) {
 }
 
 connector *new_connector(connector_type *type, void *user_info) {
-  connector *tmp = calloc(sizeof(connector), 1);
+  connector *tmp = xyz_new(connector);
 
   tmp->type = type;
   tmp->user_info = user_info;
@@ -73,7 +73,7 @@ void connector_add_output(connector *conn, conn_output *output) {
 }
 
 conn_output *connector_new_output(connector *conn) {
-  conn_output *tmp = calloc(sizeof(conn_output), 1);
+  conn_output *tmp = xyz_new(conn_output);
 
   connector_add_output(conn, tmp);
 
@@ -81,7 +81,7 @@ conn_output *connector_new_output(connector *conn) {
 }
 
 conn_input *connector_new_input(connector *conn) {
-  conn_input *tmp = calloc(sizeof(conn_input), 1);
+  conn_input *tmp = xyz_new(conn_input);
 
   connector_add_input(conn, tmp);
 

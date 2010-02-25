@@ -64,6 +64,10 @@ typedef struct {
   connector *conn;
 } ToppingPrivate;
 
+typedef struct {
+  connector *conn;
+} GatePrivate;
+
 
 /* Prototypes */
 

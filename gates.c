@@ -9,17 +9,18 @@ void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 static void gate_target_draw(xyz_sprite *sprite);
 static void gate_target_event_handler(xyz_sprite *sprite,
 				      xyz_sprite_event *event);
+static void gate_connector_process(connector *conn);
 
 static xyz_sprite_methods toolbox_methods = { toolbox_draw, NULL };
 static xyz_sprite_methods gate_methods = { gate_draw, gate_event_handler };
 static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 						  gate_target_event_handler };
 
-typedef struct {
-  connector *conn;
-} GatePrivate;
-
 static int toolbox_sprite_user_info = 0;
+
+connector_type gate_conn_type = {
+  2, 1, gate_connector_process
+};
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
                  1, 1, 1, 1, 1, 1, 1, 1 }
@@ -92,6 +93,10 @@ void delete_gate(xyz_sprite *sprite) {
   xyz_free_sprite(sprite);
 }
 
+static void gate_connector_process(connector *conn) {
+
+}
+
 /*********** Gate event handlers ******************/
 
 static void toolbox_draw(xyz_sprite *sprite) {
@@ -155,8 +160,38 @@ static void gate_target_event_handler(xyz_sprite *sprite,
 }
 
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
+  GatePrivate *priv = (GatePrivate*)xyz_sprite_get_private_data(sprite);
   /* Do we do anything special in this handler? */
   switch(event->type) {
+  case XYZ_SPRITE_CREATED: {
+    conn_output_private *opriv = xyz_new(conn_output_private);
+    conn_input_private *ipriv1 = xyz_new(conn_input_private);
+    conn_input_private *ipriv2 = xyz_new(conn_input_private);
+    conn_output *output;
+    conn_input *input1;
+    conn_input *input2;
+
+    priv->conn = new_connector(&gate_conn_type, (void*)sprite);
+    output = connector_new_output(priv->conn);
+    opriv->x = GATE_WIDTH / 2;
+    opriv->y = 0;
+    output->user_info = (void*)opriv;
+
+    input1 = connector_new_input(priv->conn);
+    ipriv1->x = 0;
+    ipriv1->y = GATE_HEIGHT;
+    input1->user_info = (void*)ipriv1;
+
+    input2 = connector_new_input(priv->conn);
+    ipriv2->x = GATE_WIDTH;
+    ipriv2->y = GATE_HEIGHT;
+    input2->user_info = (void*)ipriv2;
+    break;
+  }
+  case XYZ_SPRITE_DESTROYED: {
+    destroy_connector(priv->conn);
+    break;
+  }
   case XYZ_SPRITE_BUTTONDOWN:
     break;
   case XYZ_SPRITE_BUTTONUP:
