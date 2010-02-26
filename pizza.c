@@ -198,6 +198,7 @@ int mouse_button_handler(int button, int is_down) {
 	px = opriv->x; py = opriv->y;
       }
 
+      ioro_disconnect(input, output);
       drag_to_connect(sprite, conn, input, output, sx + px, sy + py);
       return 0;
     }

@@ -53,6 +53,7 @@ void connector_delete_input(conn_input *input);
 void connector_delete_output(conn_output *output);
 
 connector* ioro_connector(conn_input *input, conn_output *output);
+void ioro_disconnect(conn_input *input, conn_output *output);
 
 void connector_connect(conn_input *input, conn_output *output);
 

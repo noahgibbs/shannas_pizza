@@ -89,15 +89,23 @@ conn_input *connector_new_input(connector *conn) {
 }
 
 void connector_disconnect_input(conn_input *input) {
-  if(input->attached) {
+  if(input->attached && input->attached->attached == input) {
     input->attached->attached = NULL;
   }
+  if(input->attached && input->attached->attached) {
+    fprintf(stderr, "Consistency error (input)!  Dying!\n");
+  }
+  input->attached = NULL;
 }
 
 void connector_disconnect_output(conn_output *output) {
-  if(output->attached) {
+  if(output->attached && output->attached->attached == output) {
     output->attached->attached = NULL;
   }
+  if(output->attached && output->attached->attached) {
+    fprintf(stderr, "Consistency error (output)!  Dying!\n");
+  }
+  output->attached = NULL;
 }
 
 void connector_delete_input(conn_input *input) {
@@ -109,6 +117,8 @@ void connector_delete_output(conn_output *output) {
 }
 
 void connector_connect(conn_input *input, conn_output *output) {
+  connector_disconnect_input(input);
+  connector_disconnect_output(output);
   input->attached = output;
   output->attached = input;
 }
@@ -117,4 +127,9 @@ connector* ioro_connector(conn_input *input, conn_output *output) {
   if(input) return input->host;
   if(output) return output->host;
   return NULL;
+}
+
+void ioro_disconnect(conn_input *input, conn_output *output) {
+  if(input) connector_disconnect_input(input);
+  if(output) connector_disconnect_output(output);
 }
