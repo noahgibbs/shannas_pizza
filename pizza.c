@@ -10,16 +10,19 @@
 #define CURSOR_FILE            "images/cursor_small.png"
 /* #define DRAGGING_CURSOR_FILE   "images/dragging_cursor.png" */
 
+connector_set *pizza_connector_set = NULL;
+
 void init(void) {
   xyz_start();
-  /* xyz_set_up_screen_fullscreen(); */
-  xyz_set_up_screen_window(TOTAL_HEIGHT, TOTAL_WIDTH);
+  xyz_set_up_screen_fullscreen();
+  /* xyz_set_up_screen_window(TOTAL_HEIGHT, TOTAL_WIDTH); */
 
   xyz_set_key_handler(keyhandler);
   xyz_set_mouse_handlers(mouse_move_handler, mouse_button_handler);
 
-  load_sprites();
   init_connectors();
+  pizza_connector_set = new_connector_set();
+  load_sprites();
 
   xyz_custom_cursor_from_file(CURSOR_FILE, CURSOR_X_OFFSET, CURSOR_Y_OFFSET);
 }

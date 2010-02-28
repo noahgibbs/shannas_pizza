@@ -23,13 +23,35 @@ void shutdown_connectors(void) {
 
 }
 
-connector *new_connector(connector_type *type, void *user_info) {
+connector_set *new_connector_set(void) {
+  connector_set *tmp = xyz_new(connector_set);
+  tmp->allocated_connectors = 16;
+  tmp->connectors = calloc(sizeof(connector*) * tmp->allocated_connectors, 1);
+  tmp->num_connectors = 0;
+
+  return tmp;
+}
+
+connector *new_connector(connector_type *type, connector_set *set,
+			 void *user_info) {
   connector *tmp = xyz_new(connector);
 
   tmp->type = type;
   tmp->user_info = user_info;
   tmp->outputs = calloc(sizeof(conn_output*) * type->max_outputs, 1);
   tmp->inputs = calloc(sizeof(conn_input*) * type->max_inputs, 1);
+  tmp->set = set;
+
+  if(set->num_connectors >= set->allocated_connectors) {
+    set->allocated_connectors *= 2;
+    set->connectors = realloc(set->connectors,
+			      sizeof(connector*) * set->allocated_connectors);
+    if(!set->connectors) {
+      xyz_fatal_error("Can't reallocate connectors in connector_set!");
+    }
+  }
+  set->connectors[set->num_connectors] = tmp;
+  set->num_connectors++;
 
   return tmp;
 }
@@ -132,4 +154,14 @@ connector* ioro_connector(conn_input *input, conn_output *output) {
 void ioro_disconnect(conn_input *input, conn_output *output) {
   if(input) connector_disconnect_input(input);
   if(output) connector_disconnect_output(output);
+}
+
+void connector_set_process(connector_set *set) {
+  int i;
+
+  /* TODO: some kind of topological sort? */
+  for(i = 0; i < set->num_connectors; i++) {
+    connector *index = set->connectors[i];
+    index->type->process(index);  /* Just process in order? */
+  }
 }

@@ -179,7 +179,8 @@ void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
     conn_input *input1;
     conn_input *input2;
 
-    priv->conn = new_connector(&gate_conn_type, (void*)sprite);
+    priv->conn = new_connector(&gate_conn_type, pizza_connector_set,
+			       (void*)sprite);
     output = connector_new_output(priv->conn);
     opriv->x = GATE_WIDTH / 2;
     opriv->y = 0;

@@ -51,7 +51,8 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
     conn_output *output;
     conn_output_private *priv = xyz_new(conn_output_private);
 
-    tp->conn = new_connector(&topping_type, (void*)sprite);
+    tp->conn = new_connector(&topping_type, pizza_connector_set,
+			     (void*)sprite);
     output = connector_new_output(tp->conn);
     priv->x = SYMBOLS_WIDTH / 2;
     priv->y = 0;

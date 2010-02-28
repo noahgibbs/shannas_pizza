@@ -103,4 +103,8 @@ void delete_toppings(void);
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 
+/* Variables */
+
+extern connector_set *pizza_connector_set;
+
 #endif /* __PIZZA_H__ */
