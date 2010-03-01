@@ -12,10 +12,23 @@
 
 connector_set *pizza_connector_set = NULL;
 
-void init(void) {
+void init(int argc, char **argv) {
+  int i;
+  int fullscreen = 0;
+
+  for(i = 1; i < argc; i++) {
+    if(!strcasecmp(argv[i], "--fullscreen")) {
+      fullscreen = 1;
+    } else {
+      xyz_fatal_error("Unrecognized parameter '%s'!", argv[i]);
+    }
+  }
+
   xyz_start();
-  xyz_set_up_screen_fullscreen();
-  /* xyz_set_up_screen_window(TOTAL_HEIGHT, TOTAL_WIDTH); */
+  if(fullscreen)
+    xyz_set_up_screen_fullscreen();
+  else
+    xyz_set_up_screen_window(TOTAL_HEIGHT, TOTAL_WIDTH);
 
   xyz_set_key_handler(keyhandler);
   xyz_set_mouse_handlers(mouse_move_handler, mouse_button_handler);
@@ -252,11 +265,11 @@ void main_loop(void) {
 }
 
 int main(int argc, char** argv) {
-    init();
+  init(argc, argv);
 
-    main_loop();
+  main_loop();
 
-    shutdown();
+  shutdown();
 
-    return 0;
+  return 0;
 }
