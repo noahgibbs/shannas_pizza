@@ -9,6 +9,7 @@ typedef struct _output_t conn_output;
 
 struct _input_t {
   void *signal;
+  void *calculated_signal;
   connector *host;
   conn_output *attached;
   void *user_info;
@@ -16,6 +17,7 @@ struct _input_t {
 
 struct _output_t {
   void *signal;
+  void *calculated_signal;
   connector *host;
   conn_input *attached;
   void *user_info;
@@ -40,7 +42,7 @@ struct _connector_t {
 struct _connector_set_t {
   connector **connectors;
   int num_connectors;
-  int allocated_connectors;
+  int allocated_connectors; /* Actually, allocated connector pointers */
 };
 
 void init_connectors(void);
@@ -66,6 +68,8 @@ connector* ioro_connector(conn_input *input, conn_output *output);
 void ioro_disconnect(conn_input *input, conn_output *output);
 
 void connector_connect(conn_input *input, conn_output *output);
+
+void connector_free_signal(void *signal);
 
 void connector_set_process(connector_set *set);
 

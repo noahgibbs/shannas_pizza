@@ -159,9 +159,27 @@ void ioro_disconnect(conn_input *input, conn_output *output) {
 void connector_set_process(connector_set *set) {
   int i;
 
-  /* TODO: some kind of topological sort? */
   for(i = 0; i < set->num_connectors; i++) {
     connector *index = set->connectors[i];
     index->type->process(index);  /* Just process in order? */
   }
+
+  for(i = 0; i < set->num_connectors; i++) {
+    connector *index = set->connectors[i];
+    int j;
+    for(j = 0; j < index->num_inputs; j++) {
+      conn_input *input = index->inputs[j];
+      connector_free_signal(input->signal);
+      input->signal = input->calculated_signal;
+    }
+    for(j = 0; j < index->num_outputs; j++) {
+      conn_output *output = index->outputs[j];
+      connector_free_signal(output->signal);
+      output->signal = output->calculated_signal;
+    }
+  }
+}
+
+void connector_free_signal(void *signal) {
+  /* For now, do nothing */
 }
