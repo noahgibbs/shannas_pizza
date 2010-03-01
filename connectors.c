@@ -58,6 +58,7 @@ connector *new_connector(connector_type *type, connector_set *set,
 
 void destroy_connector(connector *conn) {
   int i;
+  connector_set *set = conn->set;
 
   for(i = 0; i < conn->num_inputs; i++) {
     connector_disconnect_input(conn->inputs[i]);
@@ -68,6 +69,16 @@ void destroy_connector(connector *conn) {
     connector_disconnect_output(conn->outputs[i]);
     connector_delete_output(conn->outputs[i]);
   }
+
+  for(i = 0; i < set->num_connectors; i++) {
+    if(set->connectors[i] == conn) break;
+  }
+  if(i >= set->num_connectors)
+    xyz_fatal_error("Couldn't find connector in connector set!");
+
+  set->connectors[i] = set->connectors[set->num_connectors - 1];
+
+  set->num_connectors--;
 
   free(conn->inputs);
   free(conn->outputs);
