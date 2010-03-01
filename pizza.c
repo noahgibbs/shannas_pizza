@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include "xyz.h"
 #include "xyz_sprite.h"
@@ -252,6 +253,48 @@ void process_events(void) {
   }
 }
 
+static void timeval_minus(struct timeval *diff, struct timeval *tv1,
+			  struct timeval *tv2) {
+  long int usecs;
+  long int secs;
+
+  secs = tv1->tv_sec - tv2->tv_sec;
+  usecs = tv1->tv_usec - tv2->tv_usec;
+
+  if(usecs < 0) {
+    usecs += 1000000;
+    secs--;
+  }
+
+  diff->tv_sec = secs;
+  diff->tv_usec = usecs;
+}
+
+static struct timeval last_process = { 0, 0 };
+
+void do_calculations(void) {
+  struct timeval tv;
+  struct timeval diff;
+  long int usecs;
+
+  if(gettimeofday(&tv, NULL))
+    xyz_fatal_error("Couldn't get time!");
+
+  if(last_process.tv_sec == 0) {
+    last_process = tv;
+    connector_set_process(pizza_connector_set);
+    return;
+  }
+
+  timeval_minus(&diff, &tv, &last_process);
+  usecs = diff.tv_sec * 1000000 + diff.tv_usec;
+  if(usecs > 1500000) {
+    last_process = tv;
+    connector_set_process(pizza_connector_set);
+    return;
+  }
+}
+
 /**************** Main loop ****************/
 
 void main_loop(void) {
@@ -261,6 +304,7 @@ void main_loop(void) {
     process_events();
     draw();
     usleep(50);
+    do_calculations();
   }
 }
 
