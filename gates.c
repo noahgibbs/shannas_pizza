@@ -94,7 +94,27 @@ void delete_gate(xyz_sprite *sprite) {
 }
 
 static void gate_connector_process(connector *conn) {
+  int input1, input2, output;
+  xyz_sprite *sprite = (xyz_sprite*)conn->user_info;
+  void *sui = xyz_sprite_get_user_info(sprite);
+  void *signal_one = get_signal_one();
+  void *signal_zero = get_signal_zero();
 
+  input1 = conn->inputs[0]->signal == signal_one;
+  input2 = conn->inputs[1]->signal == signal_one;
+
+  switch((int)sui) {
+  case GATE_TYPE_OR:
+    output = input1 | input2;
+    break;
+  case GATE_TYPE_AND:
+    output = input1 & input2;
+    break;
+  default:
+    xyz_fatal_error("Unknown gate type!");
+  }
+
+  conn->outputs[0]->calculated_signal = (output ? signal_one : signal_zero);
 }
 
 /*********** Gate event handlers ******************/

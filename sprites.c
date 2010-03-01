@@ -55,7 +55,16 @@ void draw_connector(connector *conn) {
 	ox = xyz_sprite_get_x(sprite2) + output_private->x;
 	oy = xyz_sprite_get_y(sprite2) + output_private->y;
 
-	xyz_color(255, 0, 0);
+	if(input->signal == NULL) {
+	  xyz_color(128, 128, 128);
+	} else if(input->signal == get_signal_one()) {
+	  xyz_color(255, 0, 0);
+	} else if(input->signal == get_signal_zero()) {
+	  xyz_color(0, 0, 255);
+	} else {
+	  /* Unknown signal! */
+	  xyz_color(255, 255, 255);
+	}
 	wire_from_to(ix, iy, ox, oy);
       }
     }

@@ -58,7 +58,6 @@ static conn_output *drag_output = NULL;
 
 
 void wire_from_to(int from_x, int from_y, int to_x, int to_y) {
-    xyz_color(255, 0, 0);
     xyz_rectangle_coords(from_x, from_y, from_x + 1, to_y);
     xyz_rectangle_coords(from_x, to_y, to_x, to_y + 1);
 }
@@ -87,6 +86,7 @@ void draw(void) {
 
   /* Connection-in-progress */
   if(drag_connector) {
+    xyz_color(255, 0, 0);
     wire_from_to(drag_begin_x, drag_begin_y, x, y);
   }
 
