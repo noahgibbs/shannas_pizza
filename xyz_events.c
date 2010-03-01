@@ -110,6 +110,9 @@ static void xyz_process_event(SDL_Event *eventp) {
   }
 }
 
+/* Declared in xyz_sprite.c */
+void xyz_sprite_periodic(void);
+
 void xyz_process_events(void) {
   SDL_Event event;
 
@@ -121,4 +124,6 @@ void xyz_process_events(void) {
       xyz_process_event(&event);
     }
   } while(pending);
+
+  xyz_sprite_periodic();
 }

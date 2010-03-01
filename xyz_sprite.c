@@ -29,6 +29,8 @@ struct _xyz_sprite_t {
 static xyz_sprite *sprite_head = NULL;
 static xyz_sprite *sprite_tail = NULL;
 
+static xyz_sprite *sprite_to_free = NULL;
+
 static xyz_sprite *xyz_new_sprite(int x, int y, int width, int height,
 			   xyz_image *image) {
   xyz_sprite *tmp = NULL;
@@ -122,7 +124,10 @@ void xyz_free_sprite(xyz_sprite *sprite) {
   if(sprite_tail == sprite)
     sprite_tail = sprite->prev;
 
-  free(sprite);
+  /* Don't do "free(sprite);", put it on the "to-free" list so that
+     this is safe to call in XYZ event handlers. */
+  sprite->next = sprite_to_free;
+  sprite_to_free = sprite->next;
 }
 
 void xyz_free_all_sprites(void) {
@@ -351,6 +356,14 @@ void xyz_draw_sprites(void) {
   while(index) {
     if(!index->hidden) xyz_draw_sprite(index);
     index = index->next;
+  }
+}
+
+void xyz_sprite_periodic(void) {
+  while(sprite_to_free) {
+    xyz_sprite *tmp = sprite_to_free->next;
+    free(sprite_to_free);
+    sprite_to_free = tmp;
   }
 }
 

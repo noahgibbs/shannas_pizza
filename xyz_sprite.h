@@ -11,7 +11,7 @@
 #define XYZ_SPRITE_CLICKED      5  /* Not impl */
 #define XYZ_SPRITE_ENTER        6  /* Not impl */
 #define XYZ_SPRITE_EXIT         7  /* Not impl */
-#define XYZ_SPRITE_RESERVED1    8
+#define XYZ_SPRITE_IDLE         8
 #define XYZ_SPRITE_RESERVED2    9
 #define XYZ_SPRITE_RESERVED3   10
 #define XYZ_SPRITE_RESERVED4   11
@@ -31,6 +31,7 @@ typedef struct _xyz_sprite_event_t {
   int sprite_x;
   int sprite_y;
   xyz_sprite *sprite;
+  int (*callback)(xyz_sprite *sprite, void *user_info);
   struct _xyz_sprite_event_t *next_event;
   struct _xyz_sprite_event_t *prev_event;
   struct _xyz_sprite_event_t *next_sprite_event;
