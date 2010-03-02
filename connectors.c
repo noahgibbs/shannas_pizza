@@ -174,11 +174,22 @@ void connector_set_process(connector_set *set) {
   /* Propagate output signals to attached inputs, if any */
   for(i = 0; i < set->num_connectors; i++) {
     index = set->connectors[i];
+
+    /* Propagate signals from attached output to attached inputs */
     for(j = 0; j < index->num_outputs; j++) {
       conn_output *output = index->outputs[j];
       if(output->attached) {
 	connector_free_signal(output->attached->signal);
 	output->attached->signal = connector_copy_signal(output->signal);
+      }
+    }
+
+    /* No signal to unattached inputs */
+    for(j = 0; j < index->num_inputs; j++) {
+      conn_input *input = index->inputs[j];
+      if(!input->attached) {
+	connector_free_signal(input->signal);
+	input->signal = NULL;
       }
     }
   }

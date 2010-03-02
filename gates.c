@@ -18,8 +18,12 @@ static xyz_sprite_methods gate_target_methods = { gate_target_draw,
 
 static int toolbox_sprite_user_info = 0;
 
-connector_type gate_conn_type = {
+connector_type andor_gate_conn_type = {
   2, 1, gate_connector_process
+};
+
+connector_type not_gate_conn_type = {
+  1, 1, gate_connector_process
 };
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -37,6 +41,10 @@ static xyz_sprite_spec gatefilesprites[] = {
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT + GATE_HEIGHT,
    GATE_WIDTH, GATE_HEIGHT,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_OR},
+  {"",
+   TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT + 2 * GATE_HEIGHT,
+   GATE_WIDTH, GATE_HEIGHT,
+   &gate_target_methods, EVENTS, (void*)GATE_TYPE_NOT},
   { NULL }
 };
 
@@ -46,10 +54,12 @@ static xyz_sprite_spec gatesprites[] = {
 };
 
 static xyz_sprite *toolbox_sprite = NULL;
-static xyz_image *base_gate_image = NULL;
+static xyz_image *andor_gate_image = NULL;
+static xyz_image *not_gate_image = NULL;
 
 void init_gate_sprites(void) {
-  base_gate_image = xyz_load_image("images/base_gate_small.png");
+  andor_gate_image = xyz_load_image("images/base_gate_small.png");
+  not_gate_image = xyz_load_image("images/not_gate_small.png");
 
   xyz_sprites_from_specs(-1, gatefilesprites);
 
@@ -96,19 +106,23 @@ void delete_gate(xyz_sprite *sprite) {
 static void gate_connector_process(connector *conn) {
   int input1, input2, output;
   xyz_sprite *sprite = (xyz_sprite*)conn->user_info;
-  void *sui = xyz_sprite_get_user_info(sprite);
+  int type = (int)xyz_sprite_get_user_info(sprite);
   void *signal_one = get_signal_one();
   void *signal_zero = get_signal_zero();
 
   input1 = conn->inputs[0]->signal == signal_one;
-  input2 = conn->inputs[1]->signal == signal_one;
+  if(conn->num_inputs > 1)
+    input2 = conn->inputs[1]->signal == signal_one;
 
-  switch((int)sui) {
+  switch(type) {
   case GATE_TYPE_OR:
     output = input1 | input2;
     break;
   case GATE_TYPE_AND:
     output = input1 & input2;
+    break;
+  case GATE_TYPE_NOT:
+    output = !input1;
     break;
   default:
     xyz_fatal_error("Unknown gate type!");
@@ -131,18 +145,21 @@ static void basic_gate_draw(xyz_sprite *sprite) {
   int y = xyz_sprite_get_y(sprite);
   int type = (int)xyz_sprite_get_user_info(sprite);
 
-  xyz_draw_image(base_gate_image, x, y);
-
   switch(type) {
   case GATE_TYPE_AND:
+    xyz_draw_image(andor_gate_image, x, y);
     xyz_color(128, 128, 128);
     xyz_rectangle(x + AND_CROSSBAR_WIDTH_OFFSET, y + AND_CROSSBAR_OFF_HEIGHT,
 		  AND_CROSSBAR_WIDTH, AND_CROSSBAR_HEIGHT);
     break;
   case GATE_TYPE_OR:
+    xyz_draw_image(andor_gate_image, x, y);
     xyz_color(128, 0, 180);
     xyz_rectangle(x + OR_CROSSBAR_WIDTH_OFFSET, y + OR_CROSSBAR_OFF_HEIGHT,
 		  OR_CROSSBAR_WIDTH, OR_CROSSBAR_HEIGHT);
+    break;
+  case GATE_TYPE_NOT:
+    xyz_draw_image(not_gate_image, x, y);
     break;
   default:
     xyz_fatal_error("Unknown gate type!");
@@ -187,40 +204,65 @@ static void gate_target_event_handler(xyz_sprite *sprite,
   }
 }
 
-void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
+static void gate_create_connector(xyz_sprite *sprite) {
   GatePrivate *priv = (GatePrivate*)xyz_sprite_get_private_data(sprite);
-  /* Do we do anything special in this handler? */
-  switch(event->type) {
-  case XYZ_SPRITE_CREATED: {
-    conn_output_private *opriv = xyz_new(conn_output_private);
-    conn_input_private *ipriv1 = xyz_new(conn_input_private);
-    conn_input_private *ipriv2 = xyz_new(conn_input_private);
-    conn_output *output;
-    conn_input *input1;
-    conn_input *input2;
+  conn_output_private *opriv = xyz_new(conn_output_private);
+  conn_input_private *ipriv1 = xyz_new(conn_input_private);
+  conn_input_private *ipriv2 = xyz_new(conn_input_private);
+  conn_output *output;
+  conn_input *input1;
+  conn_input *input2;
+  int type = (int)xyz_sprite_get_user_info(sprite);
+  connector_type *conn_type;
+  int num_inputs;
 
-    priv->conn = new_connector(&gate_conn_type, pizza_connector_set,
-			       (void*)sprite);
-    output = connector_new_output(priv->conn);
-    opriv->x = GATE_WIDTH / 2;
-    opriv->y = 0;
-    output->user_info = (void*)opriv;
+  switch(type) {
+  case GATE_TYPE_AND:
+  case GATE_TYPE_OR:
+    conn_type = &andor_gate_conn_type;
+    break;
+  case GATE_TYPE_NOT:
+    conn_type = &not_gate_conn_type;
+    break;
+  default:
+    xyz_fatal_error("Unknown gate type!");
+  }
+  num_inputs = conn_type->max_inputs;
 
-    input1 = connector_new_input(priv->conn);
+  priv->conn = new_connector(&andor_gate_conn_type, pizza_connector_set,
+			     (void*)sprite);
+  output = connector_new_output(priv->conn);
+  opriv->x = GATE_WIDTH / 2;
+  opriv->y = 0;
+  output->user_info = (void*)opriv;
+
+  input1 = connector_new_input(priv->conn);
+  if(num_inputs == 1) {
+    ipriv1->x = GATE_WIDTH / 2;
+  } else {
     ipriv1->x = 0;
-    ipriv1->y = GATE_HEIGHT;
-    input1->user_info = (void*)ipriv1;
+  }
+  ipriv1->y = GATE_HEIGHT;
+  input1->user_info = (void*)ipriv1;
 
+  if(num_inputs > 1) {
     input2 = connector_new_input(priv->conn);
     ipriv2->x = GATE_WIDTH;
     ipriv2->y = GATE_HEIGHT;
     input2->user_info = (void*)ipriv2;
-    break;
   }
-  case XYZ_SPRITE_DESTROYED: {
+}
+
+void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
+  GatePrivate *priv = (GatePrivate*)xyz_sprite_get_private_data(sprite);
+  /* Do we do anything special in this handler? */
+  switch(event->type) {
+  case XYZ_SPRITE_CREATED:
+    gate_create_connector(sprite);
+    break;
+  case XYZ_SPRITE_DESTROYED:
     destroy_connector(priv->conn);
     break;
-  }
   case XYZ_SPRITE_BUTTONDOWN:
     break;
   case XYZ_SPRITE_BUTTONUP:

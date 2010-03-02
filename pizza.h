@@ -43,8 +43,10 @@
 
 #define GATE_TYPE_AND    0
 #define GATE_TYPE_OR     1
-#define GATE_TYPE_MAX    1 /* Duplicate */
+#define GATE_TYPE_NOT    2
+#define GATE_TYPE_MAX    2 /* Duplicate */
 
+#define GATE_DELAY_USECS 250000
 
 /* Structures */
 

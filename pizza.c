@@ -286,7 +286,7 @@ void do_calculations(void) {
 
   timeval_minus(&diff, &tv, &last_process);
   usecs = diff.tv_sec * 1000000 + diff.tv_usec;
-  if(usecs > 1500000) {
+  if(usecs > GATE_DELAY_USECS) {
     last_process = tv;
     connector_set_process(pizza_connector_set);
     return;
