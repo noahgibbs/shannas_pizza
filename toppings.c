@@ -40,7 +40,7 @@ static void topping_connector_process(connector *conn) {
 
   /* Turn output on or off */
   hack++;
-  conn->outputs[0]->calculated_signal = hack ? get_signal_one() : get_signal_zero();
+  conn->outputs[0]->calculated_signal = (hack % 2) ? get_signal_one() : get_signal_zero();
 }
 
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
