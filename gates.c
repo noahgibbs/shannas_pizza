@@ -76,6 +76,7 @@ static int num_gates = 0;
 static xyz_sprite* gates[MAX_NUM_GATES];
 
 static xyz_sprite* new_gate(int x, int y, int type) {
+  gatesprites[0].user_info = (void*)type;
   xyz_sprite *gate = xyz_sprite_from_spec(&gatesprites[0]);
   xyz_sprite_set_x(gate, x - GATE_WIDTH / 2);
   xyz_sprite_set_y(gate, y - GATE_HEIGHT / 2);
