@@ -178,9 +178,7 @@ int mouse_button_handler(int button, int is_down) {
 	  if((input && drag_input) || (output && drag_output)) {
 	    /* Went from input to input or output to output -- break wire */
 	    /* TODO:  Add sound effect and visual feedback */
-	    printf("Same-to-same connection.  Break wire!\n");
 	  } else {
-	    printf("Same-to-different connection.  Connect!\n");
 	    if(input) {
 	      connector_connect(input, drag_output);
 	    } else {
@@ -303,7 +301,7 @@ void main_loop(void) {
     xyz_process_events();
     process_events();
     draw();
-    usleep(50);
+    usleep(100);
     do_calculations();
   }
 }

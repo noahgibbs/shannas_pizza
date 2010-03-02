@@ -168,21 +168,30 @@ void ioro_disconnect(conn_input *input, conn_output *output) {
 }
 
 void connector_set_process(connector_set *set) {
-  int i;
+  int i, j;
+  connector *index;
 
+  /* Propagate output signals to attached inputs, if any */
   for(i = 0; i < set->num_connectors; i++) {
-    connector *index = set->connectors[i];
+    index = set->connectors[i];
+    for(j = 0; j < index->num_outputs; j++) {
+      conn_output *output = index->outputs[j];
+      if(output->attached) {
+	connector_free_signal(output->attached->signal);
+	output->attached->signal = connector_copy_signal(output->signal);
+      }
+    }
+  }
+
+  /* Call process() to get calculated signals */
+  for(i = 0; i < set->num_connectors; i++) {
+    index = set->connectors[i];
     index->type->process(index);  /* Just process in order? */
   }
 
+  /* Move calculated signals over to regular signals */
   for(i = 0; i < set->num_connectors; i++) {
-    connector *index = set->connectors[i];
-    int j;
-    for(j = 0; j < index->num_inputs; j++) {
-      conn_input *input = index->inputs[j];
-      connector_free_signal(input->signal);
-      input->signal = input->calculated_signal;
-    }
+    index = set->connectors[i];
     for(j = 0; j < index->num_outputs; j++) {
       conn_output *output = index->outputs[j];
       connector_free_signal(output->signal);
@@ -193,4 +202,9 @@ void connector_set_process(connector_set *set) {
 
 void connector_free_signal(void *signal) {
   /* For now, do nothing */
+}
+
+void *connector_copy_signal(void *signal) {
+  /* For now, just return it again */
+  return signal;
 }

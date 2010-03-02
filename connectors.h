@@ -70,6 +70,7 @@ void ioro_disconnect(conn_input *input, conn_output *output);
 void connector_connect(conn_input *input, conn_output *output);
 
 void connector_free_signal(void *signal);
+void *connector_copy_signal(void *signal);
 
 void connector_set_process(connector_set *set);
 
