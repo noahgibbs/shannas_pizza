@@ -63,7 +63,6 @@ void wire_from_to(int from_x, int from_y, int to_x, int to_y) {
 }
 
 void draw(void) {
-  char mousebox[100];
   int x, y;
 
   xyz_mouse_position(&x, &y);
@@ -77,6 +76,7 @@ void draw(void) {
 
   /* Mouse Coords */
   if(show_mousebox) {
+    char mousebox[100];
     xyz_color(128, 128, 128);
     xyz_rectangle(TOTAL_WIDTH-100, TOTAL_HEIGHT-50, 100, 50);
     xyz_color(0, 0, 255);

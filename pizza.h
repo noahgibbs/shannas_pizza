@@ -41,10 +41,13 @@
 /* Gate constants */
 #define MAX_NUM_GATES 100
 
-#define GATE_TYPE_AND    0
-#define GATE_TYPE_OR     1
-#define GATE_TYPE_NOT    2
-#define GATE_TYPE_MAX    2 /* Duplicate */
+#define GATE_TYPE_AND            0
+#define GATE_TYPE_OR             1
+#define GATE_TYPE_NOT            2
+#define GATE_TYPE_MAX            2 /* Intentional Duplicate */
+#define GATE_TYPE_MASK         127
+
+#define GATE_MOD_UPSIDE_DOWN   128
 
 #define GATE_DELAY_USECS 250000
 

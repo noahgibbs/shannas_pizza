@@ -45,6 +45,17 @@ static xyz_sprite_spec gatefilesprites[] = {
    TOOLBOX_LEFT_WIDTH, TOOLBOX_TOP_HEIGHT + 2 * GATE_HEIGHT,
    GATE_WIDTH, GATE_HEIGHT,
    &gate_target_methods, EVENTS, (void*)GATE_TYPE_NOT},
+  {"",
+   TOOLBOX_LEFT_WIDTH + GATE_WIDTH, TOOLBOX_TOP_HEIGHT, GATE_WIDTH, GATE_HEIGHT,
+   &gate_target_methods, EVENTS, (void*)(GATE_MOD_UPSIDE_DOWN|GATE_TYPE_AND)},
+  {"",
+   TOOLBOX_LEFT_WIDTH + GATE_WIDTH, TOOLBOX_TOP_HEIGHT + GATE_HEIGHT,
+   GATE_WIDTH, GATE_HEIGHT,
+   &gate_target_methods, EVENTS, (void*)(GATE_MOD_UPSIDE_DOWN|GATE_TYPE_OR)},
+  {"",
+   TOOLBOX_LEFT_WIDTH + GATE_WIDTH, TOOLBOX_TOP_HEIGHT + 2 * GATE_HEIGHT,
+   GATE_WIDTH, GATE_HEIGHT,
+   &gate_target_methods, EVENTS, (void*)(GATE_MOD_UPSIDE_DOWN|GATE_TYPE_NOT)},
   { NULL }
 };
 
@@ -115,7 +126,7 @@ static void gate_connector_process(connector *conn) {
   if(conn->num_inputs > 1)
     input2 = conn->inputs[1]->signal == signal_one;
 
-  switch(type) {
+  switch(type & GATE_TYPE_MASK) {
   case GATE_TYPE_OR:
     output = input1 | input2;
     break;
@@ -126,7 +137,7 @@ static void gate_connector_process(connector *conn) {
     output = !input1;
     break;
   default:
-    xyz_fatal_error("Unknown gate type!");
+    xyz_fatal_error("Unknown gate type '%d'!", type & GATE_TYPE_MASK);
   }
 
   conn->outputs[0]->calculated_signal = (output ? signal_one : signal_zero);
@@ -146,7 +157,7 @@ static void basic_gate_draw(xyz_sprite *sprite) {
   int y = xyz_sprite_get_y(sprite);
   int type = (int)xyz_sprite_get_user_info(sprite);
 
-  switch(type) {
+  switch(type & GATE_TYPE_MASK) {
   case GATE_TYPE_AND:
     xyz_draw_image(andor_gate_image, x, y);
     xyz_color(128, 128, 128);
@@ -163,7 +174,7 @@ static void basic_gate_draw(xyz_sprite *sprite) {
     xyz_draw_image(not_gate_image, x, y);
     break;
   default:
-    xyz_fatal_error("Unknown gate type!");
+    xyz_fatal_error("Unknown gate type '%d/%d'!", type, type & GATE_TYPE_MASK);
   }
 }
 
@@ -217,7 +228,7 @@ static void gate_create_connector(xyz_sprite *sprite) {
   connector_type *conn_type;
   int num_inputs;
 
-  switch(type) {
+  switch(type & GATE_TYPE_MASK) {
   case GATE_TYPE_AND:
   case GATE_TYPE_OR:
     conn_type = &andor_gate_conn_type;
@@ -226,7 +237,7 @@ static void gate_create_connector(xyz_sprite *sprite) {
     conn_type = &not_gate_conn_type;
     break;
   default:
-    xyz_fatal_error("Unknown gate type!");
+    xyz_fatal_error("Unknown gate type '%d'!", type & GATE_TYPE_MASK);
   }
   num_inputs = conn_type->max_inputs;
 
