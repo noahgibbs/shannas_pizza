@@ -12,7 +12,7 @@
 
 #define xyz_fatal_error(format, args...) \
   { \
-    fprintf(stderr, format "\n", ##args); \
+    fprintf(stderr, "%s:%d *** " format "\n", __FILE__, __LINE__, ##args); \
     exit(-1); \
   }
 
