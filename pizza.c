@@ -8,8 +8,8 @@
 #include "pizza.h"
 #include "connectors.h"
 
-#define CURSOR_FILE            "images/cursor_small.png"
-/* #define DRAGGING_CURSOR_FILE   "images/dragging_cursor.png" */
+#define CURSOR_FILE            "resources/cursor_small.png"
+/* #define DRAGGING_CURSOR_FILE   "resources/dragging_cursor.png" */
 
 connector_set *pizza_connector_set = NULL;
 

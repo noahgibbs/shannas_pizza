@@ -10,11 +10,11 @@ static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
                  1, 1, 1, 1, 1, 1, 1, 1 }
 
 static xyz_sprite_spec toppingsprites[] = {
-  { "images/sausage_small_white.png", 50, 425, 32, 32,
+  { "resources/sausage_small_white.png", 50, 425, 32, 32,
     &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
-  { "images/pepper_small_white.png", 130, 450, 32, 32,
+  { "resources/pepper_small_white.png", 130, 450, 32, 32,
     &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
-  { "images/pineapple_small_white.png", 210, 425, 32, 32,
+  { "resources/pineapple_small_white.png", 210, 425, 32, 32,
     &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
   { NULL }
 };

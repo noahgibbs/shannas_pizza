@@ -67,7 +67,7 @@ void xyz_start(void) {
   if(TTF_Init() == -1)
     xyz_fatal_error("Couldn't initialize SDL_ttf: %s.\n",
 		    TTF_GetError());
-  sanskrit_font_20 = TTF_OpenFont("sanskrit.ttf", 20);
+  sanskrit_font_20 = TTF_OpenFont("resources/sanskrit.ttf", 20);
   if(!sanskrit_font_20)
     xyz_fatal_error("Couldn't open font file: %s!\n",
 		    TTF_GetError());

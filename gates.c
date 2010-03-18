@@ -69,8 +69,8 @@ static xyz_image *andor_gate_image = NULL;
 static xyz_image *not_gate_image = NULL;
 
 void init_gate_sprites(void) {
-  andor_gate_image = xyz_load_image("images/base_gate_small.png");
-  not_gate_image = xyz_load_image("images/not_gate_small.png");
+  andor_gate_image = xyz_load_image("resources/base_gate_small.png");
+  not_gate_image = xyz_load_image("resources/not_gate_small.png");
 
   xyz_sprites_from_specs(-1, gatefilesprites);
 
