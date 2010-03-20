@@ -4,3 +4,4 @@ test/test_conn
 pizza
 current_mode.txt
 fullscreen_modes.txt
+win32/*.exe
