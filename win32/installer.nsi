@@ -1,6 +1,6 @@
 # define name of installer
 !searchparse ${__DATE__} `` MONTH `/` DAY `/` YEAR
-outFile "shannas_pizza_${YEAR}${MONTH}${DAY}.exe"
+outFile "shannas_pizza_demo_${YEAR}_${MONTH}_${DAY}.exe"
 
 # define installation directory
 installDir "$DESKTOP\shannas_pizza"
