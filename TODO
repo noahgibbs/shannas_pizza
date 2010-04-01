@@ -7,8 +7,6 @@ Make program full-screen, with coordinates recentered somehow
 
 Merge inputs with outputs into a single connection structure.
 
-Add upside-down gates
-
 Add splitters (nodes, in Robot Odyssey parlance)
 
 Add "continue propagating" flag to use with _process() function
