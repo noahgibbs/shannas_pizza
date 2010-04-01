@@ -14,30 +14,25 @@ section
     # create the uninstaller
     writeUninstaller "$INSTDIR\uninstall.exe"
 
-    # create a shortcut named "new shortcut" in the start menu programs directory
-    # point the new shortcut at the program uninstaller
-    createShortCut "$SMPROGRAMS\Uninstall Shannas Pizza.lnk" "$INSTDIR\uninstall.exe"
+    CreateDirectory "$SMPROGRAMS\Shanna's Daddy Software"
+    createShortCut "$SMPROGRAMS\Shanna's Daddy Software\Shanna's Pizza.lnk" "$INSTDIR\pizza.exe"
+    createShortCut "$SMPROGRAMS\Shanna's Daddy Software\Shanna's Pizza (full-screen).lnk" "$INSTDIR\pizza.exe --fullscreen"
+    createShortCut "$SMPROGRAMS\Shanna's Daddy Software\Uninstall Shanna's Pizza.lnk" "$INSTDIR\uninstall.exe"
 
     #MkDir "$INSTDIR/resources"
 
     file /r ..\resources
     file pizza.exe
     file dlls\*.dll
+    file dlls\*.exe
 sectionEnd
 
 # uninstaller section start
 section "uninstall"
 
-    # first, delete the uninstaller
-    delete "$INSTDIR\uninstall.exe"
-
     # second, remove the link from the start menu
-    delete "$SMPROGRAMS\Uninstall Shannas Pizza.lnk"
+    RmDir /r "$SMPROGRAMS\Shanna's Daddy Software"
 
-    delete "$INSTDIR\resources\*.*"
-    RMDir "$INSTDIR\resources"
-
-    delete "$INSTDIR\*.*"
-    RMDir $INSTDIR
+    RMDir /r $INSTDIR
 # uninstaller section end
 sectionEnd
