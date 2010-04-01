@@ -19,6 +19,9 @@ struct _xyz_sprite_t {
 
   int hidden;
 
+  /* Auxiliary surfaces - rotated and whatnot */
+  xyz_image *upside_down_image;
+
   struct _xyz_sprite_t *next;
   struct _xyz_sprite_t *prev;
 
@@ -141,6 +144,16 @@ void xyz_draw_sprite(xyz_sprite *sprite) {
     sprite->methods->draw(sprite);
   } else if(sprite->image) {
     xyz_draw_image(sprite->image, sprite->x, sprite->y);
+  } else {
+    xyz_fatal_error("There's no way to draw sprite %p!\n", sprite);
+  }
+}
+
+void xyz_draw_sprite_upside_down(xyz_sprite *sprite) {
+  if(sprite->methods && sprite->methods->draw) {
+    xyz_fatal_error("Haven't implemented graphics context yet!");
+  } else if(sprite->image) {
+    xyz_draw_image(sprite->upside_down_image, sprite->x, sprite->y);
   } else {
     xyz_fatal_error("There's no way to draw sprite %p!\n", sprite);
   }

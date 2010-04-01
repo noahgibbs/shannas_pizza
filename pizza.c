@@ -95,6 +95,10 @@ void draw(void) {
   xyz_done_drawing();
 }
 
+void start_screen_flash(void) {
+
+}
+
 void shutdown(void) {
   xyz_custom_cursor_from_file(NULL, 0, 0);
   shutdown_connectors();
@@ -107,8 +111,10 @@ void shutdown(void) {
 void keyhandler(const char *keyname, int down) {
   if(!strcasecmp(keyname, "q"))
     exit(0);
-  if(!strcasecmp(keyname, "m") && down == 1)
+  else if(!strcasecmp(keyname, "m") && down == 1)
     show_mousebox = !show_mousebox;
+  else
+    start_screen_flash();
 }
 
 int mouse_move_handler(int x, int y) {
@@ -163,7 +169,9 @@ void drag_to_connect(xyz_sprite *from_sprite,
 }
 
 int mouse_button_handler(int button, int is_down) {
-  if(button == 1) {
+  if(button != 1) {
+    start_screen_flash();
+  } else {  /* Button is 1 */
     int x, y;
     conn_input *input;
     conn_output *output;
@@ -301,7 +309,7 @@ void main_loop(void) {
     xyz_process_events();
     process_events();
     draw();
-    usleep(100);
+    usleep(50);
     do_calculations();
   }
 }

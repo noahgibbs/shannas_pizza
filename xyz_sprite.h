@@ -66,6 +66,7 @@ void xyz_sprites_from_specs(int num, xyz_sprite_spec *specs);
 void xyz_free_sprite(xyz_sprite *sprite);
 void xyz_free_all_sprites(void);
 void xyz_draw_sprite(xyz_sprite *sprite);
+void xyz_draw_sprite_upside_down(xyz_sprite *sprite);
 void xyz_draw_sprites(void);  /* Draw all sprites */
 
 void xyz_sprite_set_x(xyz_sprite *sprite, int x);

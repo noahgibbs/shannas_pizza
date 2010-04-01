@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "SDL_rotozoom.h"
 
 #include "xyz.h"
 #include "xyz_sprite.h"
@@ -209,6 +210,12 @@ void xyz_draw_image(xyz_image *image, int x, int y)
     dest.w = image->image->w;
     dest.h = image->image->h;
     SDL_BlitSurface(image->image, NULL, surface, &dest);
+}
+
+xyz_image *xyz_turn_image(xyz_image *source, int num_turns_clockwise) {
+  xyz_image *ret = xyz_new(xyz_image);
+  ret->image = rotateSurface90Degrees(source->image, 2);
+  return ret;
 }
 
 void xyz_free_image(xyz_image *image) {

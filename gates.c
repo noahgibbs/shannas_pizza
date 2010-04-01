@@ -67,10 +67,15 @@ static xyz_sprite_spec gatesprites[] = {
 static xyz_sprite *toolbox_sprite = NULL;
 static xyz_image *andor_gate_image = NULL;
 static xyz_image *not_gate_image = NULL;
+static xyz_image *flipped_andor_gate_image = NULL;
+static xyz_image *flipped_not_gate_image = NULL;
 
 void init_gate_sprites(void) {
   andor_gate_image = xyz_load_image("resources/base_gate_small.png");
   not_gate_image = xyz_load_image("resources/not_gate_small.png");
+
+  flipped_andor_gate_image = xyz_turn_image(andor_gate_image, 2);
+  flipped_not_gate_image = xyz_turn_image(not_gate_image, 2);
 
   xyz_sprites_from_specs(-1, gatefilesprites);
 
@@ -157,11 +162,19 @@ static void basic_gate_draw(xyz_sprite *sprite) {
   int y = xyz_sprite_get_y(sprite);
   int type = (int)xyz_sprite_get_user_info(sprite);
 
-  switch(type & GATE_TYPE_MASK) {
+  switch(type) {
   case GATE_TYPE_AND:
     xyz_draw_image(andor_gate_image, x, y);
     xyz_color(128, 128, 128);
     xyz_rectangle(x + AND_CROSSBAR_WIDTH_OFFSET, y + AND_CROSSBAR_OFF_HEIGHT,
+		  AND_CROSSBAR_WIDTH, AND_CROSSBAR_HEIGHT);
+    break;
+  case (GATE_TYPE_AND | GATE_MOD_UPSIDE_DOWN):
+    xyz_draw_image(flipped_andor_gate_image, x, y);
+    xyz_color(128, 128, 128);
+    xyz_rectangle(x + AND_CROSSBAR_WIDTH_OFFSET,
+		  y + GATE_HEIGHT - AND_CROSSBAR_OFF_HEIGHT -
+		    AND_CROSSBAR_HEIGHT,
 		  AND_CROSSBAR_WIDTH, AND_CROSSBAR_HEIGHT);
     break;
   case GATE_TYPE_OR:
@@ -170,8 +183,18 @@ static void basic_gate_draw(xyz_sprite *sprite) {
     xyz_rectangle(x + OR_CROSSBAR_WIDTH_OFFSET, y + OR_CROSSBAR_OFF_HEIGHT,
 		  OR_CROSSBAR_WIDTH, OR_CROSSBAR_HEIGHT);
     break;
+  case (GATE_TYPE_OR | GATE_MOD_UPSIDE_DOWN):
+    xyz_draw_image(flipped_andor_gate_image, x, y);
+    xyz_color(128, 0, 180);
+    xyz_rectangle(x + OR_CROSSBAR_WIDTH_OFFSET,
+		  y + GATE_HEIGHT - OR_CROSSBAR_OFF_HEIGHT - OR_CROSSBAR_HEIGHT,
+		  OR_CROSSBAR_WIDTH, OR_CROSSBAR_HEIGHT);
+    break;
   case GATE_TYPE_NOT:
     xyz_draw_image(not_gate_image, x, y);
+    break;
+  case (GATE_TYPE_NOT | GATE_MOD_UPSIDE_DOWN):
+    xyz_draw_image(flipped_not_gate_image, x, y);
     break;
   default:
     xyz_fatal_error("Unknown gate type '%d/%d'!", type, type & GATE_TYPE_MASK);
@@ -227,7 +250,9 @@ static void gate_create_connector(xyz_sprite *sprite) {
   int type = (int)xyz_sprite_get_user_info(sprite);
   connector_type *conn_type;
   int num_inputs;
+  int upside_down;
 
+  upside_down = !!(type & GATE_MOD_UPSIDE_DOWN);
   switch(type & GATE_TYPE_MASK) {
   case GATE_TYPE_AND:
   case GATE_TYPE_OR:
@@ -245,7 +270,7 @@ static void gate_create_connector(xyz_sprite *sprite) {
 			     (void*)sprite);
   output = connector_new_output(priv->conn);
   opriv->x = GATE_WIDTH / 2;
-  opriv->y = 0;
+  opriv->y = upside_down ? GATE_HEIGHT : 0;
   output->user_info = (void*)opriv;
 
   input1 = connector_new_input(priv->conn);
@@ -254,13 +279,13 @@ static void gate_create_connector(xyz_sprite *sprite) {
   } else {
     ipriv1->x = 0;
   }
-  ipriv1->y = GATE_HEIGHT;
+  ipriv1->y = upside_down ? 0 : GATE_HEIGHT;
   input1->user_info = (void*)ipriv1;
 
   if(num_inputs > 1) {
     input2 = connector_new_input(priv->conn);
     ipriv2->x = GATE_WIDTH;
-    ipriv2->y = GATE_HEIGHT;
+    ipriv2->y = upside_down ? 0 : GATE_HEIGHT;
     input2->user_info = (void*)ipriv2;
   }
 }
