@@ -1,5 +1,6 @@
 #include "xyz.h"
 #include <math.h>
+#include <sys/time.h>
 
 int xyz_point_distance(int x1, int y1, int x2, int y2) {
   int xdist = x2 - x1;
@@ -8,19 +9,19 @@ int xyz_point_distance(int x1, int y1, int x2, int y2) {
   return (int)sqrt(xdist * xdist + ydist * ydist);
 }
 
-void xyz_timespec_minus(struct timespec *diff, struct timespec *ts1,
-			struct timespec *ts2) {
+void xyz_timeval_minus(struct timeval *diff, struct timeval *tv1,
+		       struct timeval *tv2) {
   long int secs;
-  long int nsecs;
+  long int usecs;
 
-  secs = ts1->tv_sec - ts2->tv_sec;
-  nsecs = ts1->tv_nsec - ts2->tv_nsec;
+  secs = tv1->tv_sec - tv2->tv_sec;
+  usecs = tv1->tv_usec - tv2->tv_usec;
 
-  if(nsecs < 0) {
-    nsecs += 1000000000;
+  if(usecs < 0) {
+    usecs += 1000000;
     secs--;
   }
 
   diff->tv_sec = secs;
-  diff->tv_nsec = nsecs;
+  diff->tv_usec = usecs;
 }

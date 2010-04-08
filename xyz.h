@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>  /* for exit(), invoked from macros */
 #include <time.h>
+#include <sys/time.h>
 
 #define xyz_fatal_error(format, args...) \
   { \

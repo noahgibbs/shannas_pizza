@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <sys/time.h>
 
 #define ANIM_CREATED    1
 #define ANIM_STARTED    2
@@ -10,9 +12,9 @@
 
 struct _xyz_anim_t {
   /* TODO: add state - started, stopped, etc */
-  struct timespec start_time;
-  struct timespec current_time;
-  struct timespec duration;
+  struct timeval start_time;
+  struct timeval current_time;
+  struct timeval duration;
   int repeat;
   int n_variables;
   xyz_variable **variables;
@@ -36,10 +38,10 @@ void xyz_anim_periodic(void) {
   xyz_anim *index = head;
   xyz_anim *index_next = NULL;
   long millisecs;
-  struct timespec current;
-  struct timespec diff;
+  struct timeval current;
+  struct timeval diff;
 
-  if(clock_gettime(CLOCK_REALTIME, &current)) {
+  if(gettimeofday(&current, NULL)) {
     xyz_fatal_error("Can't get time when evaluating animation!");
   }
 
@@ -47,8 +49,8 @@ void xyz_anim_periodic(void) {
     index_next = index->next;
 
     if(index->state == ANIM_STARTED) {
-      xyz_timespec_minus(&diff, &current, &index->start_time);
-      millisecs = diff.tv_nsec / 1000000;
+      xyz_timeval_minus(&diff, &current, &index->start_time);
+      millisecs = diff.tv_usec / 1000;
       xyz_anim_frame(index, diff.tv_sec, millisecs);
     }
 
@@ -78,12 +80,12 @@ xyz_anim* xyz_anim_create(xyz_anim_spec *spec, void *user_info) {
   ret->draw = spec->draw;
 
   ret->duration.tv_sec = spec->duration_seconds;
-  ret->duration.tv_nsec = spec->duration_milliseconds * 1000000;
+  ret->duration.tv_usec = spec->duration_milliseconds * 1000;
   ret->repeat = spec->repeat;
 
   ret->user_info = user_info;
 
-  clock_gettime(CLOCK_REALTIME, &ret->current_time);
+  gettimeofday(&ret->current_time, NULL);
 
   ret->next = head;
   head = ret;
@@ -103,7 +105,7 @@ void* xyz_anim_get_user_info(xyz_anim *anim) {
 }
 
 void xyz_anim_start(xyz_anim *anim) {
-  clock_gettime(CLOCK_REALTIME, &anim->start_time);
+  gettimeofday(&anim->start_time, NULL);
 
   if(anim->start)
     anim->start(anim);
@@ -118,7 +120,7 @@ void xyz_anim_evaluate(xyz_anim *anim) {
 
 void xyz_anim_frame(xyz_anim *anim, long seconds, long milliseconds) {
   anim->current_time.tv_sec = seconds;
-  anim->current_time.tv_nsec = milliseconds * 1000000;
+  anim->current_time.tv_usec = milliseconds * 1000;
   if(anim->evaluate)
     anim->evaluate(anim);
 }
