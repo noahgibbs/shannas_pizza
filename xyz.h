@@ -55,7 +55,7 @@ void xyz_free_image(xyz_image *image);
 /* Utils */
 
 int xyz_point_distance(int x1, int y1, int x2, int y2);
-void xyz_timespec_minus(struct timespec *diff, struct timespec *ts1,
-			struct timespec *ts2);
+void xyz_timeval_minus(struct timeval *diff, struct timeval *ts1,
+		       struct timeval *ts2);
 
 #endif /* __XYZ_H__ */

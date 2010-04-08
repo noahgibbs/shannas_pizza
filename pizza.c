@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/time.h>
 
 #include "xyz.h"
@@ -262,26 +263,26 @@ void process_events(void) {
   }
 }
 
-static struct timespec last_process = { 0, 0 };
+static struct timeval last_process = { 0, 0 };
 
 void do_calculations(void) {
-  struct timespec ts;
-  struct timespec diff;
-  long long int nsecs;
+  struct timeval tv;
+  struct timeval diff;
+  long int usecs;
 
-  if(clock_gettime(CLOCK_REALTIME, &ts))
+  if(gettimeofday(&tv, NULL))
     xyz_fatal_error("Couldn't get time when calculating!");
 
   if(last_process.tv_sec == 0) {
-    last_process = ts;
+    last_process = tv;
     connector_set_process(pizza_connector_set);
     return;
   }
 
-  xyz_timespec_minus(&diff, &ts, &last_process);
-  nsecs = diff.tv_sec * 1000000000 + diff.tv_nsec;
-  if(nsecs > GATE_DELAY_NSECS) {
-    last_process = ts;
+  xyz_timeval_minus(&diff, &tv, &last_process);
+  usecs = diff.tv_sec * 1000000 + diff.tv_usec;
+  if(usecs > GATE_DELAY_USECS) {
+    last_process = tv;
     connector_set_process(pizza_connector_set);
     return;
   }

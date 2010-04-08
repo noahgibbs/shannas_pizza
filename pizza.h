@@ -49,7 +49,7 @@
 
 #define GATE_MOD_UPSIDE_DOWN   128
 
-#define GATE_DELAY_NSECS 250000000
+#define GATE_DELAY_USECS 250000
 
 /* Structures */
 
