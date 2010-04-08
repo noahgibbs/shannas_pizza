@@ -3,21 +3,25 @@
 When an invalid key or mouse button is hit, flash the screen or respond
 in some way.  Provide an option to turn this off, perhaps (or not).
 
-Make program full-screen, with coordinates recentered somehow
-
-Merge inputs with outputs into a single connection structure.
-
 Add splitters (nodes, in Robot Odyssey parlance)
-
-Add "continue propagating" flag to use with _process() function
 
 Figure out how to draw wires better
 
 Wires slowly (or quickly?) change color?
 
-Re-lay-out screen coords
+==== Eventual
+
+Make program full-screen, with coordinates recentered somehow
+
+Merge inputs with outputs into a single connection structure.
+
+Add "continue propagating" flag to use with _process() function
 
 ========= XYZ TODO:
+
+Animations and variables
+
+==== Eventual
 
 Allow Z-reordering of sprites
 
