@@ -14,6 +14,7 @@ struct _xyz_anim_t {
   /* TODO: add state - started, stopped, etc */
   struct timeval start_time;
   struct timeval current_time;
+  double current_ratio;
   struct timeval duration;
   int repeat;
   int n_variables;
@@ -86,6 +87,7 @@ xyz_anim* xyz_anim_create(xyz_anim_spec *spec, void *user_info) {
   ret->user_info = user_info;
 
   gettimeofday(&ret->current_time, NULL);
+  ret->current_ratio = 0.0;
 
   ret->next = head;
   head = ret;
@@ -104,8 +106,14 @@ void* xyz_anim_get_user_info(xyz_anim *anim) {
   return anim->user_info;
 }
 
+double xyz_anim_get_current_ratio(xyz_anim *anim) {
+  return anim->current_ratio;
+}
+
 void xyz_anim_start(xyz_anim *anim) {
   gettimeofday(&anim->start_time, NULL);
+  gettimeofday(&anim->current_time, NULL);
+  anim->current_ratio = 0.0;
 
   if(anim->start)
     anim->start(anim);
@@ -119,8 +127,28 @@ void xyz_anim_evaluate(xyz_anim *anim) {
 }
 
 void xyz_anim_frame(xyz_anim *anim, long seconds, long milliseconds) {
+  long current_milli;
+  long duration_milli;
+
+  if(seconds > anim->duration.tv_sec ||
+     (seconds == anim->duration.tv_sec && milliseconds >
+      (anim->duration.tv_usec / 1000))) {
+    /* Exceeded duration */
+    if(anim->repeat) {
+      xyz_anim_start(anim);
+    } else {
+      xyz_anim_delete(anim);
+    }
+    return;
+  }
+
   anim->current_time.tv_sec = seconds;
   anim->current_time.tv_usec = milliseconds * 1000;
+  current_milli = seconds * 1000 + milliseconds;
+  duration_milli = anim->duration.tv_sec * 1000 +
+    (anim->duration.tv_usec / 1000);
+  anim->current_ratio = (double)current_milli / duration_milli;
+
   if(anim->evaluate)
     anim->evaluate(anim);
 }

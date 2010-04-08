@@ -88,6 +88,9 @@ void drag_to_connect(xyz_sprite *from_sprite,
 		     conn_output *from_output,
 		     int from_x, int from_y);
 void wire_from_to(int from_x, int from_y, int to_x, int to_y);
+
+/* simple_anim.c */
+void screen_draw_background(void);
 void start_screen_flash(void);
 
 /* From sprites.c */

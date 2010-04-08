@@ -59,8 +59,6 @@ static conn_input *drag_input = NULL;
 static conn_output *drag_output = NULL;
 
 
-extern xyz_anim *screen_background_anim;
-
 void wire_from_to(int from_x, int from_y, int to_x, int to_y) {
     xyz_rectangle_coords(from_x, from_y, from_x + 1, to_y);
     xyz_rectangle_coords(from_x, to_y, to_x, to_y + 1);
@@ -71,8 +69,7 @@ void draw(void) {
 
   xyz_mouse_position(&x, &y);
 
-  xyz_color(0, 0, 0);
-  xyz_fill();
+  screen_draw_background();
 
   /* Conveyor box */
   xyz_color(255, 0, 0);
@@ -99,10 +96,6 @@ void draw(void) {
   xyz_done_drawing();
 }
 
-void start_screen_flash(void) {
-
-}
-
 void shutdown(void) {
   xyz_custom_cursor_from_file(NULL, 0, 0);
   shutdown_connectors();
@@ -117,7 +110,7 @@ void keyhandler(const char *keyname, int down) {
     exit(0);
   else if(!strcasecmp(keyname, "m") && down == 1)
     show_mousebox = !show_mousebox;
-  else
+  else if(down)
     start_screen_flash();
 }
 
