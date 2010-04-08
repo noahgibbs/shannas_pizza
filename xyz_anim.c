@@ -1,0 +1,167 @@
+#include "xyz_anim.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ANIM_CREATED    1
+#define ANIM_STARTED    2
+#define ANIM_STOPPED    3
+
+struct _xyz_anim_t {
+  /* TODO: add state - started, stopped, etc */
+  struct timespec start_time;
+  struct timespec current_time;
+  struct timespec duration;
+  int repeat;
+  int n_variables;
+  xyz_variable **variables;
+  void *user_info;
+  xyz_anim *next;
+  xyz_anim *prev;
+  int state;
+
+  xyz_anim_func construct;
+  xyz_anim_func destroy;
+  xyz_anim_func start;
+  xyz_anim_func stop;
+  xyz_anim_func evaluate;
+  xyz_anim_func draw;
+};
+
+static xyz_anim *head = NULL;
+static xyz_anim *tail = NULL;
+
+void xyz_anim_periodic(void) {
+  xyz_anim *index = head;
+  xyz_anim *index_next = NULL;
+  long millisecs;
+  struct timespec current;
+  struct timespec diff;
+
+  if(clock_gettime(CLOCK_REALTIME, &current)) {
+    xyz_fatal_error("Can't get time when evaluating animation!");
+  }
+
+  while(index) {
+    index_next = index->next;
+
+    if(index->state == ANIM_STARTED) {
+      xyz_timespec_minus(&diff, &current, &index->start_time);
+      millisecs = diff.tv_nsec / 1000000;
+      xyz_anim_frame(index, diff.tv_sec, millisecs);
+    }
+
+    index = index_next;
+  }
+}
+
+void xyz_anim_delete_all(void) {
+  xyz_anim *index = head;
+  xyz_anim *index_next = NULL;
+
+  while(index) {
+    index_next = index->next;
+    xyz_anim_delete(index);
+    index = index_next;
+  }
+}
+
+xyz_anim* xyz_anim_create(xyz_anim_spec *spec, void *user_info) {
+  xyz_anim *ret = xyz_new(xyz_anim);
+
+  ret->construct = spec->construct;
+  ret->destroy = spec->destroy;
+  ret->start = spec->start;
+  ret->stop = spec->stop;
+  ret->evaluate = spec->evaluate;
+  ret->draw = spec->draw;
+
+  ret->duration.tv_sec = spec->duration_seconds;
+  ret->duration.tv_nsec = spec->duration_milliseconds * 1000000;
+  ret->repeat = spec->repeat;
+
+  ret->user_info = user_info;
+
+  clock_gettime(CLOCK_REALTIME, &ret->current_time);
+
+  ret->next = head;
+  head = ret;
+
+  if(!tail) tail = ret;
+
+  if(ret->construct)
+    ret->construct(ret);
+
+  ret->state = ANIM_CREATED;
+
+  return ret;
+}
+
+void* xyz_anim_get_user_info(xyz_anim *anim) {
+  return anim->user_info;
+}
+
+void xyz_anim_start(xyz_anim *anim) {
+  clock_gettime(CLOCK_REALTIME, &anim->start_time);
+
+  if(anim->start)
+    anim->start(anim);
+
+  anim->state = ANIM_STARTED;
+}
+
+void xyz_anim_evaluate(xyz_anim *anim) {
+  if(anim->evaluate)
+    anim->evaluate(anim);
+}
+
+void xyz_anim_frame(xyz_anim *anim, long seconds, long milliseconds) {
+  anim->current_time.tv_sec = seconds;
+  anim->current_time.tv_nsec = milliseconds * 1000000;
+  if(anim->evaluate)
+    anim->evaluate(anim);
+}
+
+void xyz_anim_draw(xyz_anim *anim) {
+  if(anim->draw)
+    anim->draw(anim);
+}
+
+void xyz_anim_stop(xyz_anim *anim) {
+  if(anim->stop)
+    anim->stop(anim);
+
+  anim->state = ANIM_STOPPED;
+}
+
+void xyz_anim_delete(xyz_anim *anim) {
+  int i;
+
+  if(anim->destroy)
+    anim->destroy(anim);
+
+  anim->state = 0;  /* Invalid */
+
+  /* Destroy variables */
+  for(i = 0; i < anim->n_variables; i++) {
+    free(anim->variables[i]);
+  }
+  if(anim->variables) free(anim->variables);
+
+  if(anim->prev)
+    anim->prev->next = anim->next;
+  if(anim->next)
+    anim->next->prev = anim->prev;
+  if(tail == anim)
+    tail = anim->prev;
+  if(head == anim)
+    head = anim->next;
+
+  free(anim);
+}
+
+void xyz_anim_add_variable(xyz_anim *anim, xyz_variable *variable) {
+  anim->n_variables++;
+  anim->variables = realloc(anim->variables, sizeof(xyz_variable*) * anim->n_variables);
+}

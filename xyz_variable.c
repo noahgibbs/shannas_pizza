@@ -16,8 +16,8 @@ struct _xyz_variable_t {
   xyz_variable *prev;
 };
 
-xyz_variable *head = NULL;
-xyz_variable *tail = NULL;
+static xyz_variable *head = NULL;
+static xyz_variable *tail = NULL;
 
 xyz_variable *xyz_variable_by_name(const char *name) {
   xyz_variable *index = head;
@@ -86,9 +86,10 @@ static const double* linear_interp(xyz_variable *var, double time) {
 }
 
 static xyz_interpolation_function method_to_function(int interpolation_method) {
-  if(interpolation_method != XYZ_INTERP_LINEAR)
-    xyz_fatal_error("Unimplemented interpolation method!");
-  return linear_interp;
+  if(interpolation_method == XYZ_INTERP_LINEAR)
+    return linear_interp;
+
+  xyz_fatal_error("Unimplemented interpolation method!");
 }
 
 xyz_variable *xyz_variable1_new(const char *name, double duration,

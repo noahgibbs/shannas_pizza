@@ -5,6 +5,7 @@
 
 #include "xyz.h"
 #include "xyz_sprite.h"
+#include "xyz_anim.h"
 #include "pizza.h"
 #include "connectors.h"
 
@@ -56,6 +57,8 @@ static connector *drag_connector = NULL;
 static conn_input *drag_input = NULL;
 static conn_output *drag_output = NULL;
 
+
+extern xyz_anim *screen_background_anim;
 
 void wire_from_to(int from_x, int from_y, int to_x, int to_y) {
     xyz_rectangle_coords(from_x, from_y, from_x + 1, to_y);
@@ -259,43 +262,26 @@ void process_events(void) {
   }
 }
 
-static void timeval_minus(struct timeval *diff, struct timeval *tv1,
-			  struct timeval *tv2) {
-  long int usecs;
-  long int secs;
-
-  secs = tv1->tv_sec - tv2->tv_sec;
-  usecs = tv1->tv_usec - tv2->tv_usec;
-
-  if(usecs < 0) {
-    usecs += 1000000;
-    secs--;
-  }
-
-  diff->tv_sec = secs;
-  diff->tv_usec = usecs;
-}
-
-static struct timeval last_process = { 0, 0 };
+static struct timespec last_process = { 0, 0 };
 
 void do_calculations(void) {
-  struct timeval tv;
-  struct timeval diff;
-  long int usecs;
+  struct timespec ts;
+  struct timespec diff;
+  long long int nsecs;
 
-  if(gettimeofday(&tv, NULL))
-    xyz_fatal_error("Couldn't get time!");
+  if(clock_gettime(CLOCK_REALTIME, &ts))
+    xyz_fatal_error("Couldn't get time when calculating!");
 
   if(last_process.tv_sec == 0) {
-    last_process = tv;
+    last_process = ts;
     connector_set_process(pizza_connector_set);
     return;
   }
 
-  timeval_minus(&diff, &tv, &last_process);
-  usecs = diff.tv_sec * 1000000 + diff.tv_usec;
-  if(usecs > GATE_DELAY_USECS) {
-    last_process = tv;
+  xyz_timespec_minus(&diff, &ts, &last_process);
+  nsecs = diff.tv_sec * 1000000000 + diff.tv_nsec;
+  if(nsecs > GATE_DELAY_NSECS) {
+    last_process = ts;
     connector_set_process(pizza_connector_set);
     return;
   }
