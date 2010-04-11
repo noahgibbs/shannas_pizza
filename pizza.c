@@ -166,7 +166,7 @@ void drag_to_connect(xyz_sprite *from_sprite,
 }
 
 int mouse_button_handler(int button, int is_down) {
-  if(button != 1) {
+  if(button != 1 && is_down) {
     start_screen_flash();
   } else {  /* Button is 1 */
     int x, y;

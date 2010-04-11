@@ -24,6 +24,7 @@ int screen_flash_draw(xyz_anim *anim) {
 
 int screen_flash_delete(xyz_anim *anim) {
   screen_background_anim = NULL;
+  return 0;
 }
 
 xyz_anim_spec screen_background_spec = {
@@ -31,8 +32,6 @@ xyz_anim_spec screen_background_spec = {
 };
 
 void start_screen_flash(void) {
-  fprintf(stderr, "Start screen flash!\n");
-
   if(screen_background_anim) {
     xyz_anim_delete(screen_background_anim);
     screen_background_anim = NULL;
