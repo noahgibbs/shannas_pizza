@@ -105,7 +105,13 @@ void shutdown(void) {
 
 /************ Event processing **************/
 
-void keyhandler(const char *keyname, int down) {
+void keyhandler(int keysym, const char *keyname, int down) {
+  if(keysym == 27 && down == 1) {  /* Esc key */
+    if(pizza_is_rolling())
+      esc_to_cancel();
+    return;
+  }
+
   if(!strcasecmp(keyname, "q"))
     exit(0);
   else if(!strcasecmp(keyname, "m") && down == 1)

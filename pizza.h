@@ -80,7 +80,7 @@ typedef struct {
 /* Prototypes */
 
 /* From pizza.c */
-void keyhandler(const char *keyname, int down);
+void keyhandler(int keysym, const char *keyname, int down);
 int mouse_move_handler(int x, int y);
 int mouse_button_handler(int button, int is_down);
 void drag_sprite(xyz_sprite *sprite);
@@ -127,6 +127,7 @@ int sp_has_topping(const char *topping_name);
 void start_pizzas_rolling();
 void roll_pizza_refresh(void);
 int pizza_is_rolling(void);
+void esc_to_cancel(void);
 
 /* Variables */
 

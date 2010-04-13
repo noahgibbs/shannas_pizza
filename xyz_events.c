@@ -34,9 +34,9 @@ static void buttonup_handler(xyz_sprite *sprite) {
   xyz_sprite_handle_event(sprite, event);
 }
 
-static void (*xyz_key_handler)(const char *key_name, int down);
+static void (*xyz_key_handler)(int keysym, const char *key_name, int down);
 
-void xyz_set_key_handler(void (*key_handler)(const char *key_name, int down)) {
+void xyz_set_key_handler(void (*key_handler)(int keysym, const char *key_name, int down)) {
   xyz_key_handler = key_handler;
 }
 
@@ -55,14 +55,14 @@ static void xyz_process_event(SDL_Event *eventp) {
   case SDL_KEYDOWN: {
     const char *keyname = SDL_GetKeyName(eventp->key.keysym.sym);
     if(xyz_key_handler) {
-      xyz_key_handler(keyname, 1);
+      xyz_key_handler((int)eventp->key.keysym.sym, keyname, 1);
     }
     break;
   }
   case SDL_KEYUP: {
     const char *keyname = SDL_GetKeyName(eventp->key.keysym.sym);
     if(xyz_key_handler) {
-      xyz_key_handler(keyname, 0);
+      xyz_key_handler(eventp->key.keysym.sym, keyname, 0);
     }
     break;
   }

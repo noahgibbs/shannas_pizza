@@ -5,8 +5,10 @@
 
 #include "pizza.h"
 
-static void start_roll_pizza(int topping_mask,
-			     int start_x, int end_x, int duration_millis);
+static void start_roll_one_pizza(int topping_mask,
+				 int start_x, int end_x, int duration_millis);
+static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,
+				  int duration_millis);
 
 static xyz_anim *roll_pizza_anim = NULL;
 
@@ -18,7 +20,7 @@ void start_pizzas_rolling(void) {
     return;
   }
 
-  start_roll_pizza(7, 5, 280, 3000);
+  start_roll_all_pizzas(7, 5, 280, 3000);
 }
 
 void roll_pizza_refresh(void) {
@@ -33,6 +35,62 @@ int pizza_is_rolling(void) {
   return 0;
 }
 
+void esc_to_cancel(void) {
+  if(roll_pizza_anim) {
+    xyz_anim_delete(roll_pizza_anim);
+  }
+}
+
+/*** Tracking code to roll all pizzas, one after another ***/
+
+static int all_pizzas_topping_mask = -1;
+static int all_pizzas_index = -1;
+static int all_pizzas_start_x = -1;
+static int all_pizzas_end_x = -1;
+static int all_pizzas_millis = -1;
+
+static int next_all_pizzas_index(void) {
+  do {
+    all_pizzas_index++;
+  } while(((all_pizzas_index & all_pizzas_topping_mask) == 0)
+	  && all_pizzas_index < all_pizzas_topping_mask);
+
+  if(all_pizzas_index <= all_pizzas_topping_mask)
+    return all_pizzas_index;
+
+  return -1;
+}
+
+static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,
+				  int duration_millis) {
+  int idx;
+
+  all_pizzas_topping_mask = topping_mask;
+  all_pizzas_index = -1;
+  all_pizzas_start_x = start_x;
+  all_pizzas_end_x = end_x;
+  all_pizzas_millis = duration_millis;
+
+  idx = next_all_pizzas_index();
+  if(idx == -1) {
+    xyz_fatal_error("No valid indexes, but we're still rolling out pizzas!");
+  }
+
+  start_roll_one_pizza(idx, start_x, end_x, duration_millis);
+}
+
+static void roll_pizza_finished(void) {
+  int idx = next_all_pizzas_index();
+
+  if(idx == -1) {
+    fprintf(stderr, "Got to the end successfully!  Yay!\n");
+    return;
+  }
+
+  start_roll_one_pizza(idx, all_pizzas_start_x, all_pizzas_end_x,
+		       all_pizzas_millis);
+}
+
 /*** Animation to roll a single pizza a short distance ***/
 
 typedef struct roll_pizza_private_struct {
@@ -41,31 +99,32 @@ typedef struct roll_pizza_private_struct {
   int topping_mask;
 } roll_pizza_private;
 
-int roll_pizza_create(xyz_anim *anim) {
+static int roll_pizza_create(xyz_anim *anim) {
   return 0;
 }
 
-int roll_pizza_delete(xyz_anim *anim) {
+static int roll_pizza_delete(xyz_anim *anim) {
   roll_pizza_anim = NULL;
+  roll_pizza_finished();
   return 0;
 }
 
-int roll_pizza_start(xyz_anim *anim) {
+static int roll_pizza_start(xyz_anim *anim) {
   return 0;
 }
 
-int roll_pizza_stop(xyz_anim *anim) {
+static int roll_pizza_stop(xyz_anim *anim) {
   return 0;
 }
 
-int roll_pizza_eval(xyz_anim *anim) {
+static int roll_pizza_eval(xyz_anim *anim) {
   return 0;
 }
 
 static int topping_x_offset[] = { 10, 50, 25, -1 };
 static int topping_y_offset[] = { 25, 10, 60, -1 };
 
-int roll_pizza_draw(xyz_anim *anim) {
+static int roll_pizza_draw(xyz_anim *anim) {
   int cur_x, cur_y, i;
   double cur_ratio = xyz_anim_get_current_ratio(anim);
   roll_pizza_private *priv = xyz_anim_get_private_data(anim);
@@ -96,8 +155,8 @@ xyz_anim_spec roll_pizza_spec = {
   sizeof(roll_pizza_private)
 };
 
-static void start_roll_pizza(int topping_mask,
-			     int start_x, int end_x, int duration_millis) {
+static void start_roll_one_pizza(int topping_mask, int start_x, int end_x,
+				 int duration_millis) {
   roll_pizza_private *priv = NULL;
 
   roll_pizza_spec.duration_seconds = duration_millis / 1000;

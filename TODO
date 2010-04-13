@@ -3,7 +3,7 @@
 Pizza roll animation:
   - For each pizza type (topping combo)
     - Adjust signal from topping detectors, change appearance of same
-    - Roll pizza on conveyor to judgement spot
+    * Roll pizza on conveyor to judgement spot
     - Pause
     - If judged acceptable:
       - Roll pizza to eating spot
@@ -16,8 +16,6 @@ Pizza roll animation:
       - Frowny animation, possibly with hungry
       - Show unacceptable pizza toppings prominently
       - Stop all pizzas from rolling
-
-Add ESC-to-fast-forward on (each?) pizza rolling
 
 Start on last problem pizza?
 
