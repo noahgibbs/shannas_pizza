@@ -41,28 +41,15 @@ void draw_pizza(int x, int y) {
   xyz_draw_image(pizza_image, x, y);
 }
 
-int get_n_toppings(void) {
-  return 3;
-}
-
-static xyz_image* topping_images[] = { NULL, NULL, NULL, NULL };
-
-xyz_image** get_topping_images(void) {
-  if(topping_images[0]) {
-    return topping_images;
-  }
-
-  topping_images[0] = xyz_load_image("resources/sausage_small_trans.png");
-  topping_images[1] = xyz_load_image("resources/pepper_small_trans.png");
-  topping_images[2] = xyz_load_image("resources/pineapple_small_trans.png");
-
-  return topping_images;
-}
-
 static int hack = 0;
 
 static void topping_connector_process(connector *conn) {
   if(conn->num_outputs < 1) return;
+
+  if(pizza_is_rolling()) {
+    conn->outputs[0]->calculated_signal = get_signal_one();
+    return;
+  }
 
   /* Turn output on or off */
   hack++;

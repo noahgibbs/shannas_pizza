@@ -10,13 +10,36 @@ static void start_roll_pizza(int n_toppings, xyz_image **toppings,
 
 static xyz_anim *roll_pizza_anim = NULL;
 
-void start_pizzas_rolling(int n_toppings, xyz_image **toppings) {
+/*** APIs from other files ***/
+
+void start_pizzas_rolling(void) {
+  int n_toppings;
+  xyz_image **topping_images;
+
   if(roll_pizza_anim) {
     start_screen_flash();
+    return;
   }
 
-  start_roll_pizza(n_toppings, toppings, 5, 280, 3000);
+  n_toppings = sp_get_n_toppings();
+  topping_images = sp_get_topping_images();
+
+  start_roll_pizza(n_toppings, topping_images, 5, 280, 3000);
 }
+
+void roll_pizza_refresh(void) {
+  if(roll_pizza_anim)
+    xyz_anim_draw(roll_pizza_anim);
+}
+
+int pizza_is_rolling(void) {
+  if(roll_pizza_anim)
+    return 1;
+
+  return 0;
+}
+
+/*** Animation to roll a single pizza a short distance ***/
 
 typedef struct roll_pizza_private_struct {
   int start_x;
@@ -90,9 +113,4 @@ static void start_roll_pizza(int n_toppings, xyz_image **toppings,
   priv->n_toppings = n_toppings;
   priv->toppings = toppings;
   xyz_anim_start(roll_pizza_anim);
-}
-
-void roll_pizza_refresh(void) {
-  if(roll_pizza_anim)
-    xyz_anim_draw(roll_pizza_anim);
 }

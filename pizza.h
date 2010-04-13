@@ -115,12 +115,18 @@ void delete_toppings(void);
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void draw_pizza(int x, int y);
-int get_n_toppings(void);
-xyz_image** get_topping_images(void);
+
+/* From level.c */
+int sp_get_n_toppings(void);
+xyz_image** sp_get_topping_images(void);
+void sp_set_level(int level);
+void sp_next_level(void);
+int sp_has_topping(const char *topping_name);
 
 /* From roll_pizza_anim.c */
-void start_pizzas_rolling(int n_toppings, xyz_image **toppings);
+void start_pizzas_rolling();
 void roll_pizza_refresh(void);
+int pizza_is_rolling(void);
 
 /* Variables */
 
