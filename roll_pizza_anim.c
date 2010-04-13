@@ -46,16 +46,25 @@ int roll_pizza_eval(xyz_anim *anim) {
   return 0;
 }
 
+static int topping_x_offset[] = { 10, 50, 25, -1 };
+static int topping_y_offset[] = { 25, 10, 60, -1 };
+
 int roll_pizza_draw(xyz_anim *anim) {
-  int cur_x;
+  int cur_x, cur_y, i;
   double cur_ratio = xyz_anim_get_current_ratio(anim);
   roll_pizza_private *priv = xyz_anim_get_private_data(anim);
 
   cur_x = (1.0 - cur_ratio) * priv->start_x + cur_ratio * priv->end_x;
+  cur_y = 5;
 
-  draw_pizza(cur_x, 5);
+  draw_pizza(cur_x, cur_y);
 
-  /* TODO: draw toppings */
+  for(i = 0; i < priv->n_toppings; i++) {
+    if(topping_x_offset[i] < 0) break;  /* Too many toppings */
+
+    xyz_draw_image(priv->toppings[i], cur_x + topping_x_offset[i],
+		   cur_y + topping_y_offset[i]);
+  }
 
   return 0;
 }

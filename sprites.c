@@ -178,7 +178,7 @@ void free_sprites(void) {
 static void go_button_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   switch(event->type) {
   case XYZ_SPRITE_BUTTONDOWN:
-    start_pizzas_rolling(0, NULL);
+    start_pizzas_rolling(get_n_toppings(), get_topping_images());
     break;
   }
 }
