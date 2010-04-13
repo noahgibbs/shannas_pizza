@@ -23,6 +23,7 @@ struct _xyz_anim_t {
   xyz_anim *next;
   xyz_anim *prev;
   int state;
+  void *private_data;
 
   xyz_anim_func construct;
   xyz_anim_func destroy;
@@ -85,13 +86,17 @@ xyz_anim* xyz_anim_create(xyz_anim_spec *spec, void *user_info) {
   ret->repeat = spec->repeat;
 
   ret->user_info = user_info;
+  ret->private_data = NULL;
+  if(spec->private_data_size > 0) {
+    ret->private_data = calloc(1, spec->private_data_size);
+  }
 
   gettimeofday(&ret->current_time, NULL);
   ret->current_ratio = 0.0;
 
+  if(head) head->prev = ret;
   ret->next = head;
   head = ret;
-
   if(!tail) tail = ret;
 
   if(ret->construct)
@@ -104,6 +109,10 @@ xyz_anim* xyz_anim_create(xyz_anim_spec *spec, void *user_info) {
 
 void* xyz_anim_get_user_info(xyz_anim *anim) {
   return anim->user_info;
+}
+
+void* xyz_anim_get_private_data(xyz_anim *anim) {
+  return anim->private_data;
 }
 
 double xyz_anim_get_current_ratio(xyz_anim *anim) {
@@ -172,6 +181,9 @@ void xyz_anim_delete(xyz_anim *anim) {
     anim->destroy(anim);
 
   anim->state = 0;  /* Invalid */
+
+  if(anim->private_data)
+    free(anim->private_data);
 
   /* Destroy variables */
   for(i = 0; i < anim->n_variables; i++) {

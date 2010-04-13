@@ -21,6 +21,8 @@ typedef struct {
   xyz_anim_func stop;
   xyz_anim_func evaluate;
   xyz_anim_func draw;
+
+  int private_data_size;
 } xyz_anim_spec;
 
 xyz_anim* xyz_anim_create(xyz_anim_spec *spec, void *user_info);
@@ -32,6 +34,7 @@ void xyz_anim_delete(xyz_anim *anim);
 void xyz_anim_delete_all(void);
 
 void* xyz_anim_get_user_info(xyz_anim *anim);
+void* xyz_anim_get_private_data(xyz_anim *anim);
 double xyz_anim_get_current_ratio(xyz_anim *anim);
 
 void xyz_anim_add_variable(xyz_anim *anim, xyz_variable *variable);
