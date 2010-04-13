@@ -163,6 +163,7 @@ void load_sprites(void) {
 
 void draw_sprites(void) {
   xyz_draw_sprites();
+  roll_pizza_refresh();
 }
 
 void free_sprites(void) {
@@ -177,8 +178,7 @@ void free_sprites(void) {
 static void go_button_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   switch(event->type) {
   case XYZ_SPRITE_BUTTONDOWN:
-    printf("Clicked on 'GO' button, mouse button %d!\n",
-	   event->button);
+    start_pizzas_rolling(0, NULL);
     break;
   }
 }

@@ -6,6 +6,8 @@ static void topping_connector_process(connector *conn);
 
 static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
 
+static xyz_image *pizza_image = NULL;
+
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
                  1, 1, 1, 1, 1, 1, 1, 1 }
 
@@ -27,10 +29,16 @@ connector_type topping_type = {
 void init_toppings(void) {
   /* Initialize connectors */
   xyz_sprites_from_specs(-1, toppingsprites);
+
+  pizza_image = xyz_load_image("resources/pizza_100.png");
 }
 
 void delete_toppings(void) {
 
+}
+
+void draw_pizza(int x, int y) {
+  xyz_draw_image(pizza_image, x, y);
 }
 
 static int hack = 0;

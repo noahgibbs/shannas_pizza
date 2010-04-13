@@ -1,6 +1,9 @@
 #ifndef __PIZZA_H__
 #define __PIZZA_H__
 
+#include "xyz.h"
+#include "xyz_sprite.h"
+
 #include "connectors.h"
 
 /* Cursor "hot spot" */
@@ -111,6 +114,11 @@ void init_toppings(void);
 void delete_toppings(void);
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+void draw_pizza(int x, int y);
+
+/* From roll_pizza_anim.c */
+void start_pizzas_rolling(int n_toppings, xyz_image **toppings);
+void roll_pizza_refresh(void);
 
 /* Variables */
 

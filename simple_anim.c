@@ -28,7 +28,9 @@ int screen_flash_delete(xyz_anim *anim) {
 }
 
 xyz_anim_spec screen_background_spec = {
-  0, 250, 0, NULL, screen_flash_delete, NULL, NULL, screen_flash_eval, screen_flash_draw
+  0, 250, 0, NULL,
+  screen_flash_delete, NULL, NULL, screen_flash_eval, screen_flash_draw,
+  0
 };
 
 void start_screen_flash(void) {
