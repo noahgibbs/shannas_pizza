@@ -5,10 +5,18 @@
 
 #include "pizza.h"
 
+#define ROLL_PIZZA_X_START         5
+#define ROLL_PIZZA_X_END         280
+#define ROLL_PIZZA_Y               5
+#define ROLL_PIZZA_DURATION     3000
+#define ROLL_PIZZA_PAUSE        1000
+
 static void start_roll_one_pizza(int topping_mask,
 				 int start_x, int end_x, int duration_millis);
+static void start_pause_one_pizza(int duration_millis);
 static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,
 				  int duration_millis);
+static void draw_pizza_with_toppings(int cur_x, int cur_y, int topping_mask);
 
 static xyz_anim *roll_pizza_anim = NULL;
 
@@ -20,7 +28,8 @@ void start_pizzas_rolling(void) {
     return;
   }
 
-  start_roll_all_pizzas(7, 5, 280, 3000);
+  start_roll_all_pizzas(7, ROLL_PIZZA_X_START, ROLL_PIZZA_X_END,
+			ROLL_PIZZA_DURATION);
 }
 
 void roll_pizza_refresh(void) {
@@ -84,6 +93,10 @@ static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,
 }
 
 static void roll_pizza_finished(void) {
+  start_pause_one_pizza(ROLL_PIZZA_PAUSE);
+}
+
+static void pause_pizza_finished(void) {
   int idx = next_all_pizzas_index();
 
   if(idx == -1) {
@@ -93,6 +106,32 @@ static void roll_pizza_finished(void) {
 
   start_roll_one_pizza(idx, all_pizzas_start_x, all_pizzas_end_x,
 		       all_pizzas_millis);
+}
+
+/*** 'Animation' to pause ***/
+
+static int pause_pizza_delete(xyz_anim *anim) {
+  pause_pizza_finished();
+  return 0;
+}
+
+static int pause_pizza_draw(xyz_anim *anim) {
+  draw_pizza_with_toppings(ROLL_PIZZA_X_END, ROLL_PIZZA_Y, all_pizzas_index);
+  return 0;
+}
+
+xyz_anim_spec pause_pizza_spec = {
+  0, 2000, 0,
+  NULL, pause_pizza_delete,
+  NULL, NULL, NULL, pause_pizza_draw,
+  0
+};
+
+static void start_pause_one_pizza(int duration_millis) {
+  pause_pizza_spec.duration_seconds = duration_millis / 1000;
+  pause_pizza_spec.duration_milliseconds = duration_millis % 1000;
+  roll_pizza_anim = xyz_anim_create(&pause_pizza_spec, NULL);
+  xyz_anim_start(roll_pizza_anim);
 }
 
 /*** Animation to roll a single pizza a short distance ***/
@@ -129,26 +168,34 @@ static int topping_x_offset[] = { 10, 50, 25, -1 };
 static int topping_y_offset[] = { 25, 10, 60, -1 };
 
 static int roll_pizza_draw(xyz_anim *anim) {
-  int cur_x, cur_y, i;
+  int cur_x, cur_y;
   double cur_ratio = xyz_anim_get_current_ratio(anim);
   roll_pizza_private *priv = xyz_anim_get_private_data(anim);
-  int n_toppings = sp_get_n_toppings();
-  xyz_image **toppings = sp_get_topping_images();
 
   cur_x = (1.0 - cur_ratio) * priv->start_x + cur_ratio * priv->end_x;
-  cur_y = 5;
+  cur_y = ROLL_PIZZA_Y;
+
+  draw_pizza_with_toppings(cur_x, cur_y, priv->topping_mask);
+
+  return 0;
+}
+
+static void draw_pizza_with_toppings(int cur_x, int cur_y,
+				     int topping_mask) { 
+  int n_toppings = sp_get_n_toppings();
+  xyz_image **toppings = sp_get_topping_images();
+  int i;
 
   draw_pizza(cur_x, cur_y);
 
   for(i = 0; i < n_toppings; i++) {
     if(topping_x_offset[i] < 0) break;  /* Too many toppings */
 
-    if(priv->topping_mask & (1 << i))
+    if(topping_mask & (1 << i))
       xyz_draw_image(toppings[i], cur_x + topping_x_offset[i],
 		     cur_y + topping_y_offset[i]);
   }
 
-  return 0;
 }
 
 xyz_anim_spec roll_pizza_spec = {
