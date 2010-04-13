@@ -5,7 +5,7 @@
 
 #include "pizza.h"
 
-static void start_roll_pizza(int n_toppings, xyz_image **toppings,
+static void start_roll_pizza(int topping_mask,
 			     int start_x, int end_x, int duration_millis);
 
 static xyz_anim *roll_pizza_anim = NULL;
@@ -13,18 +13,12 @@ static xyz_anim *roll_pizza_anim = NULL;
 /*** APIs from other files ***/
 
 void start_pizzas_rolling(void) {
-  int n_toppings;
-  xyz_image **topping_images;
-
   if(roll_pizza_anim) {
     start_screen_flash();
     return;
   }
 
-  n_toppings = sp_get_n_toppings();
-  topping_images = sp_get_topping_images();
-
-  start_roll_pizza(n_toppings, topping_images, 5, 280, 3000);
+  start_roll_pizza(7, 5, 280, 3000);
 }
 
 void roll_pizza_refresh(void) {
@@ -44,8 +38,7 @@ int pizza_is_rolling(void) {
 typedef struct roll_pizza_private_struct {
   int start_x;
   int end_x;
-  int n_toppings;
-  xyz_image **toppings;
+  int topping_mask;
 } roll_pizza_private;
 
 int roll_pizza_create(xyz_anim *anim) {
@@ -76,17 +69,20 @@ int roll_pizza_draw(xyz_anim *anim) {
   int cur_x, cur_y, i;
   double cur_ratio = xyz_anim_get_current_ratio(anim);
   roll_pizza_private *priv = xyz_anim_get_private_data(anim);
+  int n_toppings = sp_get_n_toppings();
+  xyz_image **toppings = sp_get_topping_images();
 
   cur_x = (1.0 - cur_ratio) * priv->start_x + cur_ratio * priv->end_x;
   cur_y = 5;
 
   draw_pizza(cur_x, cur_y);
 
-  for(i = 0; i < priv->n_toppings; i++) {
+  for(i = 0; i < n_toppings; i++) {
     if(topping_x_offset[i] < 0) break;  /* Too many toppings */
 
-    xyz_draw_image(priv->toppings[i], cur_x + topping_x_offset[i],
-		   cur_y + topping_y_offset[i]);
+    if(priv->topping_mask & (1 << i))
+      xyz_draw_image(toppings[i], cur_x + topping_x_offset[i],
+		     cur_y + topping_y_offset[i]);
   }
 
   return 0;
@@ -100,7 +96,7 @@ xyz_anim_spec roll_pizza_spec = {
   sizeof(roll_pizza_private)
 };
 
-static void start_roll_pizza(int n_toppings, xyz_image **toppings,
+static void start_roll_pizza(int topping_mask,
 			     int start_x, int end_x, int duration_millis) {
   roll_pizza_private *priv = NULL;
 
@@ -110,7 +106,6 @@ static void start_roll_pizza(int n_toppings, xyz_image **toppings,
   priv = xyz_anim_get_private_data(roll_pizza_anim);
   priv->start_x = start_x;
   priv->end_x = end_x;
-  priv->n_toppings = n_toppings;
-  priv->toppings = toppings;
+  priv->topping_mask = topping_mask;
   xyz_anim_start(roll_pizza_anim);
 }
