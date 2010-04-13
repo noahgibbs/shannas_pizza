@@ -35,7 +35,7 @@ int pizza_is_rolling(void) {
   return 0;
 }
 
-void esc_to_cancel(void) {
+void esc_to_cancel_pizza(void) {
   if(roll_pizza_anim) {
     xyz_anim_delete(roll_pizza_anim);
   }
@@ -59,6 +59,10 @@ static int next_all_pizzas_index(void) {
     return all_pizzas_index;
 
   return -1;
+}
+
+int topping_is_rolling(int topping_number) {
+  return !!(all_pizzas_index & (1 << topping_number));
 }
 
 static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,

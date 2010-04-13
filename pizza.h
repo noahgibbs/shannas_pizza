@@ -66,10 +66,13 @@ typedef struct {
   /* Offset within sprite */
   int x;
   int y;
+
+  void *sprite;
 } conn_output_private;
 
 typedef struct {
   connector *conn;
+  int topping_number;
 } ToppingPrivate;
 
 typedef struct {
@@ -127,7 +130,8 @@ int sp_has_topping(const char *topping_name);
 void start_pizzas_rolling();
 void roll_pizza_refresh(void);
 int pizza_is_rolling(void);
-void esc_to_cancel(void);
+void esc_to_cancel_pizza(void);
+int topping_is_rolling(int topping_number);
 
 /* Variables */
 

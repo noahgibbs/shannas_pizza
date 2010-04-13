@@ -13,11 +13,11 @@ static xyz_image *pizza_image = NULL;
 
 static xyz_sprite_spec toppingsprites[] = {
   { "resources/sausage_small_white.png", 50, 425, 32, 32,
-    &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
+    &topping_methods, EVENTS, (void*)0, sizeof(ToppingPrivate) },
   { "resources/pepper_small_white.png", 130, 450, 32, 32,
-    &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
+    &topping_methods, EVENTS, (void*)1, sizeof(ToppingPrivate) },
   { "resources/pineapple_small_white.png", 210, 425, 32, 32,
-    &topping_methods, EVENTS, NULL, sizeof(ToppingPrivate) },
+    &topping_methods, EVENTS, (void*)2, sizeof(ToppingPrivate) },
   { NULL }
 };
 
@@ -44,10 +44,15 @@ void draw_pizza(int x, int y) {
 static int hack = 0;
 
 static void topping_connector_process(connector *conn) {
+  xyz_sprite *sprite = (xyz_sprite*)conn->user_info;
+  ToppingPrivate *tp = (ToppingPrivate*)xyz_sprite_get_private_data(sprite);
+
   if(conn->num_outputs < 1) return;
 
   if(pizza_is_rolling()) {
-    conn->outputs[0]->calculated_signal = get_signal_one();
+    int rolling = topping_is_rolling(tp->topping_number);
+
+    conn->outputs[0]->calculated_signal = rolling ? get_signal_one() : get_signal_zero();
     return;
   }
 
@@ -64,8 +69,12 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
     conn_output *output;
     conn_output_private *priv = xyz_new(conn_output_private);
 
+    /* Make new connector */
     tp->conn = new_connector(&topping_type, pizza_connector_set,
 			     (void*)sprite);
+    tp->topping_number = (int)xyz_sprite_get_user_info(sprite);
+
+    /* Make new output for connector */
     output = connector_new_output(tp->conn);
     priv->x = SYMBOLS_WIDTH / 2;
     priv->y = 0;

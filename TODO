@@ -1,8 +1,9 @@
 ========= Pizza TODO:
 
 Pizza roll animation:
-  - For each pizza type (topping combo)
-    - Adjust signal from topping detectors, change appearance of same
+  * For each pizza type (topping combo)
+    * Adjust signal from topping detectors
+    - Change appearance of topping detectors
     * Roll pizza on conveyor to judgement spot
     - Pause
     - If judged acceptable:
