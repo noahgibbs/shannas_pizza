@@ -23,6 +23,8 @@ static xyz_sprite_spec pizzasprites[] = {
   { NULL }
 };
 
+xyz_image *red_x_image = NULL;
+
 /******* Connector functions **********/
 
 void draw_connector(connector *conn) {
@@ -159,6 +161,8 @@ void load_sprites(void) {
 
   init_gate_sprites();
   init_toppings();
+
+  red_x_image = xyz_load_image("resources/red_x_100.png");
 }
 
 void draw_sprites(void) {
@@ -171,6 +175,10 @@ void free_sprites(void) {
   delete_toppings();
 
   /* XYZ will free sprites on exit */
+}
+
+void draw_red_x(int x, int y) {
+  xyz_draw_image(red_x_image, x, y);
 }
 
 /*********** Sprite event handlers ******************/

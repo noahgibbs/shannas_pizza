@@ -103,6 +103,7 @@ void start_screen_flash(void);
 void draw_sprites(void);
 void load_sprites(void);
 void free_sprites(void);
+void draw_red_x(int x, int y);
 void draw_connector(connector *conn);
 int intersect_connector_objects(int x, int y,
 				conn_input **inputOutP,
