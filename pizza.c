@@ -131,6 +131,8 @@ static int is_draggable(xyz_sprite *sprite) {
     return 1;
   if(methods->handle_event == gate_event_handler)
     return 1;
+  if(methods->handle_event == splitter_event_handler)
+    return 1;
 
   return 0;
 }

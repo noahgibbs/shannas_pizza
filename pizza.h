@@ -38,6 +38,9 @@
 #define OR_CROSSBAR_HEIGHT         7
 #define OR_CROSSBAR_WIDTH_OFFSET   ((GATE_WIDTH - OR_CROSSBAR_WIDTH) / 2)
 
+#define SPLITTER_WIDTH  32
+#define SPLITTER_HEIGHT 64
+
 #define JUDGE_WIDTH                32
 #define JUDGE_HEIGHT               32
 #define JUDGE_LEFT_WIDTH           ((TOOLBOX_LEFT_WIDTH - JUDGE_WIDTH) / 2)
@@ -59,12 +62,14 @@
 #define PASS_DURATION_MILLIS    1500
 #define FAIL_DURATION_MILLIS    1500
 #define SHANNA_DURATION_MILLIS  1500
+#define BIG_SHANNA_DURATION_MILLIS 3000
 
 /* Radius in pixels to click on an input or output */
 #define CONNECT_RADIUS 15
 
 /* Gate constants */
 #define MAX_NUM_GATES 100
+#define MAX_NUM_SPLITTERS 75
 
 #define GATE_TYPE_AND            0
 #define GATE_TYPE_OR             1
@@ -103,6 +108,10 @@ typedef struct {
 
 typedef struct {
   connector *conn;
+} SplitterPrivate;
+
+typedef struct {
+  connector *conn;
 } JudgePrivate;
 
 
@@ -138,17 +147,24 @@ int intersect_connector_objects(int x, int y,
 /* From gates.c */
 void init_gate_sprites(void);
 void delete_gate_sprites(void);
+void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+xyz_sprite* get_toolbox_sprite(void);
+
+/* From splitter.c */
+void init_splitter_sprite(void);
+void delete_splitter_sprite(void);
+void splitter_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 
 /* From toppings.c */
 void init_toppings(void);
 void delete_toppings(void);
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
-void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void draw_pizza(int x, int y);
 
 /* From level.c */
 int sp_get_n_toppings(void);
 xyz_image** sp_get_topping_images(void);
+const char *sp_get_end_of_level_image_filename(void);
 void sp_set_level(int level);
 void sp_next_level(void);
 int sp_has_topping(const char *topping_name);

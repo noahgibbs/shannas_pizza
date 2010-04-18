@@ -80,10 +80,16 @@ void init_gate_sprites(void) {
   xyz_sprites_from_specs(-1, gatefilesprites);
 
   toolbox_sprite = xyz_get_sprite_by_user_info(&toolbox_sprite_user_info);
+
+  init_splitter_sprite();
 }
 
 void delete_gate_sprites(void) {
 
+}
+
+xyz_sprite* get_toolbox_sprite(void) {
+  return toolbox_sprite;
 }
 
 /************** Gate functions ********************/
@@ -292,7 +298,7 @@ static void gate_create_connector(xyz_sprite *sprite) {
 
 void gate_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   GatePrivate *priv = (GatePrivate*)xyz_sprite_get_private_data(sprite);
-  /* Do we do anything special in this handler? */
+
   switch(event->type) {
   case XYZ_SPRITE_CREATED:
     gate_create_connector(sprite);
