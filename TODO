@@ -2,8 +2,6 @@
 
 Run valgrind on animations
 
-Add big Shanna for getting all pizzas judged correctly
-
 Add initial animation to show what Shanna likes or dislikes
 
 Add animation on failure to show what went wrong and remind of likes/dislikes
@@ -11,8 +9,6 @@ Add animation on failure to show what went wrong and remind of likes/dislikes
 Add level text display (temp measure until animations are better)
 
 Start on last problem pizza?
-
-Add splitters (nodes, in Robot Odyssey parlance)
 
 Figure out how to draw wires better
 
