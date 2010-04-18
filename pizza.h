@@ -140,6 +140,7 @@ int sp_should_be_true(int topping_mask);
 /* From judge_input.c */
 void init_judge_sprite(void);
 int judge_says_true(void);
+void judge_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 
 /* From roll_pizza_anim.c */
 void start_pizzas_rolling();

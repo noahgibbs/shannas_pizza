@@ -2,6 +2,8 @@
 
 Run valgrind on animations
 
+Bug with returned values - some iterations not failing properly!
+
 Pizza roll animation:
   * For each pizza type (topping combo)
     * Adjust signal from topping detectors

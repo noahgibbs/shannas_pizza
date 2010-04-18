@@ -26,7 +26,9 @@ int sp_should_be_true(int topping_mask) {
   int topping2 = !!(topping_mask & 0x2);
   int topping3 = !!(topping_mask & 0x4);
 
-  return (topping1 || topping2) ^ topping3;
+  int value = (topping1 || topping2) ^ topping3;
+
+  return value;
 }
 
 static xyz_image* topping_images[] = { NULL, NULL, NULL, NULL };

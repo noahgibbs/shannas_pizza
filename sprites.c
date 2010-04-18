@@ -94,6 +94,9 @@ int conn_sprite_filter(xyz_sprite *sprite) {
   } else if (methods->handle_event == gate_event_handler) {
     GatePrivate *gp = (GatePrivate*)xyz_sprite_get_private_data(sprite);
     conn = gp->conn;
+  } else if (methods->handle_event == judge_event_handler) {
+    JudgePrivate *gp = (JudgePrivate*)xyz_sprite_get_private_data(sprite);
+    conn = gp->conn;
   } else {
     return 0;
   }

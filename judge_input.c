@@ -2,7 +2,8 @@
 #include "connectors.h"
 #include "pizza.h"
 
-static void judge_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+void judge_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
+static void judge_draw(xyz_sprite *sprite);
 
 static xyz_sprite *judge_sprite;
 
@@ -10,7 +11,7 @@ connector_type judge_conn_type = {
   1, 0, NULL
 };
 
-static xyz_sprite_methods judge_sprite_methods = { NULL, judge_event_handler };
+static xyz_sprite_methods judge_sprite_methods = { judge_draw, judge_event_handler };
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
                  1, 1, 1, 1, 1, 1, 1, 1 }
@@ -46,6 +47,16 @@ static void judge_create_connector(xyz_sprite *sprite) {
   ipriv1->y = JUDGE_HEIGHT;
   input1->user_info = (void*)ipriv1;
 
+}
+
+static void judge_draw(xyz_sprite *sprite) {
+  GatePrivate *priv = (GatePrivate*)xyz_sprite_get_private_data(sprite);
+
+  draw_connector(priv->conn);
+
+  /* To avoid recursing, and perhaps infinitely drawing this sprite's
+     connector. */
+  xyz_default_draw_sprite(sprite);
 }
 
 void judge_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
