@@ -43,6 +43,23 @@
 #define JUDGE_LEFT_WIDTH           ((TOOLBOX_LEFT_WIDTH - JUDGE_WIDTH) / 2)
 #define JUDGE_TOP_HEIGHT           CONVEYOR_BOTTOM_HEIGHT
 
+#define SHANNA_IMAGE_WIDTH      150
+#define SHANNA_IMAGE_HEIGHT     150
+#define SHANNA_IMAGE_LEFT_WIDTH (TOTAL_WIDTH - SHANNA_IMAGE_WIDTH)
+#define SHANNA_IMAGE_TOP_HEIGHT 0
+
+/* Timing and locations for animations */
+
+#define ROLL_PIZZA_X_START         5
+#define ROLL_PIZZA_X_END         280
+#define ROLL_PIZZA_Y               5
+#define ROLL_PIZZA_DURATION     3000
+#define ROLL_PIZZA_PAUSE        1000
+
+#define PASS_DURATION_MILLIS    1500
+#define FAIL_DURATION_MILLIS    1500
+#define SHANNA_DURATION_MILLIS  1500
+
 /* Radius in pixels to click on an input or output */
 #define CONNECT_RADIUS 15
 

@@ -5,16 +5,6 @@
 
 #include "pizza.h"
 
-#define ROLL_PIZZA_X_START         5
-#define ROLL_PIZZA_X_END         280
-#define ROLL_PIZZA_Y               5
-#define ROLL_PIZZA_DURATION     3000
-#define ROLL_PIZZA_PAUSE        1000
-
-#define PASS_DURATION_MILLIS    1500
-#define FAIL_DURATION_MILLIS    1500
-#define SHANNA_DURATION_MILLIS  2000
-
 static void start_roll_one_pizza(int topping_mask,
 				 int start_x, int end_x, int duration_millis);
 static void start_pause_one_pizza(int duration_millis);
@@ -27,6 +17,7 @@ static void draw_pizza_with_toppings(int cur_x, int cur_y, int topping_mask);
 static void fail_pizzas(void);
 
 static xyz_anim *roll_pizza_anim = NULL;
+static xyz_anim *shanna_anim = NULL;
 
 /*** APIs from other files ***/
 
@@ -43,6 +34,8 @@ void start_pizzas_rolling(void) {
 void roll_pizza_refresh(void) {
   if(roll_pizza_anim)
     xyz_anim_draw(roll_pizza_anim);
+  if(shanna_anim)
+    xyz_anim_draw(shanna_anim);
 }
 
 int pizza_is_rolling(void) {
@@ -56,6 +49,10 @@ void esc_to_cancel_pizza(void) {
   /* TODO: skip to/past judgement, no just animation */
   if(roll_pizza_anim) {
     xyz_anim_delete(roll_pizza_anim);
+  }
+  if(shanna_anim) {
+    xyz_anim_delete(shanna_anim);
+    shanna_anim = NULL;
   }
 }
 
@@ -122,7 +119,7 @@ static void pause_pizza_finished(void) {
   all_pizzas_index_correct = (should_be_true == is_true);
   all_pizzas_index_passed = is_true;
 
-  if(all_pizzas_index_passed)
+  if(all_pizzas_index_correct)
     start_pass_one_pizza();
   else
     start_fail_one_pizza();
@@ -130,7 +127,9 @@ static void pause_pizza_finished(void) {
 
 static void pass_or_fail_pizza_finished(void) {
   int idx = next_all_pizzas_index();
-  int correct = all_pizzas_index_passed;
+  int correct = all_pizzas_index_correct;
+
+  start_shanna_picture(SHANNA_DURATION_MILLIS);
 
   if(!correct) {
     fail_pizzas();
@@ -143,7 +142,6 @@ static void pass_or_fail_pizza_finished(void) {
     return;
   }
 
-  start_shanna_picture(SHANNA_DURATION_MILLIS);
   start_roll_one_pizza(idx, all_pizzas_start_x, all_pizzas_end_x,
 		       all_pizzas_millis);
 }
@@ -342,19 +340,67 @@ static void start_fail_one_pizza() {
 
 /*** Animation for Shanna getting pizza ***/
 
+typedef struct shanna_entry_struct {
+  const char *filename;
+  xyz_image *image;
+  int happy;
+  int eating;
+} shanna_entry;
+
+shanna_entry shanna_entries[] = {
+  { "resources/cropped_hurl_150.png", NULL, 0, 1 },
+  { "resources/cropped_stoic_150.png", NULL, 0, 0 },
+  { "resources/cropped_happy_face_150.png", NULL, 1, 0 },
+  { "resources/cropped_happy_hat_150.png", NULL, 1, 0 },
+  { "resources/cropped_happy_eating_150.png", NULL, 1, 1 },
+  { NULL, NULL, 0, 0 }
+};
+
+static int shanna_entry_offset = -1;
+
+static int shanna_create(xyz_anim *anim) {
+  int shanna_eating = all_pizzas_index_passed;
+  int shanna_happy = all_pizzas_index_correct;
+  int i;
+
+  for(i = 0; ; i++) {
+    if(shanna_entries[i].filename == NULL) {
+      xyz_fatal_error("Couldn't find appropriate Shanna entry!");
+    }
+
+    if((shanna_entries[i].happy == shanna_happy)
+       && (shanna_entries[i].eating == shanna_eating)) {
+      break;
+    }
+  }
+
+  shanna_entry_offset = i;
+
+  if(!shanna_entries[i].image) {
+    shanna_entries[i].image = xyz_load_image(shanna_entries[i].filename);
+  }
+
+  shanna_anim = anim;
+
+  return 0;
+}
+
 static int shanna_delete(xyz_anim *anim) {
+  shanna_anim = NULL;
+
   return 0;
 }
 
 static int shanna_draw(xyz_anim *anim) {
-  /* int shanna_got = all_pizzas_index_passed; */
+  xyz_draw_image(shanna_entries[shanna_entry_offset].image,
+		 SHANNA_IMAGE_LEFT_WIDTH, SHANNA_IMAGE_TOP_HEIGHT);
 
   return 0;
 }
 
 xyz_anim_spec shanna_spec = {
   0, 1500, 0,
-  NULL, shanna_delete,
+  shanna_create, shanna_delete,
   NULL, NULL, NULL, shanna_draw,
   0
 };
