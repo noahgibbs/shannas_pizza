@@ -38,6 +38,11 @@
 #define OR_CROSSBAR_HEIGHT         7
 #define OR_CROSSBAR_WIDTH_OFFSET   ((GATE_WIDTH - OR_CROSSBAR_WIDTH) / 2)
 
+#define JUDGE_WIDTH                32
+#define JUDGE_HEIGHT               32
+#define JUDGE_LEFT_WIDTH           ((TOOLBOX_LEFT_WIDTH - JUDGE_WIDTH) / 2)
+#define JUDGE_TOP_HEIGHT           CONVEYOR_BOTTOM_HEIGHT
+
 /* Radius in pixels to click on an input or output */
 #define CONNECT_RADIUS 15
 
@@ -78,6 +83,10 @@ typedef struct {
 typedef struct {
   connector *conn;
 } GatePrivate;
+
+typedef struct {
+  connector *conn;
+} JudgePrivate;
 
 
 /* Prototypes */
@@ -126,6 +135,11 @@ xyz_image** sp_get_topping_images(void);
 void sp_set_level(int level);
 void sp_next_level(void);
 int sp_has_topping(const char *topping_name);
+int sp_should_be_true(int topping_mask);
+
+/* From judge_input.c */
+void init_judge_sprite(void);
+int judge_says_true(void);
 
 /* From roll_pizza_anim.c */
 void start_pizzas_rolling();

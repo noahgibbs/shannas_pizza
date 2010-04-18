@@ -160,6 +160,7 @@ void load_sprites(void) {
   xyz_sprites_from_specs(-1, pizzasprites);
 
   init_gate_sprites();
+  init_judge_sprite();
   init_toppings();
 
   red_x_image = xyz_load_image("resources/red_x_100.png");

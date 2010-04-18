@@ -13,18 +13,18 @@
 
 #define PASS_DURATION_MILLIS    1500
 #define FAIL_DURATION_MILLIS    1500
+#define SHANNA_DURATION_MILLIS  2000
 
 static void start_roll_one_pizza(int topping_mask,
 				 int start_x, int end_x, int duration_millis);
 static void start_pause_one_pizza(int duration_millis);
 static void start_pass_one_pizza();
 static void start_fail_one_pizza();
+static void start_shanna_picture(int duration_millis);
 static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,
 				  int duration_millis);
 static void draw_pizza_with_toppings(int cur_x, int cur_y, int topping_mask);
 static void fail_pizzas(void);
-static void show_shanna_pass(void);
-static void show_shanna_fail(void);
 
 static xyz_anim *roll_pizza_anim = NULL;
 
@@ -66,6 +66,8 @@ static int all_pizzas_index = -1;
 static int all_pizzas_start_x = -1;
 static int all_pizzas_end_x = -1;
 static int all_pizzas_millis = -1;
+static int all_pizzas_index_passed = -1;
+static int all_pizzas_index_correct = -1;
 
 static int all_pizzas_state = -1;
 
@@ -115,20 +117,25 @@ static void roll_pizza_finished(void) {
 }
 
 static void pause_pizza_finished(void) {
-  /* TODO: Check pass/fail */
-  start_pass_one_pizza();
+  int should_be_true = sp_should_be_true(all_pizzas_index);
+  int is_true = judge_says_true();
+  all_pizzas_index_correct = (should_be_true == is_true);
+  all_pizzas_index_passed = is_true;
+
+  if(all_pizzas_index_passed)
+    start_pass_one_pizza();
+  else
+    start_fail_one_pizza();
 }
 
-static void fail_pizza_finished(void) {
-  roll_pizza_anim = NULL;
-
-  /* show_shanna_fail(); */
-
-  fail_pizzas();
-}
-
-static void pass_pizza_finished(void) {
+static void pass_or_fail_pizza_finished(void) {
   int idx = next_all_pizzas_index();
+  int correct = all_pizzas_index_passed;
+
+  if(!correct) {
+    fail_pizzas();
+    return;
+  }
 
   roll_pizza_anim = NULL;
   if(idx == -1) {
@@ -136,18 +143,18 @@ static void pass_pizza_finished(void) {
     return;
   }
 
+  start_shanna_picture(SHANNA_DURATION_MILLIS);
   start_roll_one_pizza(idx, all_pizzas_start_x, all_pizzas_end_x,
 		       all_pizzas_millis);
-
-  /* show_shanna_pass(); */
 }
 
 static void fail_pizzas(void) {
   all_pizzas_state = STATE_NONE;
   all_pizzas_index = -1;
+  roll_pizza_anim = NULL;
 }
 
-/*** 'Animation' to pause ***/
+/*** 'Animation' to pause the pizza in place ***/
 
 static int pause_pizza_delete(xyz_anim *anim) {
   pause_pizza_finished();
@@ -266,7 +273,7 @@ static void start_roll_one_pizza(int topping_mask, int start_x, int end_x,
 /*** Animation for pizza found worthy ***/
 
 static int pass_pizza_delete(xyz_anim *anim) {
-  pass_pizza_finished();
+  pass_or_fail_pizza_finished();
   return 0;
 }
 
@@ -300,7 +307,7 @@ static void start_pass_one_pizza(void) {
 /*** Animation for pizza found unworthy ***/
 
 static int fail_pizza_delete(xyz_anim *anim) {
-  fail_pizza_finished();
+  pass_or_fail_pizza_finished();
   return 0;
 }
 
@@ -335,34 +342,28 @@ static void start_fail_one_pizza() {
 
 /*** Animation for Shanna getting pizza ***/
 
-static int shanna_pass_pizza_delete(xyz_anim *anim) {
+static int shanna_delete(xyz_anim *anim) {
   return 0;
 }
 
-static int shanna_pass_pizza_draw(xyz_anim *anim) {
-  double cur_ratio = xyz_anim_get_current_ratio(anim);
-  int segment = (int)(cur_ratio * 8.0);
-
-  draw_pizza_with_toppings(ROLL_PIZZA_X_END, ROLL_PIZZA_Y, all_pizzas_index);
-
-  if(segment % 2)
-    draw_red_x(ROLL_PIZZA_X_END, ROLL_PIZZA_Y);
+static int shanna_draw(xyz_anim *anim) {
+  /* int shanna_got = all_pizzas_index_passed; */
 
   return 0;
 }
 
-xyz_anim_spec shanna_pass_pizza_spec = {
+xyz_anim_spec shanna_spec = {
   0, 1500, 0,
-  NULL, shanna_pass_pizza_delete,
-  NULL, NULL, NULL, shanna_pass_pizza_draw,
+  NULL, shanna_delete,
+  NULL, NULL, NULL, shanna_draw,
   0
 };
 
-static void start_shanna_pass_one_pizza(int duration_millis) {
+static void start_shanna_picture(int duration_millis) {
   xyz_anim *tmp;
 
-  shanna_pass_pizza_spec.duration_seconds = duration_millis / 1000;
-  shanna_pass_pizza_spec.duration_milliseconds = duration_millis % 1000;
-  tmp = xyz_anim_create(&shanna_pass_pizza_spec, NULL);
+  shanna_spec.duration_seconds = duration_millis / 1000;
+  shanna_spec.duration_milliseconds = duration_millis % 1000;
+  tmp = xyz_anim_create(&shanna_spec, NULL);
   xyz_anim_start(tmp);
 }
