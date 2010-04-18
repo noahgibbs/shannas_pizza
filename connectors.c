@@ -197,7 +197,8 @@ void connector_set_process(connector_set *set) {
   /* Call process() to get calculated signals */
   for(i = 0; i < set->num_connectors; i++) {
     index = set->connectors[i];
-    index->type->process(index);  /* Just process in order? */
+    if(index->type->process)
+      index->type->process(index);
   }
 
   /* Move calculated signals over to regular signals */
