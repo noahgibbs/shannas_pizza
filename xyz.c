@@ -198,6 +198,14 @@ xyz_image *xyz_load_image(const char *file) {
   return tmp;
 }
 
+int xyz_image_get_width(xyz_image *image) {
+  return image->image->w;
+}
+
+int xyz_image_get_height(xyz_image *image) {
+  return image->image->h;
+}
+
 void xyz_draw_image(xyz_image *image, int x, int y)
 {
     SDL_Rect dest;

@@ -51,6 +51,8 @@ void xyz_done_drawing();
 xyz_image *xyz_load_image(const char *file);
 void xyz_draw_image(xyz_image *image, int x, int y);
 xyz_image *xyz_turn_image(xyz_image *source, int num_turns_clockwise);
+int xyz_image_get_width(xyz_image *image);
+int xyz_image_get_height(xyz_image *image);
 void xyz_free_image(xyz_image *image);
 
 /* Utils */
