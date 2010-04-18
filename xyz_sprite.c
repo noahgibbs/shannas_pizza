@@ -149,6 +149,10 @@ void xyz_draw_sprite(xyz_sprite *sprite) {
   }
 }
 
+void xyz_default_draw_sprite(xyz_sprite *sprite) {
+  xyz_draw_image(sprite->image, sprite->x, sprite->y);
+}
+
 void xyz_draw_sprite_upside_down(xyz_sprite *sprite) {
   if(sprite->methods && sprite->methods->draw) {
     xyz_fatal_error("Haven't implemented graphics context yet!");

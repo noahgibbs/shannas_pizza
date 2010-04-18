@@ -66,6 +66,12 @@ void xyz_sprites_from_specs(int num, xyz_sprite_spec *specs);
 void xyz_free_sprite(xyz_sprite *sprite);
 void xyz_free_all_sprites(void);
 void xyz_draw_sprite(xyz_sprite *sprite);
+
+/* This draws the sprite in the simple, default manner, regardless of whether
+   it overrides the draw function.  It's mostly used to implement the sprite's
+   draw function. */
+void xyz_default_draw_sprite(xyz_sprite *sprite);
+
 void xyz_draw_sprite_upside_down(xyz_sprite *sprite);
 void xyz_draw_sprites(void);  /* Draw all sprites */
 
