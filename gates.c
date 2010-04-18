@@ -266,7 +266,7 @@ static void gate_create_connector(xyz_sprite *sprite) {
   }
   num_inputs = conn_type->max_inputs;
 
-  priv->conn = new_connector(&andor_gate_conn_type, pizza_connector_set,
+  priv->conn = new_connector(conn_type, pizza_connector_set,
 			     (void*)sprite);
   output = connector_new_output(priv->conn);
   opriv->x = GATE_WIDTH / 2;
