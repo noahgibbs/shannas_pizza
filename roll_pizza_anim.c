@@ -11,6 +11,7 @@ static void start_pause_one_pizza(int duration_millis);
 static void start_pass_one_pizza();
 static void start_fail_one_pizza();
 static void start_shanna_picture(int duration_millis);
+static void start_big_shanna_picture(int duration_millis);
 static void start_roll_all_pizzas(int topping_mask, int start_x, int end_x,
 				  int duration_millis);
 static void draw_pizza_with_toppings(int cur_x, int cur_y, int topping_mask);
@@ -138,7 +139,7 @@ static void pass_or_fail_pizza_finished(void) {
 
   roll_pizza_anim = NULL;
   if(idx == -1) {
-    fprintf(stderr, "Got to the end successfully!  Yay!\n");
+    start_big_shanna_picture(BIG_SHANNA_DURATION_MILLIS);
     return;
   }
 
@@ -338,7 +339,7 @@ static void start_fail_one_pizza() {
   all_pizzas_state = STATE_FAILED;
 }
 
-/*** Animation for Shanna getting pizza ***/
+/*** Animation for Shanna getting (or not getting) pizza ***/
 
 typedef struct shanna_entry_struct {
   const char *filename;
@@ -411,5 +412,58 @@ static void start_shanna_picture(int duration_millis) {
   shanna_spec.duration_seconds = duration_millis / 1000;
   shanna_spec.duration_milliseconds = duration_millis % 1000;
   tmp = xyz_anim_create(&shanna_spec, NULL);
+  xyz_anim_start(tmp);
+}
+
+/*** Animation for end of level ***/
+
+static xyz_image *big_shanna_image = NULL;
+static int big_shanna_x, big_shanna_y;
+
+static int big_shanna_create(xyz_anim *anim) {
+  int w, h;
+
+  shanna_anim = anim;
+
+  if(big_shanna_image)
+    xyz_free_image(big_shanna_image);
+
+  big_shanna_image = xyz_load_image(sp_get_end_of_level_image_filename());
+  w = xyz_image_get_width(big_shanna_image);
+  h = xyz_image_get_height(big_shanna_image);
+
+  big_shanna_x = (TOTAL_WIDTH - w) / 2;
+  big_shanna_y = (TOTAL_HEIGHT - h) / 2;
+
+  return 0;
+}
+
+static int big_shanna_delete(xyz_anim *anim) {
+  shanna_anim = NULL;
+
+  sp_next_level();
+
+  return 0;
+}
+
+static int big_shanna_draw(xyz_anim *anim) {
+  xyz_draw_image(big_shanna_image, big_shanna_x, big_shanna_y);
+
+  return 0;
+}
+
+xyz_anim_spec big_shanna_spec = {
+  0, 3000, 0,
+  big_shanna_create, big_shanna_delete,
+  NULL, NULL, NULL, big_shanna_draw,
+  0
+};
+
+static void start_big_shanna_picture(int duration_millis) {
+  xyz_anim *tmp;
+
+  big_shanna_spec.duration_seconds = duration_millis / 1000;
+  big_shanna_spec.duration_milliseconds = duration_millis % 1000;
+  tmp = xyz_anim_create(&big_shanna_spec, NULL);
   xyz_anim_start(tmp);
 }

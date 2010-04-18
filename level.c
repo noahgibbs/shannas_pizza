@@ -11,6 +11,8 @@ void sp_set_level(int level) {
 
 void sp_next_level(void) {
   sp_set_level(level_number + 1);
+
+  fprintf(stderr, "Made it to level %d!\n", level_number);
 }
 
 int sp_has_topping(const char *topping_name) {
@@ -29,6 +31,10 @@ int sp_should_be_true(int topping_mask) {
   int value = (topping1 || topping2) ^ topping3;
 
   return value;
+}
+
+const char *sp_get_end_of_level_image_filename(void) {
+  return "resources/huge_happy_arms_up_shanna_400.png";
 }
 
 static xyz_image* topping_images[] = { NULL, NULL, NULL, NULL };
