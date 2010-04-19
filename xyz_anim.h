@@ -1,3 +1,6 @@
+#ifndef __XYZ_ANIM_H__
+#define __XYZ_ANIM_H__
+
 #include "xyz.h"
 #include "xyz_variable.h"
 
@@ -41,3 +44,5 @@ void xyz_anim_add_variable(xyz_anim *anim, xyz_variable *variable);
 
 /* "Tick" one frame */
 void xyz_anim_frame(xyz_anim *anim, long seconds, long milliseconds);
+
+#endif /* __XYZ_ANIM_H__ */
