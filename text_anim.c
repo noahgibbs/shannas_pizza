@@ -39,6 +39,7 @@ static int show_text_draw(xyz_anim *anim) {
   xyz_color(priv->bg_r, priv->bg_g, priv->bg_b);
   xyz_rectangle(priv->bg_x, priv->bg_y, priv->bg_w, priv->bg_h);
 
+  xyz_color(0, 0, 0);
   xyz_block_text(priv->x, priv->y, priv->text);
 
   return 0;
