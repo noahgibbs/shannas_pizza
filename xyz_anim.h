@@ -39,6 +39,7 @@ void xyz_anim_delete_all(void);
 void* xyz_anim_get_user_info(xyz_anim *anim);
 void* xyz_anim_get_private_data(xyz_anim *anim);
 double xyz_anim_get_current_ratio(xyz_anim *anim);
+void xyz_anim_set_delete_hook(xyz_anim *anim, xyz_anim_func hook);
 
 void xyz_anim_add_variable(xyz_anim *anim, xyz_variable *variable);
 

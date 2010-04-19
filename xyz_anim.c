@@ -31,6 +31,7 @@ struct _xyz_anim_t {
   xyz_anim_func stop;
   xyz_anim_func evaluate;
   xyz_anim_func draw;
+  xyz_anim_func delete_hook;
 };
 
 static xyz_anim *head = NULL;
@@ -119,6 +120,10 @@ double xyz_anim_get_current_ratio(xyz_anim *anim) {
   return anim->current_ratio;
 }
 
+void xyz_anim_set_delete_hook(xyz_anim *anim, xyz_anim_func hook) {
+  anim->delete_hook = hook;
+}
+
 void xyz_anim_start(xyz_anim *anim) {
   gettimeofday(&anim->start_time, NULL);
   gettimeofday(&anim->current_time, NULL);
@@ -176,6 +181,9 @@ void xyz_anim_stop(xyz_anim *anim) {
 
 void xyz_anim_delete(xyz_anim *anim) {
   int i;
+
+  if(anim->delete_hook)
+    anim->delete_hook(anim);
 
   if(anim->destroy)
     anim->destroy(anim);
