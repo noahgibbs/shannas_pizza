@@ -1,12 +1,12 @@
 ========= Pizza TODO:
 
+Show, hide or reposition toppings at the start of each level
+
 Run valgrind on animations
 
 Add initial animation to show what Shanna likes or dislikes
 
 Add animation on failure to show what went wrong and remind of likes/dislikes
-
-Add level text display (temp measure until animations are better)
 
 Start on last problem pizza?
 
