@@ -126,7 +126,7 @@ void connector_disconnect_input(conn_input *input) {
     input->attached->attached = NULL;
   }
   if(input->attached && input->attached->attached) {
-    fprintf(stderr, "Consistency error (input)!  Dying!\n");
+    xyz_fatal_error("Consistency error (input)!  Dying!");
   }
   input->attached = NULL;
 }
@@ -136,7 +136,7 @@ void connector_disconnect_output(conn_output *output) {
     output->attached->attached = NULL;
   }
   if(output->attached && output->attached->attached) {
-    fprintf(stderr, "Consistency error (output)!  Dying!\n");
+    xyz_fatal_error("Consistency error (output)!  Dying!");
   }
   output->attached = NULL;
 }
