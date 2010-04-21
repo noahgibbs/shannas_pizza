@@ -25,29 +25,18 @@ typedef struct level_spec_struct {
 
   /* Calculated from the above: */
   int num_toppings;
-
-  xyz_image **topping_images;
 } level_spec;
 
 static int level_one_sbt(int topping_mask) {
-  fprintf(stderr, "Checking should-be-true for %d: %s\n", topping_mask,
-	  (topping_mask & 0x4) ? "Yes" : "No");
   return !!(topping_mask & 0x4);
 }
 
-#if 0
 static int level_two_sbt(int topping_mask) {
   int topping1 = !!(topping_mask & 0x1);
   int topping2 = !!(topping_mask & 0x2);
-  int topping3 = !!(topping_mask & 0x4);
 
-  int val = (topping1 || topping2);
-
-  fprintf(stderr, "Checking should-be-true for %d: %s\n", topping_mask,
-	  val ? "Yes" : "No");
-  return val;
+  return topping1 || topping2;
 }
-#endif
 
 #if 0
 static int level_ten_sbt(int topping_mask) {
@@ -66,7 +55,7 @@ static int highest_level = -1;
 level_spec levels[] = {
   {1, 0x4, level_one_sbt, "Shanna only wants pizza with "
    "pineapple right now!"},
-  /* {2, 0x7, level_two_sbt, "Shanna wants pepper or sausage!"}, */
+  {2, 0x7, level_two_sbt, "Shanna wants pepper or sausage!"},
   {-1}
 };
 
@@ -102,7 +91,7 @@ void sp_set_level(int level) {
 void sp_next_level(void) {
   sp_set_level(level_number + 1);
 
-  fprintf(stderr, "Made it to level %d!\n", level_number);
+  fprintf(stderr, "Made it to level %d!\n", levels[level_number].level_num);
 }
 
 static xyz_anim *intro_anim = NULL;
@@ -159,25 +148,13 @@ const char *sp_get_end_of_level_image_filename(void) {
 static xyz_image* topping_images[] = { NULL, NULL, NULL, NULL };
 
 xyz_image** sp_get_topping_images(void) {
-  int i, j;
-
-  if(levels[level_number].topping_images) {
-    return levels[level_number].topping_images;
-  }
+  if(topping_images[0]) return topping_images;
 
   if(!topping_images[0]) {
-    fprintf(stderr, "Loading images...\n");
     topping_images[0] = xyz_load_image("resources/sausage_small_trans.png");
     topping_images[1] = xyz_load_image("resources/pepper_small_trans.png");
     topping_images[2] = xyz_load_image("resources/pineapple_small_trans.png");
   }
 
-  levels[level_number].topping_images = calloc(1, levels[level_number].num_toppings * sizeof(xyz_image *));
-
-  for(i = 0, j = 0; (1 << i) <= levels[level_number].topping_mask; i++) {
-    if((levels[level_number].topping_mask & (1 << i)) == 0) continue;
-    levels[level_number].topping_images[j] = topping_images[i];
-  }
-
-  return levels[level_number].topping_images;
+  return topping_images;
 }
