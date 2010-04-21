@@ -1,5 +1,5 @@
 #!/bin/bash
-SOURCE_FILES="pizza.c sprites.c connectors.c toppings.c gates.c simple_anim.c roll_pizza_anim.c level.c judge_input.c splitter.c"
+SOURCE_FILES="pizza.c sprites.c connectors.c toppings.c gates.c simple_anim.c roll_pizza_anim.c level.c judge_input.c splitter.c text_anim.c"
 XYZ_FILES="xyz.c xyz_sprite.c xyz_events.c xyz_util.c xyz_variable.c xyz_anim.c"
 ALL_SOURCE="$SOURCE_FILES $XYZ_FILES"
 LIBS="-lSDL_image -lSDL_ttf -lSDL_gfx"
