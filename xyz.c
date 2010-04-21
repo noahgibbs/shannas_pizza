@@ -286,23 +286,45 @@ void xyz_block_text(int x, int y, const char *text) {
   SDL_Rect dest;
   SDL_Color color;
   Uint8 r, g, b;
+  char *one_line = NULL;
+  const char *index = text;
+  const char *next_newline;
 
   SDL_GetRGB(current_color, surface->format, &r, &g, &b);
   color.r = r;
   color.g = g;
   color.b = b;
 
-  rendered_text = TTF_RenderText_Solid(sanskrit_font_20, text, color);
-  if(!rendered_text)
-    xyz_fatal_error("Couldn't render text: %s!", TTF_GetError());
+  while(index) {
+    int length;
 
-  dest.x = x;
-  dest.y = y;
-  dest.w = surface->w;
-  dest.h = surface->h;
+    next_newline = strchr(index, '\n');
+    if(!next_newline) {
+      one_line = strdup(index);
+      index = NULL;
+    } else {
+      length = next_newline - index;
+      one_line = malloc(length + 1);
+      memcpy(one_line, index, length);
+      one_line[length] = '\0';
+      index = next_newline + 1;
+    }
 
-  SDL_BlitSurface(rendered_text, NULL, surface, &dest);
-  SDL_FreeSurface(rendered_text);
+    rendered_text = TTF_RenderText_Solid(sanskrit_font_20, one_line, color);
+    if(!rendered_text)
+      xyz_fatal_error("Couldn't render text: %s!", TTF_GetError());
+
+    dest.x = x;
+    dest.y = y;
+    y += 25;  /* For next line */
+    dest.w = surface->w;
+    dest.h = surface->h;
+
+    SDL_BlitSurface(rendered_text, NULL, surface, &dest);
+    SDL_FreeSurface(rendered_text);
+
+    free(one_line);
+  }
 }
 
 #if 0
