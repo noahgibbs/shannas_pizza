@@ -38,7 +38,6 @@ static int level_two_sbt(int topping_mask) {
   return topping1 || topping2;
 }
 
-#if 0
 static int level_ten_sbt(int topping_mask) {
   int topping1 = !!(topping_mask & 0x1);
   int topping2 = !!(topping_mask & 0x2);
@@ -48,14 +47,14 @@ static int level_ten_sbt(int topping_mask) {
 
   return value;
 }
-#endif
 
 static int highest_level = -1;
 
 level_spec levels[] = {
-  {1, 0x4, level_one_sbt, "Shanna only wants pizza with "
+  {1, 0x4, level_one_sbt, "Shanna only wants pizza with\n"
    "pineapple right now!"},
   {2, 0x7, level_two_sbt, "Shanna wants pepper or sausage!"},
+  {10, 0x7, level_ten_sbt, "Shanna wants pineapple.  Or pepper or sausage.\nBut not pineapple *with* pepper or sausage!"},
   {-1}
 };
 
