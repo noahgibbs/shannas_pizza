@@ -28,7 +28,6 @@ void start_pizzas_rolling(void) {
     return;
   }
 
-  fprintf(stderr, "Start pizzas rolling: %d\n", sp_get_n_toppings());
   start_roll_all_pizzas(sp_get_topping_mask(),
 			ROLL_PIZZA_X_START, ROLL_PIZZA_X_END,
 			ROLL_PIZZA_DURATION);
@@ -84,8 +83,6 @@ static int next_all_pizzas_index(void) {
   } while((all_pizzas_index & ~all_pizzas_topping_mask)
 	  && all_pizzas_index < all_pizzas_topping_mask);
 
-  fprintf(stderr, "Calculated next index: %d [%d]\n", all_pizzas_index, all_pizzas_topping_mask);
-
   if(all_pizzas_index <= all_pizzas_topping_mask)
     return all_pizzas_index;
 
@@ -123,8 +120,6 @@ static void pause_pizza_finished(void) {
   int is_true = judge_says_true();
   all_pizzas_index_correct = (should_be_true == is_true);
   all_pizzas_index_passed = is_true;
-
-  fprintf(stderr, " * Should: %d, Is: %d\n", should_be_true, is_true);
 
   if(all_pizzas_index_correct)
     start_pass_one_pizza();
@@ -241,10 +236,10 @@ static void draw_pizza_with_toppings(int cur_x, int cur_y,
   draw_pizza(cur_x, cur_y);
 
   for(i = 0, j = 0; (1 << i) <= topping_mask; i++) {
-    if(topping_x_offset[i] < 0) break;  /* Finished all toppings */
+    if(topping_x_offset[j] < 0) break;  /* Finished all toppings */
 
     if(topping_mask & (1 << i)) {
-      xyz_draw_image(toppings[j], cur_x + topping_x_offset[j],
+      xyz_draw_image(toppings[i], cur_x + topping_x_offset[j],
 		     cur_y + topping_y_offset[j]);
       j++;
     }
