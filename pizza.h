@@ -3,6 +3,7 @@
 
 #include "xyz.h"
 #include "xyz_sprite.h"
+#include "xyz_anim.h"
 
 #include "connectors.h"
 
@@ -63,6 +64,10 @@
 #define FAIL_DURATION_MILLIS    1500
 #define SHANNA_DURATION_MILLIS  1500
 #define BIG_SHANNA_DURATION_MILLIS 3000
+
+#define INSTRUCTION_TEXT_LEFT_WIDTH  50
+#define INSTRUCTION_TEXT_TOP_HEIGHT  400
+#define INSTRUCTION_TEXT_DURATION_MILLIS 3000
 
 /* Radius in pixels to click on an input or output */
 #define CONNECT_RADIUS 15
@@ -162,13 +167,17 @@ void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event);
 void draw_pizza(int x, int y);
 
 /* From level.c */
+void sp_init(void);
 int sp_get_n_toppings(void);
+int sp_get_topping_mask(void);
 xyz_image** sp_get_topping_images(void);
 const char *sp_get_end_of_level_image_filename(void);
+xyz_anim* sp_get_intro_animation(void);
 void sp_set_level(int level);
 void sp_next_level(void);
-int sp_has_topping(const char *topping_name);
+void sp_start_level(void);
 int sp_should_be_true(int topping_mask);
+void sp_refresh(void);
 
 /* From judge_input.c */
 void init_judge_sprite(void);
@@ -181,6 +190,10 @@ void roll_pizza_refresh(void);
 int pizza_is_rolling(void);
 void esc_to_cancel_pizza(void);
 int topping_is_rolling(int topping_number);
+
+/* From text_anim.c */
+xyz_anim* show_text_anim(int duration_millis, const char *text,
+			 int x, int y);
 
 /* Variables */
 

@@ -40,6 +40,10 @@ void init(int argc, char **argv) {
   pizza_connector_set = new_connector_set();
   load_sprites();
 
+  sp_init();
+
+  sp_start_level();
+
   xyz_custom_cursor_from_file(CURSOR_FILE, CURSOR_X_OFFSET, CURSOR_Y_OFFSET);
 }
 
@@ -92,6 +96,9 @@ void draw(void) {
   }
 
   draw_sprites();
+
+  sp_refresh();
+
   xyz_draw_cursor();
   xyz_done_drawing();
 }
