@@ -1,0 +1,17 @@
+Build for Win32
+Build for Ubuntu (if applicable)
+Copy Win32 demo into ShannasDaddy Rails app with script
+Copy Ubuntu demo into ShannasDaddy Rails app (if applicable)
+Download for Windows in VirtualBox
+Test installation
+Test that app runs
+  - Finish first level, let run to completion (NO ESCAPE KEY)
+  - Finish second level, run to completion WITH escape key
+Test uninstall
+Download for Ubuntu
+Test installation
+Test that app runs
+  - Finish first level, let run to completion (NO ESCAPE KEY)
+  - Finish second level, run to completion WITH escape key
+Test uninstall
+Look over text on web site, update front page
