@@ -3,14 +3,22 @@
 #include <string.h>
 #include "xyz_anim.h"
 
+#include "pizza.h"
+
 double screen_color[3];
 xyz_anim *screen_background_anim = NULL;
 
 int screen_flash_eval(xyz_anim *anim) {
   double current_ratio = xyz_anim_get_current_ratio(anim);
-  screen_color[0] = 255.0 * (1.0 - current_ratio);
-  screen_color[1] = 0.0;
-  screen_color[2] = 0.0;
+  double flash_amt = 1.0 - current_ratio;
+
+  screen_color[0] = (double)FLASH_COLOR_R * flash_amt +
+    (double)BACKGROUND_COLOR_R * current_ratio;
+  screen_color[1] = (double)FLASH_COLOR_G * flash_amt +
+    (double)BACKGROUND_COLOR_G * current_ratio;
+  screen_color[2] = (double)FLASH_COLOR_B * flash_amt +
+    (double)BACKGROUND_COLOR_B * current_ratio;
+
   return 0;
 }
 
@@ -47,7 +55,7 @@ void screen_draw_background(void) {
   if(screen_background_anim) {
     xyz_anim_draw(screen_background_anim);
   } else {
-    xyz_color(0, 0, 0);
+    xyz_color(BACKGROUND_COLOR_R, BACKGROUND_COLOR_G, BACKGROUND_COLOR_B);
     xyz_fill();
   }
 }

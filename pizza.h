@@ -16,6 +16,14 @@
 #define TOTAL_WIDTH            500
 #define SYMBOLS_TOP_HEIGHT     400
 
+#define BACKGROUND_COLOR_R    0xff
+#define BACKGROUND_COLOR_G    0xff
+#define BACKGROUND_COLOR_B    0xff
+
+#define FLASH_COLOR_R         0xff
+#define FLASH_COLOR_G         0x00
+#define FLASH_COLOR_B         0x00
+
 /* Conveyor, and top background above it */
 #define CONVEYOR_TOP_HEIGHT     40
 #define CONVEYOR_HEIGHT         60
