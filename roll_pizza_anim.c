@@ -394,6 +394,12 @@ static int shanna_delete(xyz_anim *anim) {
 }
 
 static int shanna_draw(xyz_anim *anim) {
+  xyz_color(SFRAME_COLOR_R, SFRAME_COLOR_G, SFRAME_COLOR_B);
+  xyz_rectangle(SHANNA_IMAGE_LEFT_WIDTH - SFRAME_WIDTH,
+		SHANNA_IMAGE_TOP_HEIGHT - SFRAME_HEIGHT,
+		SHANNA_IMAGE_WIDTH + 2 * SFRAME_WIDTH,
+		SHANNA_IMAGE_HEIGHT + 2 * SFRAME_HEIGHT);
+
   xyz_draw_image(shanna_entries[shanna_entry_offset].image,
 		 SHANNA_IMAGE_LEFT_WIDTH, SHANNA_IMAGE_TOP_HEIGHT);
 

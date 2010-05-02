@@ -15,7 +15,24 @@
 #define TOTAL_HEIGHT           500
 #define TOTAL_WIDTH            500
 #define SYMBOLS_TOP_HEIGHT     400
-#define CONVEYOR_BOTTOM_HEIGHT 100
+
+/* Conveyor, and top background above it */
+#define CONVEYOR_TOP_HEIGHT     40
+#define CONVEYOR_HEIGHT         60
+#define TOPBACK_COLOR_R       0xff
+#define TOPBACK_COLOR_G       0xff
+#define TOPBACK_COLOR_B       0xbb
+#define CONVEYOR_COLOR_R      0x6f
+#define CONVEYOR_COLOR_G      0x2b
+#define CONVEYOR_COLOR_B      0x09
+
+/* Shanna Picture */
+
+#define SFRAME_COLOR_R        0xff
+#define SFRAME_COLOR_G        0xf0
+#define SFRAME_COLOR_B        0x6b
+
+/* Toolbox */
 #define TOOLBOX_TOP_HEIGHT     150
 #define TOOLBOX_BOTTOM_HEIGHT  400
 #define TOOLBOX_LEFT_WIDTH     400
@@ -45,12 +62,15 @@
 #define JUDGE_WIDTH                32
 #define JUDGE_HEIGHT               32
 #define JUDGE_LEFT_WIDTH           ((TOOLBOX_LEFT_WIDTH - JUDGE_WIDTH) / 2)
-#define JUDGE_TOP_HEIGHT           CONVEYOR_BOTTOM_HEIGHT
+#define JUDGE_TOP_HEIGHT           (CONVEYOR_TOP_HEIGHT + CONVEYOR_HEIGHT)
+
+#define SFRAME_WIDTH              5
+#define SFRAME_HEIGHT             5
 
 #define SHANNA_IMAGE_WIDTH      150
 #define SHANNA_IMAGE_HEIGHT     150
-#define SHANNA_IMAGE_LEFT_WIDTH (TOTAL_WIDTH - SHANNA_IMAGE_WIDTH)
-#define SHANNA_IMAGE_TOP_HEIGHT 0
+#define SHANNA_IMAGE_LEFT_WIDTH (TOTAL_WIDTH - SHANNA_IMAGE_WIDTH - SFRAME_WIDTH)
+#define SHANNA_IMAGE_TOP_HEIGHT SFRAME_HEIGHT
 
 /* Timing and locations for animations */
 

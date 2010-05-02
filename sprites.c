@@ -18,7 +18,7 @@ static xyz_sprite_methods go_button_methods = { NULL, go_button_event_handler };
 
 static xyz_sprite_spec pizzasprites[] = {
   {"resources/go_button.png",
-   TOOLBOX_LEFT_WIDTH, CONVEYOR_BOTTOM_HEIGHT, 100, 50,
+   TOOLBOX_LEFT_WIDTH, CONVEYOR_TOP_HEIGHT + CONVEYOR_HEIGHT, 100, 50,
    &go_button_methods, EVENTS, NULL},
   { NULL }
 };

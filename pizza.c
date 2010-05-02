@@ -76,8 +76,10 @@ void draw(void) {
   screen_draw_background();
 
   /* Conveyor box */
-  xyz_color(255, 0, 0);
-  xyz_rectangle(0, 0, TOTAL_WIDTH, CONVEYOR_BOTTOM_HEIGHT);
+  xyz_color(TOPBACK_COLOR_R, TOPBACK_COLOR_G, TOPBACK_COLOR_B);
+  xyz_rectangle(0, 0, TOTAL_WIDTH, CONVEYOR_TOP_HEIGHT);
+  xyz_color(CONVEYOR_COLOR_R, CONVEYOR_COLOR_G, CONVEYOR_COLOR_B);
+  xyz_rectangle(0, CONVEYOR_TOP_HEIGHT, TOTAL_WIDTH, CONVEYOR_HEIGHT);
 
   /* Mouse Coords */
   if(show_mousebox) {
