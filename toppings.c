@@ -2,9 +2,11 @@
 #include "xyz_sprite.h"
 #include "pizza.h"
 
+static void topping_draw(xyz_sprite *sprite);
 static void topping_connector_process(connector *conn);
 
-static xyz_sprite_methods topping_methods = { NULL, topping_event_handler };
+static xyz_sprite_methods topping_methods = { topping_draw,
+					      topping_event_handler };
 
 static xyz_image *pizza_image = NULL;
 
@@ -12,11 +14,11 @@ static xyz_image *pizza_image = NULL;
                  1, 1, 1, 1, 1, 1, 1, 1 }
 
 static xyz_sprite_spec toppingsprites[] = {
-  { "resources/sausage_small_white.png", 50, 425, 32, 32,
+  { "resources/sausage_small_trans.png", 50, 425, 32, 32,
     &topping_methods, EVENTS, (void*)0, sizeof(ToppingPrivate) },
-  { "resources/pepper_small_white.png", 130, 450, 32, 32,
+  { "resources/pepper_small_trans.png", 130, 450, 32, 32,
     &topping_methods, EVENTS, (void*)1, sizeof(ToppingPrivate) },
-  { "resources/pineapple_small_white.png", 210, 425, 32, 32,
+  { "resources/pineapple_small_trans.png", 210, 425, 32, 32,
     &topping_methods, EVENTS, (void*)2, sizeof(ToppingPrivate) },
   { NULL }
 };
@@ -59,6 +61,19 @@ static void topping_connector_process(connector *conn) {
   /* Turn output on or off */
   hack++;
   conn->outputs[0]->calculated_signal = (hack % 2) ? get_signal_one() : get_signal_zero();
+}
+
+static void topping_draw(xyz_sprite *sprite) {
+  int x, y, w, h;
+
+  x = xyz_sprite_get_x(sprite);
+  y = xyz_sprite_get_y(sprite);
+  w = xyz_sprite_get_width(sprite);
+  h = xyz_sprite_get_height(sprite);
+
+  xyz_color(TOPPING_BOX_R, TOPPING_BOX_G, TOPPING_BOX_B);
+  xyz_rectangle(x, y, w, h);
+  xyz_default_draw_sprite(sprite);
 }
 
 void topping_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {

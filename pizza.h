@@ -14,15 +14,20 @@
 /* Screen layout */
 #define TOTAL_HEIGHT           500
 #define TOTAL_WIDTH            500
-#define SYMBOLS_TOP_HEIGHT     400
 
-#define BACKGROUND_COLOR_R    0xff
-#define BACKGROUND_COLOR_G    0xff
-#define BACKGROUND_COLOR_B    0xff
+#define BACKGROUND_COLOR_R    0xf8
+#define BACKGROUND_COLOR_G    0xf0
+#define BACKGROUND_COLOR_B    0x9f
 
 #define FLASH_COLOR_R         0xff
 #define FLASH_COLOR_G         0x00
 #define FLASH_COLOR_B         0x00
+
+/* Outputs for whether toppings are present */
+
+#define TOPPING_BOX_R         0x00
+#define TOPPING_BOX_G         0x00
+#define TOPPING_BOX_B         0x00
 
 /* Conveyor, and top background above it */
 #define CONVEYOR_TOP_HEIGHT     40
