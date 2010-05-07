@@ -10,8 +10,10 @@ void draw_connector(connector *conn);
 
 static void go_button_event_handler(xyz_sprite *sprite,
 				    xyz_sprite_event *event);
+static void go_button_draw(xyz_sprite *sprite);
 
-static xyz_sprite_methods go_button_methods = { NULL, go_button_event_handler };
+static xyz_sprite_methods go_button_methods = { go_button_draw,
+						go_button_event_handler };
 
 #define EVENTS { 1, 1, 1, 1, 1, 1, 1, 1, \
                  1, 1, 1, 1, 1, 1, 1, 1 }
@@ -190,10 +192,17 @@ void draw_red_x(int x, int y) {
 
 /*********** Sprite event handlers ******************/
 
+static void go_button_draw(xyz_sprite *sprite) {
+  int x = xyz_sprite_get_x(sprite);
+  int y = xyz_sprite_get_y(sprite);
+  draw_lever(x, y);
+}
+
 static void go_button_event_handler(xyz_sprite *sprite, xyz_sprite_event *event) {
   switch(event->type) {
   case XYZ_SPRITE_BUTTONDOWN:
     start_pizzas_rolling();
+    start_lever_animation();
     break;
   }
 }

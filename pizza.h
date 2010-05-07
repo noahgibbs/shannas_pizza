@@ -171,6 +171,8 @@ void wire_from_to(int from_x, int from_y, int to_x, int to_y);
 /* simple_anim.c */
 void screen_draw_background(void);
 void start_screen_flash(void);
+void start_lever_animation(void);
+void draw_lever(int x, int y);
 
 /* From sprites.c */
 void draw_sprites(void);
