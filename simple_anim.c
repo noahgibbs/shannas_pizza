@@ -65,7 +65,6 @@ void screen_draw_background(void) {
 static xyz_anim *lever_anim = NULL;
 
 static int lever_delete(xyz_anim *anim) {
-  fprintf(stderr, "Lever delete!\n");
   lever_anim = NULL;
   return 0;
 }
@@ -75,8 +74,6 @@ static xyz_anim_spec lever_spec = {
 };
 
 void start_lever_animation(void) {
-  fprintf(stderr, "Starting lever animation!\n");
-
   if(lever_anim) {
     xyz_anim_delete(lever_anim);
     lever_anim = NULL;
@@ -91,8 +88,8 @@ static xyz_image *lever_right = NULL;
 
 void draw_lever(int x, int y) {
   if(!lever_left) {
-    lever_left = xyz_load_image("resources/lever_left_32.png");
-    lever_right = xyz_load_image("resources/lever_right_32.png");
+    lever_left = xyz_load_image("resources/lever_left_64.png");
+    lever_right = xyz_load_image("resources/lever_right_64.png");
   }
 
   if(lever_anim) {

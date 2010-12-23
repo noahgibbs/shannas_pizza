@@ -46,8 +46,8 @@
 #define SFRAME_COLOR_B        0x6b
 
 /* Toolbox */
-#define TOOLBOX_TOP_HEIGHT     150
-#define TOOLBOX_BOTTOM_HEIGHT  400
+#define TOOLBOX_TOP_HEIGHT     175
+#define TOOLBOX_BOTTOM_HEIGHT  425
 #define TOOLBOX_LEFT_WIDTH     400
 
 /* Sizes of sprite types */
